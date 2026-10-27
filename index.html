@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>作業日報</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1d5fa8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="作業日報">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&display=swap">
+<style>
+:root{
+  --bg:#e9ebe8; --sheet:#ffffff; --fg:#1b1f1d; --muted:#5d6661; --rule:#3b423e; --hair:#c9cfcb; --head:#eef1ee; --empty:#f4f6f4;
+  --ido:#2f6fb5; --hannyu:#7a5bb0; --jitsu:#e0731c; --hanshutsu:#b0478a; --kaeri:#2a8a8a;
+  --accent:#1d5fa8; --accent-fg:#ffffff; --warn:#a15c00; --warnbg:#fff4e0;
+  --font:"BIZ UDPGothic","Hiragino Sans","Yu Gothic UI","Meiryo",sans-serif;
+  --cell:26px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121514; --sheet:#1d2220; --fg:#e8ece9; --muted:#9aa49e; --rule:#8a958f; --hair:#3a423e; --head:#262c29; --empty:#252b28;
+  --ido:#5b9be0; --hannyu:#a88be0; --jitsu:#f08a3a; --hanshutsu:#de76b7; --kaeri:#4fbcbc; --accent:#5b9be0; --accent-fg:#0d1117;
+  --warn:#ffc069; --warnbg:#3a2c12; color-scheme:dark}}
+body{background:var(--bg);color:var(--fg);font-family:var(--font);font-size:15px;line-height:1.45;margin:0;padding-top:env(safe-area-inset-top,0px)}
+.draftbtns{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.wrap{max-width:1000px;margin:0 auto;padding-block:12px 100px;
+  padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px));
+  display:flex;flex-direction:column;gap:10px}
+.sheet{background:var(--sheet);border:2px solid var(--rule);min-width:0}
+.title{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 12px;border-bottom:2px solid var(--rule)}
+.title h1{margin:0;font-size:20px;letter-spacing:.4em}
+.title span{font-size:12px;color:var(--muted)}
+.tr{display:grid;grid-template-columns:minmax(0,1fr);border-bottom:1px solid var(--rule)}
+.tr>*{min-width:0}
+.tr:last-child{border-bottom:0}
+.body2{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr)}
+.colL{min-width:0;border-right:1px solid var(--rule)}
+.colR{min-width:0}
+.r-4{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+.r-4 .td:nth-child(2n){border-right:0}.r-4 .td:nth-child(n+3){border-top:1px solid var(--rule)}
+@media (max-width:520px){.r-4{grid-template-columns:minmax(0,1fr)}.r-4 .td{border-right:0}.r-4 .td+.td{border-top:1px solid var(--rule)}}
+.ouen{flex:none;display:flex;align-items:center;gap:4px;font-size:12px;color:var(--muted);padding:0 8px;border-left:1px dotted var(--hair);cursor:pointer}
+.ouen input{width:18px;height:18px;margin:0;accent-color:var(--accent)}
+.naiyou{display:flex;flex-direction:column;flex:1;min-width:0}
+.checks.hs{border-top:1px dotted var(--hair)}
+.tbl td.no select{font:inherit;font-size:14px;color:var(--fg);background:transparent;border:0;width:100%;padding:7px 4px;min-width:0}
+.tbl td.no{width:42%}
+#comment{min-height:56px}
+@media (max-width:720px){.body2{grid-template-columns:minmax(0,1fr)}.colL{border-right:0;border-bottom:1px solid var(--rule)}}
+.td{display:flex;min-width:0;border-right:1px solid var(--rule)}
+.td:last-child{border-right:0}
+.th{flex:none;background:var(--head);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;
+  padding:4px 6px;border-right:1px solid var(--hair);text-align:center;width:4.6em;box-sizing:border-box;letter-spacing:.05em}
+.v{flex:1;min-width:0;display:flex;align-items:center}
+.v input,.v select,.v textarea{font:inherit;font-size:16px;color:var(--fg);background:transparent;border:0;width:100%;box-sizing:border-box;padding:8px;min-width:0}
+.v textarea{min-height:64px;resize:vertical}
+.v .auto{padding:8px;font-size:14px;overflow-wrap:anywhere}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.r-top{grid-template-columns:1fr 1.3fr 1fr}
+.r-2{grid-template-columns:1fr 1fr}
+@media (max-width:520px){.r-top{grid-template-columns:1fr 1fr}.r-top .td:last-child{grid-column:1/-1;border-top:1px solid var(--rule)}
+  .r-top .td:nth-child(2){border-right:0}.r-2{grid-template-columns:1fr}.r-2 .td{border-right:0}.r-2 .td+.td{border-top:1px solid var(--rule)}}
+.weather{display:flex;gap:4px;padding:4px 6px;flex-wrap:wrap}
+.wbtn{font:inherit;font-size:14px;border:1px solid var(--hair);background:transparent;color:var(--fg);border-radius:4px;padding:4px 10px;cursor:pointer}
+.wbtn.on{background:var(--accent);border-color:var(--accent);color:var(--accent-fg);font-weight:700}
+.secth{background:var(--head);font-size:12px;font-weight:700;padding:5px 10px;border-bottom:1px solid var(--hair);display:flex;justify-content:space-between;align-items:center;gap:8px;letter-spacing:.05em}
+.secth small{font-weight:400;color:var(--muted);letter-spacing:0}
+/* 作業時間の帯 */
+.band{display:flex;padding:6px 0 4px}
+.blabels{flex:none;display:flex;flex-direction:column;padding-top:30px;border-right:1px solid var(--hair)}
+.blabels div{height:40px;display:flex;align-items:center;justify-content:center;width:4.6em;font-size:13px;font-weight:700}
+.bscroll{min-width:0;flex:1;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin}
+.binner{min-width:100%}
+.ruler{display:flex;height:30px;user-select:none;-webkit-user-select:none;touch-action:none;cursor:grab;background:var(--head)}
+.ruler span{flex:1 1 0;min-width:0;overflow:hidden;white-space:nowrap;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;border-left:1px solid var(--rule);padding:6px 0 0 3px;box-sizing:border-box}
+.brow{display:flex;height:40px;touch-action:none;user-select:none;-webkit-user-select:none;border-bottom:1px solid var(--hair)}
+.brow:last-child{border-bottom:0}
+.c{flex:1 1 0;min-width:0;height:40px;background:var(--sheet);border-left:1px dotted var(--hair);box-sizing:border-box}
+.c.h{border-left:1px solid var(--rule)}
+.c.on{background:var(--col)}
+.bnav{display:none;gap:8px;padding:0 10px 6px}
+.bnav button{flex:1;font:inherit;font-size:14px;border:1px solid var(--hair);background:var(--sheet);color:var(--fg);border-radius:6px;padding:8px;cursor:pointer}
+@media (max-width:700px){
+  .binner{width:calc(var(--cell)*46)}
+  .ruler span,.c{flex:none}
+  .ruler span{width:calc(var(--cell)*2)}
+  .c{width:var(--cell)}
+  .bnav{display:flex}
+}
+.btot{display:grid;grid-template-columns:repeat(auto-fit,minmax(4.8em,1fr));border-top:1px solid var(--rule)}
+.btot div{border-bottom:1px solid var(--hair);margin-bottom:-1px;padding:6px 8px;border-right:1px solid var(--hair);font-size:12px;color:var(--muted);min-width:0}
+.btot div:last-child{border-right:0}
+.btot b{display:block;font-size:17px;color:var(--fg);font-variant-numeric:tabular-nums}
+.checks{display:flex;flex-wrap:wrap;gap:6px;padding:8px}
+.ck{font:inherit;font-size:14px;border:1px solid var(--hair);background:transparent;color:var(--fg);border-radius:4px;padding:7px 10px;cursor:pointer;display:flex;align-items:center;gap:6px}
+.ck::before{content:"";width:14px;height:14px;border:1.5px solid var(--muted);border-radius:2px;box-sizing:border-box;flex:none}
+.ck.on{border-color:var(--accent);font-weight:700}
+.ck.on::before{background:var(--accent);border-color:var(--accent);box-shadow:inset 0 0 0 2px var(--sheet)}
+.prow{display:flex;border-bottom:1px solid var(--hair);min-height:40px}
+.prow:last-child{border-bottom:0}
+.kanri{display:flex;align-items:center;padding:6px 8px}
+.hint{font-size:12px;color:var(--muted);margin:0;padding:0 10px 6px}
+.tbl{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.tbl th{background:var(--head);font-size:12px;padding:5px 4px;border:1px solid var(--hair);border-top:0}
+.tbl td{border:1px solid var(--hair);padding:0}
+.tbl tr>*:first-child{border-left:0}.tbl tr>*:last-child{border-right:0}
+.tbl input{font:inherit;font-size:16px;color:var(--fg);background:transparent;border:0;width:100%;box-sizing:border-box;padding:7px 6px;text-align:right;min-width:0}
+.tbl .del{width:30px;text-align:center}
+button.x{font:inherit;border:0;background:transparent;color:var(--muted);font-size:18px;cursor:pointer;padding:4px}
+button.add{font:inherit;font-size:13px;border:0;border-top:1px dashed var(--hair);background:transparent;color:var(--accent);padding:8px;width:100%;cursor:pointer}
+.split{display:grid;grid-template-columns:1.3fr 1fr}
+.split>div{min-width:0}
+.split>div:first-child{border-right:1px solid var(--rule)}
+@media (max-width:860px) and (min-width:721px),(max-width:620px){.split{grid-template-columns:1fr}.split>div:first-child{border-right:0;border-bottom:1px solid var(--rule)}}
+.members{display:flex;flex-direction:column;flex:1;min-width:0}
+.members .m{display:flex;border-bottom:1px dotted var(--hair)}
+.members .m:last-of-type{border-bottom:0}
+.savebar{position:fixed;left:0;right:0;bottom:0;background:var(--sheet);border-top:1px solid var(--rule);
+  padding-top:10px;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px));
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.savebar .in{max-width:1000px;margin:0 auto;display:flex;gap:10px;align-items:center}
+.savebar .sum{flex:1;font-size:12px;color:var(--muted);min-width:0}
+.save{font:inherit;font-weight:700;font-size:16px;background:var(--accent);color:var(--accent-fg);border:0;border-radius:8px;padding:12px 26px;cursor:pointer}
+.save:disabled{opacity:.6}
+.sub{font:inherit;font-size:14px;border:1px solid var(--accent);color:var(--accent);background:var(--sheet);border-radius:8px;padding:10px 14px;cursor:pointer}
+#outcard{background:var(--sheet);border:1px solid var(--hair);border-radius:6px;padding:12px}
+#outcard h2{font-size:15px;margin:0 0 6px}
+#out{display:flex;flex-direction:column;gap:4px;font-size:14px}
+#app{display:flex;flex-direction:column;gap:10px}
+.topbar{display:flex;justify-content:flex-end}
+.editbar{background:var(--warnbg);color:var(--warn);border:1px solid var(--warn);border-radius:6px;padding:10px 12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;font-weight:700}
+#pinbox,.donebox{background:var(--sheet);border:2px solid var(--rule);padding:20px;display:flex;flex-direction:column;gap:10px;max-width:360px;margin:40px auto;width:100%;box-sizing:border-box}
+#pinbox h1,.donebox h1{margin:0;font-size:20px;letter-spacing:.3em}
+#pinbox label{font-size:13px;color:var(--muted)}
+#pinbox input{font:inherit;font-size:20px;padding:10px;border:1px solid var(--rule);background:var(--sheet);color:var(--fg);letter-spacing:.3em}
+/* 過去の日報の一覧 */
+#listbox{display:flex;flex-direction:column}
+.lhead{display:flex;gap:8px;align-items:center;padding:10px 12px;border-bottom:1px solid var(--rule);flex-wrap:wrap}
+.lhead select{font:inherit;font-size:16px;padding:8px;border:1px solid var(--rule);background:var(--sheet);color:var(--fg);border-radius:6px}
+.litem{display:grid;cursor:default;grid-template-columns:5.2em minmax(0,1fr);gap:4px 10px;padding:10px 12px;border:0;border-bottom:1px solid var(--hair);background:transparent;color:var(--fg);font:inherit;text-align:left;cursor:pointer;width:100%}
+.litem .d{font-weight:700;font-variant-numeric:tabular-nums}
+.litem .k{font-weight:700;overflow-wrap:anywhere}
+.litem .s{grid-column:2;font-size:12px;color:var(--muted)}
+.lmsg{padding:14px 12px;color:var(--muted);font-size:14px;margin:0}
+.namebtn{font:inherit;font-size:16px;color:var(--fg);background:transparent;border:0;width:100%;text-align:left;padding:8px;cursor:pointer;min-height:40px;display:flex;justify-content:space-between;align-items:center;gap:6px}
+.namebtn .ph{color:var(--muted)}
+.namebtn::after{content:"検索";font-size:11px;color:var(--accent);border:1px solid var(--accent);border-radius:4px;padding:1px 5px;flex:none}
+.picker{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center}
+.pbox{background:var(--sheet);width:100%;max-width:560px;max-height:85%;display:flex;flex-direction:column;border-radius:12px 12px 0 0;
+  padding-bottom:env(safe-area-inset-bottom,0px)}
+.phead{display:flex;gap:8px;padding:12px;border-bottom:1px solid var(--rule);align-items:center}
+.phead b{font-size:15px;flex:none}
+.phead input{flex:1;min-width:0;font:inherit;font-size:18px;padding:10px;border:1px solid var(--rule);border-radius:6px;background:var(--sheet);color:var(--fg)}
+.plist{overflow-y:auto;flex:1}
+.plist button{display:block;width:100%;text-align:left;font:inherit;font-size:17px;padding:13px 16px;border:0;border-bottom:1px solid var(--hair);background:transparent;color:var(--fg);cursor:pointer}
+.plist button.clear{color:var(--muted);font-size:14px}
+.pfoot{padding:10px 12px;border-top:1px solid var(--hair);display:flex;justify-content:flex-end}
+.lbtns{grid-column:1/-1;display:flex;gap:8px;margin-top:6px}
+.lbtns button{flex:1;font:inherit;font-size:14px;padding:8px;border-radius:6px;cursor:pointer;border:1px solid var(--accent);background:var(--sheet);color:var(--accent)}
+.lbtns button.copy{background:var(--accent);color:var(--accent-fg)}
+.topbar{gap:8px;flex-wrap:wrap}
+.copybar{background:var(--head);border:1px solid var(--hair);border-radius:6px;padding:10px 12px;font-size:14px}
+[hidden]{display:none!important}
+</style>
+</head><body>
+<div class="wrap">
+  <form id="pinform"><div id="pinbox">
+    <h1>作業日報</h1>
+    <label for="pin">暗証番号</label>
+    <input id="pin" type="password" inputmode="numeric" autocomplete="off">
+    <button type="submit" class="save">開く</button>
+    <p id="pinmsg" class="hint"></p>
+  </div></form>
+  <div id="done" class="donebox" hidden>
+    <h1 id="doneh">保存しました</h1>
+    <p><span id="donemsg">kintoneの日報に登録しました</span>（レコード番号 <b id="doneid"></b>）。</p>
+    <button type="button" class="save" id="again">続けて入力する</button>
+  </div>
+
+  <div id="listbox" class="sheet" hidden>
+    <div class="title"><h1>過去の日報</h1><span>直近1か月</span></div>
+    <div class="lhead">
+      <label for="lgouki">号機No.</label>
+      <select id="lgouki"></select>
+      <button type="button" class="sub" id="lclose" style="margin-left:auto">入力画面に戻る</button>
+    </div>
+    <div id="litems"><p class="lmsg">号機No.を選んでください。</p></div>
+  </div>
+
+  <div id="app" hidden>
+  <div class="topbar"><button type="button" class="sub" id="copylast">前回の日報をコピーして入力</button><button type="button" class="sub" id="openlist">過去の日報を見る・直す</button></div>
+  <div class="copybar" id="copybar" hidden></div>
+  <div class="editbar" id="editbar" hidden><span id="edittext"></span><button type="button" class="sub" id="newentry">新しく入力する</button></div>
+  <div class="sheet">
+    <div class="title"><h1>作業日報</h1><span>丸門建設株式会社</span></div>
+    <div class="tr r-top">
+      <div class="td"><div class="th">号機No.</div><div class="v"><select id="gouki" aria-label="号機No."></select></div></div>
+      <div class="td"><div class="th">日付</div><div class="v"><input type="date" id="hiduke" aria-label="日付"></div></div>
+      <div class="td"><div class="th">天候</div><div class="v"><div class="weather" id="tenkou"></div></div></div>
+    </div>
+    <div class="tr"><div class="td"><div class="th">工事名</div><div class="v" style="flex-direction:column;align-items:stretch">
+      <input type="search" id="kojiq" placeholder="ここに打つと絞り込めます" aria-label="工事名の絞り込み" style="font-size:14px;padding:6px 8px;border-bottom:1px dotted var(--hair)">
+      <select id="koji" aria-label="工事名"></select></div></div></div>
+    <div class="tr r-2">
+      <div class="td"><div class="th">元請名</div><div class="v"><div class="auto" id="motouke"></div></div></div>
+      <div class="td"><div class="th">場所</div><div class="v"><div class="auto" id="basho"></div></div></div>
+    </div>
+    <div class="tr"><div class="td"><div class="th">作成者</div><div class="v"><select id="sakusei" class="namesel" aria-label="作成者"></select></div></div></div>
+    <div class="tr"><div>
+      <div class="secth"><span>作業時間</span><small>なぞると塗れる・塗った所を触ると消える</small></div>
+      <div class="band">
+        <div class="blabels" id="blabels"></div>
+        <div class="bscroll" id="bscroll"><div class="binner"><div class="ruler" id="ruler"></div><div id="brows"></div></div></div>
+      </div>
+      <div class="bnav"><button type="button" id="bprev">◀ 前の時間</button><button type="button" id="bnext">後の時間 ▶</button></div>
+      <p class="hint">1マス＝30分。目盛りの数字は時刻（4時〜翌朝3時）。スマホでは灰色の目盛りを指で横にずらすか、ボタンで前後の時間に動かせます。</p>
+      <div class="btot">
+        <div>移動行き<b id="t-iki">0:00</b></div><div>搬入<b id="t-hannyu">0:00</b></div><div>実作業<b id="t-jitsu">0:00</b></div><div>搬出<b id="t-hanshutsu">0:00</b></div><div>移動帰り<b id="t-kaeri">0:00</b></div><div>計<b id="t-all">0:00</b></div>
+      </div>
+    </div></div>
+    <div class="tr"><div class="body2">
+    <div class="colL">
+    <div class="td" style="border-bottom:1px solid var(--rule)"><div class="th">作業<br>内容</div><div class="v"><div class="naiyou"><div class="checks" id="naiyou" role="group" aria-label="作業内容"></div><div class="checks hs" id="hs" role="group" aria-label="搬入初日・搬出最終"></div></div></div></div>
+    <div class="split" style="border-bottom:1px solid var(--rule)">
+      <div>
+        <div class="secth"><span>出来高</span></div>
+        <table class="tbl"><thead><tr><th>φ</th><th>L（m）</th><th>本数</th><th>ﾔｯﾄｺ（m）</th><th class="del"></th></tr></thead><tbody id="deki"></tbody></table>
+        <button type="button" class="add" id="addDeki">＋ 行を追加</button>
+      </div>
+      <div>
+        <div class="secth"><span>アワメーター</span></div>
+        <table class="tbl"><thead><tr><th></th><th>No.</th><th>アワ</th></tr></thead><tbody id="nenryo"></tbody></table>
+      </div>
+    </div>
+    <div class="secth"><span>運転・溶接</span></div>
+    <div class="r-4">
+      <div class="td"><div class="th">バス</div><div class="v"><select id="bus" class="namesel" aria-label="バス運転"></select></div></div>
+      <div class="td"><div class="th">2t<br>トラック</div><div class="v"><select id="truck" class="namesel" aria-label="2tトラック運転"></select></div></div>
+      <div class="td"><div class="th">4t<br>トラック</div><div class="v"><select id="truck4" class="namesel" aria-label="4tトラック運転"></select></div></div>
+      <div class="td"><div class="th">溶接</div><div class="v"><select id="yousetsu" class="namesel" aria-label="溶接"></select></div></div>
+    </div>
+    </div>
+    <div class="colR">
+      <div class="secth"><span>人員</span></div>
+      <div class="prow"><div class="th">オペ<br>レーター</div><div class="v"><select id="ope" class="namesel" aria-label="オペレーター"></select></div><label class="ouen"><input type="checkbox" id="ouen-ope">応援</label></div>
+      <div class="prow"><div class="th">クレーン<br>オペ</div><div class="v"><select id="craneope" class="namesel" aria-label="クレーンオペレーター"></select></div><label class="ouen"><input type="checkbox" id="ouen-crane">応援</label></div>
+      <div class="prow"><div class="th">メンバー</div><div class="members"><div id="memb"></div><button type="button" class="add" id="addMemb">＋ メンバーを追加</button></div></div>
+    </div>
+    </div></div>
+    <div class="tr"><div class="td"><div class="th">コメント</div><div class="v"><textarea id="comment" aria-label="コメント" placeholder="連絡事項があれば（例：バス2台 運転 浅野、北園）"></textarea></div></div></div>
+    <div class="tr"><div class="td"><div class="th">管理者</div><div class="v kanri"><button type="button" class="ck" id="kanri" aria-pressed="false">上記内容を確認しました</button></div></div></div>
+  </div>
+  <div id="outcard" hidden>
+    <h2 id="outh"></h2>
+    <div id="out"></div>
+  </div>
+  </div>
+</div>
+<div class="picker" id="picker" hidden><div class="pbox" role="dialog" aria-label="名前を選ぶ">
+  <div class="phead"><b id="ptitle">名前</b><input id="pq" type="search" placeholder="名前の一部を入れる（例：浦中）" autocomplete="off"></div>
+  <div class="plist" id="plist"></div>
+  <div class="pfoot"><button type="button" class="sub" id="pclose">閉じる</button></div>
+</div></div>
+<div class="savebar" id="savebar" hidden><div class="in">
+  <div class="sum" id="sumline"></div>
+  <button type="button" class="save" id="save">保存</button>
+</div></div>
+<script>
+// ---- Apps Script（kintoneとのやり取り）を呼ぶ ----
+const API="https://script.google.com/macros/s/AKfycbz3XtpAENLFsbaxg5d2NkTzvQRbgPChqxP7kFwWoaKdVQHPw2h0E89fyx4bvzGOTRgV-w/exec";
+function callApi(fn,args){
+  return fetch(API,{method:"POST",body:JSON.stringify({fn:fn,args:args})})
+    .then(r=>r.json(),()=>{throw new Error("電波が届かないか、通信できませんでした。電波のよい所でもう一度試してください。入力した内容は下書きとして残っています。")})
+    .then(j=>{if(!j||!j.ok)throw new Error((j&&j.error)||"エラーが出ました。");return j.result});
+}
+const google={script:{get run(){let ok=()=>{},ng=()=>{};const o=new Proxy({},{get:(t,k)=>{
+  if(k==="withSuccessHandler")return f=>{ok=f;return o};if(k==="withFailureHandler")return f=>{ng=f;return o};
+  return(...a)=>{callApi(k,a).then(r=>ok(r),e=>ng(e))}}});return o}}};
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
+const GOUKI=["1","3","5","6","7","8","11","13","16","21","23","99"];
+let NAMES=[],KOJI=[],KUI=[],CRANE=[],YUNBO=[],HATSU=[];
+const $=id=>document.getElementById(id);
+const LS="nippo_pin";let PIN="";let EDIT=null;
+function lsGet(k){try{return localStorage.getItem(k)||""}catch(e){return ""}}
+function lsSet(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+function setSel(s,v){v=v==null?"":String(v);if(v&&![...s.options].some(o=>o.value===v))s.add(new Option(v.trim(),v));s.value=v;if(s._btn)paintNB(s)}
+// ---- 名前は検索して選ぶ ----
+let PSEL=null;
+function paintNB(s){const b=s._btn;b.innerHTML="";const t=document.createElement("span");if(s.value){t.textContent=s.value}else{t.textContent="（タップして選ぶ）";t.className="ph"}b.appendChild(t)}
+function nameBtn(s,label){s.hidden=true;const b=document.createElement("button");b.type="button";b.className="namebtn";b.setAttribute("aria-label",label);s._btn=b;s.after(b);paintNB(s);
+  b.addEventListener("click",()=>openPicker(s,label))}
+function openPicker(s,label){PSEL=s;$("ptitle").textContent=label;$("pq").value="";drawPicker("");$("picker").hidden=false;setTimeout(()=>$("pq").focus(),50)}
+function drawPicker(q){const box=$("plist");box.innerHTML="";
+  const c=document.createElement("button");c.type="button";c.className="clear";c.textContent="（空にする）";c.addEventListener("click",()=>pick(""));box.appendChild(c);
+  const hit=NAMES.filter(n=>!q||n.includes(q));
+  hit.forEach(n=>{const b=document.createElement("button");b.type="button";b.textContent=n;b.addEventListener("click",()=>pick(n));box.appendChild(b)});
+  if(!hit.length){const p=document.createElement("p");p.className="lmsg";p.textContent="見つかりません。名前の一部（名字だけなど）で探してください。";box.appendChild(p)}}
+function pick(n){if(PSEL)setSel(PSEL,n);$("picker").hidden=true;PSEL=null;if(window.__sched)__sched()}
+$("pq").addEventListener("input",e=>drawPicker(e.target.value.trim()));
+$("pclose").addEventListener("click",()=>{$("picker").hidden=true;PSEL=null});
+$("picker").addEventListener("click",e=>{if(e.target.id==="picker"){$("picker").hidden=true;PSEL=null}});
+function start(M){
+NAMES=M.names;KOJI=M.koji;KUI=M.kui;CRANE=M.crane;YUNBO=M.yunbo;HATSU=M.hatsu;
+$("gouki").add(new Option("",""));GOUKI.forEach(g=>{$("gouki").add(new Option(g,g));$("lgouki").add(new Option(g+"号機",g))});
+$("lgouki").insertBefore(new Option("（選択）",""),$("lgouki").firstChild);$("lgouki").value="";
+$("hiduke").value=new Date(Date.now()+9*3600e3).toISOString().slice(0,10);
+let tenkou="";
+["晴","曇","雨","雪"].forEach(w=>{const b=document.createElement("button");b.type="button";b.className="wbtn";b.textContent=w;b.dataset.w=w;
+  b.addEventListener("click",()=>{tenkou=w;paintW()});$("tenkou").appendChild(b)});
+function paintW(){document.querySelectorAll(".wbtn").forEach(b=>{b.classList.toggle("on",b.dataset.w===tenkou);b.setAttribute("aria-pressed",b.dataset.w===tenkou)})}
+paintW();
+function fillKoji(q){const s=$("koji"),cur=s.value;s.innerHTML="";s.add(new Option("（工事を選択）",""));
+  KOJI.forEach((k,i)=>{if(!q||k[1].includes(q)||k[2].includes(q))s.add(new Option(k[1],i))});s.value=cur;if(s.value!==cur)s.value="";showKoji()}
+function showKoji(){const k=KOJI[$("koji").value];$("motouke").textContent=k?k[2]:"";$("basho").textContent=k?k[3]:""}
+$("kojiq").addEventListener("input",e=>fillKoji(e.target.value.trim()));$("koji").addEventListener("change",showKoji);
+fillKoji("");
+document.querySelectorAll(".namesel").forEach(s=>{s.add(new Option("",""));NAMES.forEach(n=>s.add(new Option(n,n)));nameBtn(s,s.getAttribute("aria-label"))});
+let kanri=false;
+function paintK(){$("kanri").classList.toggle("on",kanri);$("kanri").setAttribute("aria-pressed",kanri)}
+$("kanri").addEventListener("click",()=>{kanri=!kanri;paintK()});
+// ---- 作業時間 ----
+const KINDS=[["iki","移動行き","--ido"],["hannyu","搬入","--hannyu"],["jitsu","実作業","--jitsu"],["hanshutsu","搬出","--hanshutsu"],["kaeri","移動帰り","--kaeri"]];
+const START=4,END=27,N=(END-START)*2;
+const T=i=>{const m=START*60+i*30;return Math.floor(m/60)+":"+String(m%60).padStart(2,"0")};
+const D=n=>{const m=n*30;return Math.floor(m/60)+":"+String(m%60).padStart(2,"0")};
+const IX=t=>{const p=String(t).split(":").map(Number);return Math.round((p[0]*60+(p[1]||0)-START*60)/30)};
+const slot=new Array(N).fill(null);
+const NAIYOU=["入/組","出/解","未固結","ｷｬﾘﾌﾞ","試掘","試杭","本杭","その他","前入り","中止"];
+const nai=new Set();
+NAIYOU.forEach(t=>{const b=document.createElement("button");b.type="button";b.className="ck";b.textContent=t;b.dataset.t=t;
+  b.addEventListener("click",()=>{nai.has(t)?nai.delete(t):nai.add(t);paintN()});$("naiyou").appendChild(b)});
+function paintN(){document.querySelectorAll("#naiyou .ck").forEach(b=>{const on=nai.has(b.dataset.t);b.classList.toggle("on",on);b.setAttribute("aria-pressed",on)})}
+paintN();
+const hs=new Set();
+[["初日","搬入初日"],["最終","搬出最終"]].forEach(([v,l])=>{const b=document.createElement("button");b.type="button";b.className="ck";b.textContent=l;b.dataset.v=v;
+  b.addEventListener("click",()=>{hs.has(v)?hs.delete(v):hs.add(v);paintH()});$("hs").appendChild(b)});
+function paintH(){document.querySelectorAll("#hs .ck").forEach(b=>{const on=hs.has(b.dataset.v);b.classList.toggle("on",on);b.setAttribute("aria-pressed",on)})}
+for(let h=START;h<END;h++){const s=document.createElement("span");s.textContent=h>=24?"翌"+(h-24):h;$("ruler").appendChild(s)}
+const cells={};
+KINDS.forEach(([k,name,col])=>{
+  const l=document.createElement("div");l.textContent=name;l.style.color="var("+col+")";$("blabels").appendChild(l);
+  const row=document.createElement("div");row.className="brow";row.style.setProperty("--col","var("+col+")");row.setAttribute("aria-label",name+"の時間帯");cells[k]=[];
+  for(let i=0;i<N;i++){const c=document.createElement("div");c.className="c"+(i%2===0?" h":"");row.appendChild(c);cells[k].push(c)}
+  $("brows").appendChild(row);
+  let mode=null;
+  const at=e=>{const r=row.getBoundingClientRect();return Math.max(0,Math.min(N-1,Math.floor((e.clientX-r.left)/r.width*N)))};
+  const apply=i=>{if(mode==="erase"){if(slot[i]===k)slot[i]=null}else slot[i]=k;render()};
+  row.addEventListener("pointerdown",e=>{const i=at(e);mode=slot[i]===k?"erase":"paint";apply(i);row.setPointerCapture(e.pointerId)});
+  row.addEventListener("pointermove",e=>{if(mode)apply(at(e))});
+  const end=()=>mode=null;row.addEventListener("pointerup",end);row.addEventListener("pointercancel",end);
+});
+// 目盛りを指でずらすと横に動く（スマホ）
+const sc=$("bscroll");let drag=null;
+$("ruler").addEventListener("pointerdown",e=>{drag={x:e.clientX,l:sc.scrollLeft};$("ruler").setPointerCapture(e.pointerId)});
+$("ruler").addEventListener("pointermove",e=>{if(drag)sc.scrollLeft=drag.l-(e.clientX-drag.x)});
+["pointerup","pointercancel"].forEach(t=>$("ruler").addEventListener(t,()=>drag=null));
+const step=()=>Math.max(120,sc.clientWidth*0.7);
+$("bprev").addEventListener("click",()=>sc.scrollBy({left:-step(),behavior:"smooth"}));
+$("bnext").addEventListener("click",()=>sc.scrollBy({left:step(),behavior:"smooth"}));
+function render(){
+  const sum={};KINDS.forEach(([k])=>sum[k]=0);
+  KINDS.forEach(([k])=>cells[k].forEach((c,i)=>c.classList.toggle("on",slot[i]===k)));
+  slot.forEach(s=>{if(s)sum[s]++});
+  KINDS.forEach(([k])=>$("t-"+k).textContent=D(sum[k]));
+  $("t-all").textContent=D(Object.values(sum).reduce((a,b)=>a+b,0));
+  $("sumline").textContent=($("gouki").value?$("gouki").value+"号機・":"")+"実作業 "+D(sum.jitsu);
+}
+render();$("gouki").addEventListener("change",render);
+function scrollToSlot(i){const c=cells.iki[Math.max(0,i)];if(c)sc.scrollLeft=Math.max(0,c.offsetLeft-20)}
+if(window.innerWidth<=700)scrollToSlot(IX("5:00"));
+// ---- 出来高・アワメーター・メンバー ----
+let rid=0;
+function addDeki(v){v=v||["","","",""];const tr=document.createElement("tr");const n=++rid;
+  ["φ","L","本数","ヤットコ"].forEach((l,i)=>{const td=document.createElement("td");const inp=document.createElement("input");inp.id="d"+n+"-"+i;inp.inputMode="decimal";inp.setAttribute("aria-label",l);inp.value=v[i]||"";td.appendChild(inp);tr.appendChild(td)});
+  const td=document.createElement("td");td.className="del";td.innerHTML='<button type="button" class="x" aria-label="この行を消す">×</button>';tr.appendChild(td);
+  tr.querySelector(".x").addEventListener("click",()=>tr.remove());$("deki").appendChild(tr)}
+addDeki();addDeki();
+$("addDeki").addEventListener("click",()=>addDeki());
+const AWA=[["杭打機","杭打機号車","数値_2",KUI],["クレーン","クレーン号車","数値_3",CRANE],["発電機1","発電機No1","数値_5",HATSU],["発電機2","発電機No2","数値_6",HATSU],["ユンボ","ユンボ号車","数値_4",YUNBO]];
+AWA.forEach(([l,,,list],i)=>{const tr=document.createElement("tr");
+  tr.innerHTML='<th>'+l+'</th><td class="no"><select id="an'+i+'" aria-label="'+l+'のNo."></select></td><td><input id="av'+i+'" inputmode="decimal" aria-label="'+l+'のアワメーター"></td>';
+  $("nenryo").appendChild(tr);const s=$("an"+i);s.add(new Option("",""));list.forEach(x=>s.add(new Option(x.trim(),x)))});
+function addMemb(v,o){const d=document.createElement("div");d.className="m v";const n=++rid;
+  const s=document.createElement("select");s.id="m"+n;s.setAttribute("aria-label","メンバー");s.add(new Option("",""));NAMES.forEach(x=>s.add(new Option(x,x)));setSel(s,v||"");
+  const x=document.createElement("button");x.type="button";x.className="x";x.textContent="×";x.setAttribute("aria-label","この人を消す");x.addEventListener("click",()=>d.remove());
+  const lb=document.createElement("label");lb.className="ouen";const c=document.createElement("input");c.type="checkbox";c.id="mo"+n;c.checked=!!o;lb.append(c,"応援");
+  d.append(s,lb,x);$("memb").appendChild(d);nameBtn(s,"メンバー")}
+addMemb();$("addMemb").addEventListener("click",()=>addMemb());
+// ---- kintoneの欄との対応 ----
+const KT={iki:["ドロップダウン_1","ドロップダウン_2",26.5],hannyu:["ドロップダウン_3","ドロップダウン_4",23.5],jitsu:["ドロップダウン_6","ドロップダウン_5",23.5],hanshutsu:["ドロップダウン_8","ドロップダウン_7",23.5],kaeri:["ドロップダウン_12","ドロップダウン_11",26.5]};
+function buildRecord(){
+  const errs=[];const k=KOJI[$("koji").value];
+  if(!k)errs.push("工事名を選んでください。");
+  if(!$("sakusei").value)errs.push("作成者を選んでください。");
+  if(!$("ope").value)errs.push("オペレーターを選んでください。");
+  if(!$("hiduke").value)errs.push("日付を入れてください。");
+  const rec={日付:$("hiduke").value,号車番号:$("gouki").value,ルックアップ:$("sakusei").value,工事名:k?k[1]:""};
+  const name=Object.fromEntries(KINDS.map(([a,b])=>[a,b]));
+  Object.entries(KT).forEach(([kk,[fs,fe,max]])=>{
+    let a=-1,b=-1;slot.forEach((s,i)=>{if(s===kk){if(a<0)a=i;b=i+1}});
+    if(a<0){rec[fs]="";rec[fe]="";return}
+    const endH=(START*60+b*30)/60;
+    if(endH>max)errs.push(name[kk]+"の終わりは"+Math.floor(max)+":"+(max%1?"30":"00")+"までしか入れられません。");
+    rec[fs]=T(a);rec[fe]=T(b);
+  });
+  rec.当日作業=NAIYOU.filter(t=>nai.has(t));
+  rec.作業開始終了=[...hs];
+  rec.出来高=[...document.querySelectorAll("#deki tr")].map(tr=>[...tr.querySelectorAll("input")].map(x=>x.value)).filter(v=>v.some(Boolean));
+  AWA.forEach(([l,nf,af],i)=>{rec[nf]=$("an"+i).value;rec[af]=$("av"+i).value});
+  rec.ルックアップ_5=$("ope").value;rec.チェックボックス_0=$("ouen-ope").checked;
+  rec.ルックアップ_11=$("craneope").value;rec.チェックボックス_1=$("ouen-crane").checked;
+  rec.手元=[...document.querySelectorAll("#memb .m")].map(d=>[d.querySelector("select").value,d.querySelector("input").checked]).filter(x=>x[0]);
+  rec.ルックアップ_3=$("bus").value;rec.ルックアップ_0=$("truck").value;rec.ルックアップ_1=$("truck4").value;rec.ルックアップ_2=$("yousetsu").value;
+  rec.コメント=$("comment").value;rec.工場長確認=kanri;
+  return {rec,errs};
+}
+// ---- 過去の日報を画面に読み込む ----
+function loadRec(R,copy){const draft=copy==="draft";if(draft)copy=false;
+  $("hiduke").value=R.日付||"";setSel($("gouki"),R.号車番号);setSel($("sakusei"),R.ルックアップ);
+  let ki=KOJI.findIndex(k=>k[1]===R.工事名);
+  if(ki<0&&R.工事名){KOJI.push([R.工事番号,R.工事名,R.元請名,R.場所]);ki=KOJI.length-1}
+  $("kojiq").value="";fillKoji("");$("koji").value=ki<0?"":String(ki);showKoji();
+  slot.fill(null);
+  Object.entries(KT).forEach(([kk,[fs,fe]])=>{if(R[fs]&&R[fe]){const a=Math.max(0,IX(R[fs])),b=Math.min(N,IX(R[fe]));for(let i=a;i<b;i++)slot[i]=kk}});
+  nai.clear();(R.当日作業||[]).forEach(t=>nai.add(t));paintN();
+  hs.clear();(R.作業開始終了||[]).forEach(t=>hs.add(t));paintH();
+  $("deki").innerHTML="";(R.出来高||[]).forEach(v=>addDeki(v));if(!(R.出来高||[]).length)addDeki();
+  AWA.forEach(([l,nf,af],i)=>{setSel($("an"+i),R[nf]);$("av"+i).value=R[af]||""});
+  setSel($("ope"),R.ルックアップ_5);$("ouen-ope").checked=!!R.チェックボックス_0;
+  setSel($("craneope"),R.ルックアップ_11);$("ouen-crane").checked=!!R.チェックボックス_1;
+  $("memb").innerHTML="";(R.手元||[]).forEach(([n,o])=>addMemb(n,o));if(!(R.手元||[]).length)addMemb();
+  setSel($("bus"),R.ルックアップ_3);setSel($("truck"),R.ルックアップ_0);setSel($("truck4"),R.ルックアップ_1);setSel($("yousetsu"),R.ルックアップ_2);
+  $("comment").value=R.コメント||"";kanri=!!R.工場長確認;paintK();
+  tenkou="";paintW();
+  render();
+  const first=slot.findIndex(Boolean);if(window.innerWidth<=700)scrollToSlot(first>=0?first-1:IX("5:00"));
+  $("outcard").hidden=true;
+  if(copy){
+    // 前の日報の再利用：日付は今日、出来高・アワの数字・コメント・管理者確認は空にする
+    $("hiduke").value=new Date(Date.now()+9*3600e3).toISOString().slice(0,10);
+    $("deki").innerHTML="";addDeki();addDeki();
+    AWA.forEach((a,i)=>{$("av"+i).value=""});
+    $("comment").value="";kanri=false;paintK();
+    hs.clear();paintH();
+    EDIT=null;$("editbar").hidden=true;$("save").textContent="保存";
+    $("copybar").textContent=R.日付+"（No."+R.id+"）の日報をコピーしました。日付は今日になっています。作業時間・人員を確かめて、出来高とアワを入れてください。";
+    $("copybar").hidden=false;return;
+  }
+  $("copybar").hidden=true;
+  if(draft){$("hiduke").value=R.日付||$("hiduke").value;EDIT=null;$("editbar").hidden=true;$("save").textContent="保存";return}
+  EDIT={id:R.id,revision:R.revision};
+  $("edittext").textContent="レコード番号 "+R.id+"（"+R.日付+"）の日報を直しています";
+  $("editbar").hidden=false;$("save").textContent="直した内容を保存";
+}
+// ---- 一覧 ----
+const WD="日月火水木金土";
+function showList(){
+  $("app").hidden=true;$("savebar").hidden=true;$("listbox").hidden=false;window.scrollTo(0,0);
+  const g=$("lgouki").value||$("gouki").value||lsGet("nippo_gouki");if(g){$("lgouki").value=g;loadList(g)}
+}
+function loadList(g){
+  lsSet("nippo_gouki",g);const box=$("litems");box.innerHTML='<p class="lmsg">読み込み中…</p>';
+  google.script.run.withSuccessHandler(list=>{
+    box.innerHTML="";
+    if(!list.length){box.innerHTML='<p class="lmsg">直近1か月の日報はありません。</p>';return}
+    list.forEach(r=>{const b=document.createElement("div");b.className="litem";
+      const dt=new Date(r.日付+"T00:00:00");const ds=(dt.getMonth()+1)+"/"+dt.getDate()+"（"+WD[dt.getDay()]+"）";
+      const d1=document.createElement("span");d1.className="d";d1.textContent=ds;
+      const d2=document.createElement("span");d2.className="k";d2.textContent=r.工事名||"（工事名なし）";
+      const d3=document.createElement("span");d3.className="s";d3.textContent=["オペ "+(r.オペ||"—"),(r.当日作業||[]).join("・"),r.確認?"確認済み":"","No."+r.id].filter(Boolean).join("　");
+      const bb=document.createElement("div");bb.className="lbtns";
+      const be=document.createElement("button");be.type="button";be.textContent="見る・直す";
+      const bc=document.createElement("button");bc.type="button";bc.className="copy";bc.textContent="コピーして新しく入力";
+      bb.append(be,bc);b.append(d1,d2,d3,bb);
+      const open=copy=>{box.querySelectorAll("button").forEach(x=>x.disabled=true);d3.textContent="開いています…";
+        google.script.run.withSuccessHandler(R=>{$("listbox").hidden=true;$("app").hidden=false;$("savebar").hidden=false;loadRec(R,copy);window.scrollTo(0,0)})
+          .withFailureHandler(err=>{box.innerHTML="";const p=document.createElement("p");p.className="lmsg";p.textContent=err.message||String(err);box.appendChild(p)})
+          .getNippo(PIN,r.id)};
+      be.addEventListener("click",()=>open(false));bc.addEventListener("click",()=>open(true));
+      box.appendChild(b)});
+  }).withFailureHandler(err=>{box.innerHTML="";const p=document.createElement("p");p.className="lmsg";p.textContent=err.message||String(err);box.appendChild(p)})
+    .listNippo(PIN,g);
+}
+$("openlist").addEventListener("click",showList);
+$("copylast").addEventListener("click",()=>{
+  const g=$("gouki").value||lsGet("nippo_gouki");
+  if(!g){$("copybar").textContent="先に号機No.を選んでから押してください。";$("copybar").hidden=false;return}
+  $("copybar").textContent=g+"号機の前回の日報を読み込んでいます…";$("copybar").hidden=false;
+  google.script.run.withSuccessHandler(list=>{
+    if(!list.length){$("copybar").textContent=g+"号機の直近1か月の日報がありません。";return}
+    google.script.run.withSuccessHandler(R=>{loadRec(R,true);window.scrollTo(0,0)})
+      .withFailureHandler(err=>{$("copybar").textContent=err.message||String(err)}).getNippo(PIN,list[0].id);
+  }).withFailureHandler(err=>{$("copybar").textContent=err.message||String(err)}).listNippo(PIN,g);
+});
+$("gouki").addEventListener("change",()=>{if($("gouki").value)lsSet("nippo_gouki",$("gouki").value)});
+$("lgouki").addEventListener("change",e=>{if(e.target.value)loadList(e.target.value)});
+$("lclose").addEventListener("click",()=>{$("listbox").hidden=true;$("app").hidden=false;$("savebar").hidden=false});
+// ---- 下書き（スマホの中に自動で残す） ----
+const DK="nippo_draft";
+function saveDraft(){if(EDIT)return;try{const {rec}=buildRecord();rec._t=Date.now();localStorage.setItem(DK,JSON.stringify(rec))}catch(e){}}
+let dtm;window.__sched=()=>{clearTimeout(dtm);dtm=setTimeout(saveDraft,700)};
+["input","change","click"].forEach(t=>$("app").addEventListener(t,window.__sched));
+(function(){let d=null;try{d=JSON.parse(localStorage.getItem(DK)||"null")}catch(e){}
+  if(!d)return;const has=d.工事名||d.ルックアップ_5||KT&&Object.values(KT).some(([a])=>d[a]);if(!has)return;
+  const t=new Date(d._t||Date.now());const bar=$("copybar");bar.innerHTML="";
+  const p=document.createElement("div");p.textContent=(t.getMonth()+1)+"/"+t.getDate()+" "+t.getHours()+":"+String(t.getMinutes()).padStart(2,"0")+" に入力途中の下書きがあります（"+(d.工事名||"工事名なし")+"）。";
+  const bb=document.createElement("div");bb.className="draftbtns";
+  const b1=document.createElement("button");b1.type="button";b1.className="save";b1.textContent="続きから入力する";
+  const b2=document.createElement("button");b2.type="button";b2.className="sub";b2.textContent="下書きを消す";
+  b1.addEventListener("click",()=>{loadRec(d,"draft");bar.hidden=true});
+  b2.addEventListener("click",()=>{try{localStorage.removeItem(DK)}catch(e){}bar.hidden=true});
+  bb.append(b1,b2);bar.append(p,bb);bar.hidden=false})();
+// ---- 保存 ----
+let saving=false;
+$("save").addEventListener("click",()=>{
+  if(saving)return;
+  const {rec,errs}=buildRecord();const out=$("out");out.innerHTML="";
+  if(errs.length){$("outh").textContent="保存できません。次を直してください";errs.forEach(e=>{const d=document.createElement("div");d.textContent=e;out.appendChild(d)});
+    $("outcard").hidden=false;$("outcard").scrollIntoView({behavior:"smooth"});return}
+  saving=true;const label=$("save").textContent;$("save").textContent="保存中…";$("save").disabled=true;$("outcard").hidden=true;
+  const ok=id=>{if(!EDIT){try{localStorage.removeItem(DK)}catch(e){}}
+    $("doneh").textContent=EDIT?"直しました":"保存しました";
+    $("donemsg").textContent=EDIT?"kintoneの日報を直しました":"kintoneの日報に登録しました";
+    $("done").hidden=false;$("doneid").textContent=id;$("app").hidden=true;$("savebar").hidden=true;window.scrollTo(0,0);
+  };
+  const ng=err=>{
+    saving=false;$("save").textContent=label;$("save").disabled=false;
+    $("outh").textContent="保存できませんでした";out.innerHTML="";const d=document.createElement("div");d.textContent=err.message||String(err);out.appendChild(d);
+    $("outcard").hidden=false;$("outcard").scrollIntoView({behavior:"smooth"});
+  };
+  if(EDIT)google.script.run.withSuccessHandler(ok).withFailureHandler(ng).updateNippo(PIN,EDIT.id,EDIT.revision,rec);
+  else google.script.run.withSuccessHandler(ok).withFailureHandler(ng).saveNippo(PIN,rec);
+});
+}
+function reload(){location.reload()}
+function login(pin){
+  $("pinmsg").textContent="読み込み中…";
+  google.script.run.withSuccessHandler(M=>{PIN=pin;lsSet(LS,pin);$("pinbox").hidden=true;$("app").hidden=false;$("savebar").hidden=false;start(M)})
+    .withFailureHandler(err=>{$("pinmsg").textContent=err.message||String(err);$("pinbox").hidden=false})
+    .getMaster(pin);
+}
+$("pinform").addEventListener("submit",e=>{e.preventDefault();login($("pin").value.trim())});
+$("again").addEventListener("click",reload);
+$("newentry").addEventListener("click",reload);
+(function(){const p=lsGet(LS);if(p){$("pinbox").hidden=true;login(p)}})();
+</script>
+</body></html>
