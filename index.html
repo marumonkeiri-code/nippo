@@ -306,6 +306,27 @@ body{padding-top:0}
 #kpinbox h2{margin:0;font-size:18px}
 #kpinbox p{margin:0;font-size:13px;color:var(--muted)}
 .kempty{text-align:center;color:var(--muted);padding:30px 10px;font-size:14px}
+
+/* 始業前点検 */
+.mbtn.tenken .mi{background:linear-gradient(145deg,#e0942a,#b06a10)}
+#tenken{display:flex;flex-direction:column;gap:10px}
+#tenken[hidden]{display:none!important}
+.tkinds{display:flex;gap:8px;flex-wrap:wrap}
+.tkinds button{font:inherit;font-size:15px;padding:10px 16px;border-radius:12px;border:1px solid var(--hair);background:var(--sheet);color:var(--fg);cursor:pointer;box-shadow:var(--shadow)}
+.tkinds button.on{background:#b06a10;border-color:#b06a10;color:#fff;font-weight:700}
+.tkinds button:disabled{opacity:.45;box-shadow:none}
+#tenken .title h1{color:#b06a10;letter-spacing:.08em;font-size:18px}
+#tenken .th{flex-direction:column;gap:1px}
+.titems{display:flex;flex-direction:column}
+.titem{display:flex;align-items:center;gap:12px;width:100%;text-align:left;font:inherit;font-size:15px;color:var(--fg);background:none;border:0;border-bottom:1px solid var(--hair);padding:12px 14px;cursor:pointer;min-height:52px}
+.titem:last-child{border-bottom:0}
+.titem .n{flex:none;width:22px;color:var(--muted);font-size:12px;text-align:right;font-variant-numeric:tabular-nums}
+.titem .t{flex:1;min-width:0}
+.titem .b{flex:none;width:34px;height:34px;border-radius:50%;border:2px solid var(--rule);display:flex;align-items:center;justify-content:center;color:transparent;transition:background-color .12s,border-color .12s}
+.titem.on .b{background:#2e9a6b;border-color:#2e9a6b;color:#fff}
+.titem.on .t{color:var(--muted)}
+.tallbar{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 14px;background:var(--head);border-bottom:1px solid var(--hair);font-size:13px;color:var(--muted)}
+#tenken textarea{min-height:70px}
 </style>
 </head><body>
 <header class="appbar"><div class="in"><svg viewBox="0 0 100 100" aria-hidden="true" class=""><defs><mask id="mkA"><rect width="100" height="100" fill="#fff"/><rect x="45" y="7" width="10" height="6.5" fill="#000"/><rect x="46.5" y="75" width="7" height="18" fill="#000"/></mask></defs><g mask="url(#mkA)" fill="currentColor" stroke="currentColor"><circle cx="50" cy="50" r="47" fill="none" stroke-width="3.6"/><circle cx="50" cy="50" r="35" fill="none" stroke-width="14"/><rect x="42.5" y="19" width="15" height="12" rx="5" stroke="none"/></g></svg><span><span class="co">丸門建設</span><span class="ttl" id="apptitle">日報・報告</span></span></div></header>
@@ -354,6 +375,7 @@ body{padding-top:0}
     <div class="hello"><span class="d" id="today"></span><span class="g">おつかれさまです</span></div>
     <button type="button" class="mbtn nippo" id="goNippo"><span class="mi">日報</span><span><b>作業日報</b><small>その日の作業時間・出来高・人員を入力</small></span></button>
     <button type="button" class="mbtn jiko" id="goJiko"><span class="mi">事故</span><span><b>事故・トラブル報告</b><small>事故や機械の損傷があったときに報告</small></span></button>
+    <button type="button" class="mbtn tenken" id="goTenken"><span class="mi">点検</span><span><b>始業前点検</b><small>機械の作業開始前点検表を入力</small></span></button>
     <button type="button" class="mbtn kakunin" id="goKakunin"><span class="mi">確認</span><span><b>工場長確認</b><small>その日の日報を見て確認のチェックを付ける</small></span></button>
   </div>
 
@@ -395,6 +417,29 @@ body{padding-top:0}
     <div id="litems"><p class="lmsg">号機No.を選んでください。</p></div>
   </div>
 
+  <div id="tenken" hidden>
+    <div class="topbar"><button type="button" class="backbtn" id="tback">← メニュー</button></div>
+    <div class="tkinds" id="tkinds"></div>
+    <div class="sheet">
+      <div class="title"><h1 id="ttitle">作業開始前点検表</h1><span>丸門建設株式会社</span></div>
+      <div class="tr r-2">
+        <div class="td"><div class="th">点検日<span class="req">必須</span></div><div class="v"><input type="date" id="t_date" aria-label="点検日"></div></div>
+        <div class="td"><div class="th">点検者<span class="req">必須</span></div><div class="v"><select id="t_name" class="tname" aria-label="点検者"></select></div></div>
+      </div>
+      <div class="tr"><div class="td"><div class="th">現場<span class="req">必須</span></div><div class="v" style="flex-direction:column;align-items:stretch">
+        <input type="search" id="t_kojiq" placeholder="ここに打つと絞り込めます" aria-label="現場の絞り込み" style="font-size:14px;padding:6px 8px;border-bottom:1px dotted var(--hair)">
+        <select id="t_koji" aria-label="現場"></select></div></div></div>
+      <div class="tr r-2">
+        <div class="td"><div class="th">管理No.<span class="req">必須</span></div><div class="v"><input type="text" id="t_no" list="t_nolist" placeholder="選ぶか入力" aria-label="管理No."><datalist id="t_nolist"></datalist></div></div>
+        <div class="td"><div class="th">型式</div><div class="v"><input type="text" id="t_kata" aria-label="型式"></div></div>
+      </div>
+      <div class="tallbar"><span id="tcount"></span><button type="button" class="sub" id="tall">全部OKにする</button></div>
+      <div class="titems" id="titems"></div>
+      <div class="secth">備考（異常があったときは内容を書いてください）</div>
+      <div class="v"><textarea id="t_biko" aria-label="備考"></textarea></div>
+    </div>
+    <div id="tconfirm" class="kconfirm" hidden></div>
+  </div>
   <div id="kakunin" hidden>
     <div class="topbar"><button type="button" class="backbtn" id="kback">← メニュー</button></div>
     <form id="kpinform"><div id="kpinbox" hidden>
@@ -493,6 +538,10 @@ body{padding-top:0}
   <div class="sum" id="sumline"></div>
   <button type="button" class="save" id="save">保存</button>
 </div></div>
+<div class="savebar" id="tsavebar" hidden><div class="in">
+  <div class="sum" id="tsum">チェックした項目を記録します</div>
+  <button type="button" class="save" id="tsave" style="background:#b06a10">点検を記録する</button>
+</div></div>
 <div class="savebar" id="ksavebar" hidden><div class="in kallbar">
   <div class="sum" id="kallsum"></div>
   <button type="button" class="save" id="kall" style="background:#1d6e4b">まとめて確認</button>
@@ -505,7 +554,7 @@ body{padding-top:0}
 // ---- Apps Script（kintoneとのやり取り）を呼ぶ ----
 const API="https://script.google.com/macros/s/AKfycbz3XtpAENLFsbaxg5d2NkTzvQRbgPChqxP7kFwWoaKdVQHPw2h0E89fyx4bvzGOTRgV-w/exec";
 let LOADN=0,LOADT=null;
-const LOADMSG={getMaster:"データを読み込んでいます…",saveNippo:"日報を保存しています…",updateNippo:"日報を保存しています…",saveJiko:"報告を送っています…",listKakunin:"日報を読み込んでいます…",kakuninNippo:"確認のチェックを付けています…",listNippo:"日報の一覧を読み込んでいます…",getNippo:"日報を読み込んでいます…"};
+const LOADMSG={getMaster:"データを読み込んでいます…",saveNippo:"日報を保存しています…",updateNippo:"日報を保存しています…",saveJiko:"報告を送っています…",listKakunin:"日報を読み込んでいます…",kakuninNippo:"確認のチェックを付けています…",saveTenken:"点検を記録しています…",listNippo:"日報の一覧を読み込んでいます…",getNippo:"日報を読み込んでいます…"};
 function loadOn(fn){LOADN++;document.getElementById("loadmsg").textContent=LOADMSG[fn]||"読み込み中…";clearTimeout(LOADT);LOADT=setTimeout(()=>{if(LOADN>0)document.getElementById("loader").hidden=false},fn==="getMaster"?0:250)}
 function loadOff(){LOADN=Math.max(0,LOADN-1);if(!LOADN){clearTimeout(LOADT);document.getElementById("loader").hidden=true}}
 function callApi(fn,args){loadOn(fn);return callApi0(fn,args).then(r=>{loadOff();return r},e=>{loadOff();throw e})}
@@ -918,22 +967,77 @@ function kAskAll(){
   y.addEventListener("click",()=>{b.hidden=true;kSet(rows,true)});n.addEventListener("click",()=>{b.hidden=true});
   bb.append(y,n);b.append(p,bb);b.hidden=false;window.scrollTo(0,0)}
 function openKakunin(){scr("kakunin");setTitle("工場長確認");$("menu").hidden=true;$("kakunin").hidden=false;if(!kStarted){kStarted=true;kStart()}else if(KPIN){$("ksavebar").hidden=false;kLoad()}window.scrollTo(0,0)}
+
+// ---- 始業前点検 ----
+const TFORMS={
+  hatsudenki:{name:"発電機",master:"hatsu",items:["エンジンに異常はないか。","エンジンオイルは規定まであるか。","エンジンオイルの汚れはないか。","水漏れ、油漏れはないか。","Vベルトの緩みはないか。","取り付けボルトに緩みはないか。","各エレメントの損傷、汚れはないか。","バッテリー液量、ターミナルの異常はないか。","指定の回数を指示しているか。","周波数計が指定指示しているか。","規定電圧を指示しているか。","投入遮断操作がスムーズにできるか。","出力端子の緩みはないか。","ボデー、漏電リレーアースは取付けているか。","内部の整理、清掃は出来ているか。","外かんに損傷、変形などの異常はないか。","安全装置各部の作動はよいか。"]}
+};
+let TKIND="hatsudenki",TCHK=new Set(),tStarted=false;
+function tStart(M){
+  if(!NAMES.length)NAMES=M.names;
+  const kb=$("tkinds");
+  Object.entries(TFORMS).forEach(([k,f])=>{const b=document.createElement("button");b.type="button";b.textContent=f.name;b.dataset.k=k;b.addEventListener("click",()=>{TKIND=k;tRender(true)});kb.appendChild(b)});
+  const s=$("t_name");s.add(new Option("",""));M.names.forEach(n=>s.add(new Option(n,n)));nameBtn(s,"点検者");
+  $("t_date").value=new Date(Date.now()+9*3600e3).toISOString().slice(0,10);
+  function fill(q){const s=$("t_koji"),cur=s.value;s.innerHTML="";s.add(new Option("（現場を選択）",""));
+    M.koji.forEach(k=>{if(!q||k[1].includes(q)||k[2].includes(q))s.add(new Option(k[1],k[1]))});s.value=cur;if(s.value!==cur)s.value=""}
+  $("t_kojiq").addEventListener("input",e=>fill(e.target.value.trim()));fill("");
+  $("t_no").addEventListener("change",()=>{const v=$("t_no").value.trim(),m=v.match(/^[^-]+-(.+)$/);if(m&&!$("t_kata").value)$("t_kata").value=m[1]});
+  $("tall").addEventListener("click",()=>{const f=TFORMS[TKIND];if(TCHK.size===f.items.length)TCHK.clear();else f.items.forEach(x=>TCHK.add(x));tPaint()});
+  $("tsave").addEventListener("click",()=>tSave(false));
+  $("tenken").addEventListener("input",()=>{$("tconfirm").hidden=true});
+  tRender(true);
+}
+function tRender(reset){
+  const f=TFORMS[TKIND];
+  document.querySelectorAll("#tkinds button[data-k]").forEach(b=>b.classList.toggle("on",b.dataset.k===TKIND));
+  $("ttitle").textContent=f.name+"作業開始前点検表";
+  const dl=$("t_nolist");dl.innerHTML="";(MASTER[f.master]||[]).forEach(n=>dl.appendChild(new Option(n)));
+  if(reset){TCHK=new Set();$("t_no").value="";$("t_kata").value="";$("t_biko").value=""}
+  const box=$("titems");box.innerHTML="";
+  f.items.forEach((t,i)=>{const b=document.createElement("button");b.type="button";b.className="titem";b.dataset.t=t;
+    b.innerHTML='<span class="n">'+(i+1)+'</span><span class="t">'+esc(t)+'</span><span class="b"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>';
+    b.addEventListener("click",()=>{TCHK.has(t)?TCHK.delete(t):TCHK.add(t);tPaint();$("tconfirm").hidden=true});box.appendChild(b)});
+  tPaint();
+}
+function tPaint(){const f=TFORMS[TKIND];
+  document.querySelectorAll("#titems .titem").forEach(b=>{const on=TCHK.has(b.dataset.t);b.classList.toggle("on",on);b.setAttribute("aria-pressed",on)});
+  $("tcount").textContent="確認 "+TCHK.size+" / "+f.items.length;$("tall").textContent=TCHK.size===f.items.length?"チェックを全部外す":"全部OKにする"}
+function tMsg(html,btns){const b=$("tconfirm");b.innerHTML="";const p=document.createElement("div");p.innerHTML=html;b.appendChild(p);
+  if(btns){const bb=document.createElement("div");bb.className="draftbtns";btns.forEach(x=>bb.appendChild(x));b.appendChild(bb)}b.hidden=false;b.scrollIntoView({behavior:"smooth",block:"center"})}
+function tSave(force){
+  const f=TFORMS[TKIND];
+  const r={点検年月日:$("t_date").value,工事名:$("t_koji").value,管理No:$("t_no").value.trim(),型式:$("t_kata").value.trim(),点検者名:$("t_name").value,備考:$("t_biko").value.trim(),点検項目:f.items.filter(x=>TCHK.has(x))};
+  const errs=[];if(!r.点検年月日)errs.push("点検日を入れてください。");if(!r.点検者名)errs.push("点検者を選んでください。");if(!r.工事名)errs.push("現場を選んでください。");if(!r.管理No)errs.push("管理No.を入れてください。");
+  if(errs.length)return tMsg("<b>記録できません。次を直してください</b><br>"+errs.map(esc).join("<br>"));
+  const miss=f.items.filter(x=>!TCHK.has(x));
+  if(miss.length&&!force){
+    const y=document.createElement("button");y.type="button";y.className="save";y.style.background="#b06a10";y.textContent="このまま記録する";y.addEventListener("click",()=>tSave(true));
+    const n=document.createElement("button");n.type="button";n.className="sub";n.textContent="戻って直す";n.addEventListener("click",()=>{$("tconfirm").hidden=true});
+    return tMsg("<b>チェックしていない項目が"+miss.length+"つあります。</b><br>"+miss.map(x=>"・"+esc(x)).join("<br>")+(r.備考?"":"<br><br>異常があった場合は、備考に内容を書いてください。"),[y,n])}
+  $("tsave").disabled=true;
+  google.script.run.withSuccessHandler(id=>{$("tsave").disabled=false;
+      $("doneh").textContent="記録しました";$("donemsg").textContent="kintoneの"+f.name+"作業開始前点検表に登録しました";$("doneid").textContent=id;
+      $("tenken").hidden=true;$("tsavebar").hidden=true;$("done").hidden=false;window.scrollTo(0,0)})
+    .withFailureHandler(err=>{$("tsave").disabled=false;tMsg("<b>記録できませんでした</b><br>"+esc(err.message||String(err)))})
+    .saveTenken(PIN,TKIND,r)}
+function openTenken(){scr("tenken");setTitle("始業前点検");$("menu").hidden=true;$("tenken").hidden=false;$("tsavebar").hidden=false;if(!tStarted){tStarted=true;tStart(MASTER)}window.scrollTo(0,0)}
 // ---- 画面の切り替え ----
 let MASTER=null,nippoStarted=false,jikoStarted=false;
 function scr(k){try{sessionStorage.setItem("screen",k)}catch(e){}}
 function setTitle(t){const e=document.getElementById("apptitle");if(e)e.textContent=t}
-function showMenu(){scr("");setTitle("日報・報告");["app","savebar","jiko","jsavebar","kakunin","ksavebar","listbox","done"].forEach(i=>$(i).hidden=true);$("menu").hidden=false;window.scrollTo(0,0)}
+function showMenu(){scr("");setTitle("日報・報告");["app","savebar","jiko","jsavebar","kakunin","ksavebar","tenken","tsavebar","listbox","done"].forEach(i=>$(i).hidden=true);$("menu").hidden=false;window.scrollTo(0,0)}
 function openNippo(){scr("nippo");setTitle("作業日報");$("menu").hidden=true;$("app").hidden=false;$("savebar").hidden=false;if(!nippoStarted){nippoStarted=true;start(MASTER)}window.scrollTo(0,0)}
 function openJiko(){scr("jiko");setTitle("事故・トラブル報告");$("menu").hidden=true;$("jiko").hidden=false;$("jsavebar").hidden=false;if(!jikoStarted){jikoStarted=true;startJiko(MASTER)}window.scrollTo(0,0)}
 (function(){const d=new Date();const w="日月火水木金土"[d.getDay()];$("today").textContent=(d.getMonth()+1)+"月"+d.getDate()+"日（"+w+"）"})();
-$("goNippo").addEventListener("click",openNippo);$("goKakunin").addEventListener("click",openKakunin);$("kback").addEventListener("click",showMenu);$("goJiko").addEventListener("click",openJiko);
+$("goNippo").addEventListener("click",openNippo);$("goKakunin").addEventListener("click",openKakunin);$("goTenken").addEventListener("click",openTenken);$("tback").addEventListener("click",showMenu);$("kback").addEventListener("click",showMenu);$("goJiko").addEventListener("click",openJiko);
 $("nback").addEventListener("click",showMenu);$("jback").addEventListener("click",showMenu);
 function reload(){location.reload()}
 function login(pin){
   $("pinmsg").textContent="読み込み中…";
   google.script.run.withSuccessHandler(M=>{PIN=pin;lsSet(LS,pin);MASTER=M;$("pinbox").hidden=true;
       let s="";try{s=sessionStorage.getItem("screen")||""}catch(e){}
-      if(s==="nippo")openNippo();else if(s==="jiko")openJiko();else if(s==="kakunin")openKakunin();else showMenu()})
+      if(s==="nippo")openNippo();else if(s==="jiko")openJiko();else if(s==="kakunin")openKakunin();else if(s==="tenken")openTenken();else showMenu()})
     .withFailureHandler(err=>{$("pinmsg").textContent=err.message||String(err);$("pinbox").hidden=false})
     .getMaster(pin);
 }
