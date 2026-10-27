@@ -192,8 +192,84 @@ button.add{font:inherit;font-size:13px;border:0;border-top:1px dashed var(--hair
 .jbtns{display:flex;flex-wrap:wrap;gap:6px;padding:8px}
 .req{color:#c0392b;font-size:11px;display:block}
 #jiko textarea{min-height:90px}
+
+/* ===== 見た目の仕上げ（2026-10 改） ===== */
+:root{
+  --bg:#edf1f5; --sheet:#ffffff; --fg:#17202a; --muted:#5f6b78; --rule:#b9c3ce; --hair:#dde3ea; --head:#f3f6fa; --empty:#f6f8fb;
+  --accent:#1d5fa8; --accent-2:#164a85; --accent-fg:#ffffff; --tint:#e8f0fa; --danger:#c0392b;
+  --shadow:0 1px 2px rgba(23,32,42,.06),0 4px 14px rgba(23,32,42,.07); --bar:#1d5fa8;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1419; --sheet:#182029; --fg:#e7ecf1; --muted:#97a3b0; --rule:#3a4654; --hair:#2a3440; --head:#1e2833; --empty:#1c252f;
+  --accent:#5b9be0; --accent-2:#7fb2ea; --accent-fg:#0b1117; --tint:#1b2a3b; --danger:#ef6f61;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.35); --bar:#183a5e}}
+body{padding-top:0}
+.appbar{position:sticky;top:0;z-index:40;background:var(--bar);color:#fff;
+  padding-top:env(safe-area-inset-top,0px);box-shadow:0 2px 10px rgba(10,30,60,.18)}
+.appbar .in{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:10px;height:52px;
+  padding-left:max(14px,env(safe-area-inset-left,0px));padding-right:max(14px,env(safe-area-inset-right,0px))}
+.appbar svg{width:30px;height:30px;flex:none;color:#fff}
+.appbar .co{font-size:12px;opacity:.85;letter-spacing:.1em;display:block;line-height:1.1}
+.appbar .ttl{font-size:17px;font-weight:700;letter-spacing:.06em;display:block;line-height:1.2}
+.wrap{padding-block:14px 110px}
+.sheet{border:1px solid var(--hair);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+.title{background:var(--head);border-bottom:1px solid var(--hair);padding:10px 14px}
+.title h1{font-size:18px;letter-spacing:.25em;color:var(--accent)}
+.tr{border-bottom-color:var(--hair)}
+.th{background:var(--head);color:var(--muted);border-right-color:var(--hair)}
+.td{border-right-color:var(--hair)}
+.colL{border-right-color:var(--hair)}
+.secth{color:var(--muted)}
+.save{border-radius:12px;box-shadow:0 2px 6px rgba(29,95,168,.28);transition:transform .08s,background-color .15s}
+.save:active{transform:scale(.97)}
+.sub{border-radius:12px;background:var(--sheet)}
+.ck{border-radius:10px;background:var(--sheet);transition:background-color .12s,border-color .12s}
+.ck.on{background:var(--tint)}
+.wbtn{border-radius:10px}
+.savebar{background:color-mix(in srgb,var(--sheet) 88%,transparent);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+  border-top:1px solid var(--hair);box-shadow:0 -4px 16px rgba(23,32,42,.08)}
+.copybar,.editbar{border-radius:12px}
+.backbtn{border-radius:12px;border-color:var(--hair);box-shadow:var(--shadow)}
+.namebtn::after{border-radius:6px}
+#pinbox,.donebox{border:1px solid var(--hair);border-radius:18px;box-shadow:var(--shadow);padding:26px 22px;margin:36px auto;gap:12px}
+#pinbox{align-items:stretch;text-align:center}
+#pinbox .pinmark{width:64px;height:64px;color:var(--accent);margin:0 auto}
+#pinbox h1{letter-spacing:.3em}
+#pinbox input{border:1px solid var(--rule);border-radius:12px;text-align:center;letter-spacing:.5em}
+.donebox{text-align:center;align-items:center}
+.donebox .ok{width:64px;height:64px;border-radius:50%;background:var(--tint);color:var(--accent);display:flex;align-items:center;justify-content:center}
+@media (prefers-reduced-motion:no-preference){.donebox .ok{animation:pop .35s ease-out}}
+@keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+/* メニュー */
+#menu{margin-top:8px}
+.hello{display:flex;flex-direction:column;gap:2px;padding:4px 4px 6px}
+.hello .d{font-size:13px;color:var(--muted)}
+.hello .g{font-size:20px;font-weight:700}
+#menu h1{display:none}
+.mbtn{border:1px solid var(--hair);border-radius:18px;box-shadow:var(--shadow);transition:transform .1s;position:relative;overflow:hidden}
+.mbtn:active{transform:scale(.98)}
+.mbtn::after{content:"›";position:absolute;right:18px;top:50%;transform:translateY(-50%);font-size:28px;color:var(--muted)}
+.mbtn .mi{width:56px;height:56px;border-radius:16px;font-size:16px}
+.mbtn.nippo .mi{background:linear-gradient(145deg,#2a74c6,#164a85)}
+.mbtn.jiko .mi{background:linear-gradient(145deg,#d9503f,#a32d21)}
+/* 読み込み中 */
+#loader{position:fixed;inset:0;z-index:90;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;
+  background:color-mix(in srgb,var(--bg) 92%,transparent);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+#loader .lm{position:relative;width:88px;height:88px}
+#loader .lm svg.mk{position:absolute;inset:18px;width:52px;height:52px;color:var(--accent)}
+#loader .lm svg.rg{position:absolute;inset:0;width:88px;height:88px}
+#loader .rg circle{fill:none;stroke-width:5;stroke-linecap:round}
+#loader .rg .bgc{stroke:var(--hair)}
+#loader .rg .fgc{stroke:var(--accent);stroke-dasharray:70 200}
+#loader p{margin:0;font-size:15px;font-weight:700;color:var(--fg);letter-spacing:.05em}
+#loader small{font-size:12px;color:var(--muted);margin-top:-10px}
+@media (prefers-reduced-motion:no-preference){#loader .rg{animation:spin 1s linear infinite}#loader{animation:fadein .2s ease-out}}
+@media (prefers-reduced-motion:reduce){#loader .rg .fgc{stroke-dasharray:none;opacity:.5}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes fadein{from{opacity:0}}
 </style>
 </head><body>
+<header class="appbar"><div class="in"><svg viewBox="0 0 100 100" aria-hidden="true" class=""><defs><mask id="mkA"><rect width="100" height="100" fill="#fff"/><rect x="45" y="7" width="10" height="6.5" fill="#000"/><rect x="46.5" y="75" width="7" height="18" fill="#000"/></mask></defs><g mask="url(#mkA)" fill="currentColor" stroke="currentColor"><circle cx="50" cy="50" r="47" fill="none" stroke-width="3.6"/><circle cx="50" cy="50" r="35" fill="none" stroke-width="14"/><rect x="42.5" y="19" width="15" height="12" rx="5" stroke="none"/></g></svg><span><span class="co">丸門建設</span><span class="ttl" id="apptitle">日報・報告</span></span></div></header>
 <div class="wrap">
   <div id="inst" class="inst" hidden>
     <h2>このアプリをホーム画面に入れましょう</h2>
@@ -220,6 +296,7 @@ button.add{font:inherit;font-size:13px;border:0;border-top:1px dashed var(--hair
   </div>
   <div id="instArrow" class="instarrow" hidden>↓ 下の共有ボタンを押してください</div>
   <form id="pinform"><div id="pinbox">
+    <svg viewBox="0 0 100 100" aria-hidden="true" class="pinmark"><defs><mask id="mkB"><rect width="100" height="100" fill="#fff"/><rect x="45" y="7" width="10" height="6.5" fill="#000"/><rect x="46.5" y="75" width="7" height="18" fill="#000"/></mask></defs><g mask="url(#mkB)" fill="currentColor" stroke="currentColor"><circle cx="50" cy="50" r="47" fill="none" stroke-width="3.6"/><circle cx="50" cy="50" r="35" fill="none" stroke-width="14"/><rect x="42.5" y="19" width="15" height="12" rx="5" stroke="none"/></g></svg>
     <h1>丸門建設</h1>
     <label for="pin">暗証番号</label>
     <input id="pin" type="password" inputmode="numeric" autocomplete="off">
@@ -227,6 +304,7 @@ button.add{font:inherit;font-size:13px;border:0;border-top:1px dashed var(--hair
     <p id="pinmsg" class="hint"></p>
   </div></form>
   <div id="done" class="donebox" hidden>
+    <div class="ok"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
     <h1 id="doneh">保存しました</h1>
     <p><span id="donemsg">kintoneの日報に登録しました</span>（レコード番号 <b id="doneid"></b>）。</p>
     <button type="button" class="save" id="again">メニューに戻る</button>
@@ -234,6 +312,7 @@ button.add{font:inherit;font-size:13px;border:0;border-top:1px dashed var(--hair
 
   <div id="menu" hidden>
     <h1>丸門建設</h1>
+    <div class="hello"><span class="d" id="today"></span><span class="g">おつかれさまです</span></div>
     <button type="button" class="mbtn nippo" id="goNippo"><span class="mi">日報</span><span><b>作業日報</b><small>その日の作業時間・出来高・人員を入力</small></span></button>
     <button type="button" class="mbtn jiko" id="goJiko"><span class="mi">事故</span><span><b>事故・トラブル報告</b><small>事故や機械の損傷があったときに報告</small></span></button>
   </div>
@@ -345,6 +424,7 @@ button.add{font:inherit;font-size:13px;border:0;border-top:1px dashed var(--hair
   </div>
   </div>
 </div>
+<div id="loader" hidden role="status" aria-live="polite"><div class="lm"><svg class="rg" viewBox="0 0 88 88"><circle class="bgc" cx="44" cy="44" r="40"/><circle class="fgc" cx="44" cy="44" r="40"/></svg><svg viewBox="0 0 100 100" aria-hidden="true" class="mk"><defs><mask id="mkC"><rect width="100" height="100" fill="#fff"/><rect x="45" y="7" width="10" height="6.5" fill="#000"/><rect x="46.5" y="75" width="7" height="18" fill="#000"/></mask></defs><g mask="url(#mkC)" fill="currentColor" stroke="currentColor"><circle cx="50" cy="50" r="47" fill="none" stroke-width="3.6"/><circle cx="50" cy="50" r="35" fill="none" stroke-width="14"/><rect x="42.5" y="19" width="15" height="12" rx="5" stroke="none"/></g></svg></div><p id="loadmsg">読み込み中…</p><small>電波の弱い所では少し時間がかかります</small></div>
 <div class="picker" id="picker" hidden><div class="pbox" role="dialog" aria-label="名前を選ぶ">
   <div class="phead"><b id="ptitle">名前</b><input id="pq" type="search" placeholder="名前の一部を入れる（例：浦中）" autocomplete="off"></div>
   <div class="plist" id="plist"></div>
@@ -361,7 +441,12 @@ button.add{font:inherit;font-size:13px;border:0;border-top:1px dashed var(--hair
 <script>
 // ---- Apps Script（kintoneとのやり取り）を呼ぶ ----
 const API="https://script.google.com/macros/s/AKfycbz3XtpAENLFsbaxg5d2NkTzvQRbgPChqxP7kFwWoaKdVQHPw2h0E89fyx4bvzGOTRgV-w/exec";
-function callApi(fn,args){
+let LOADN=0,LOADT=null;
+const LOADMSG={getMaster:"データを読み込んでいます…",saveNippo:"日報を保存しています…",updateNippo:"日報を保存しています…",saveJiko:"報告を送っています…",listNippo:"日報の一覧を読み込んでいます…",getNippo:"日報を読み込んでいます…"};
+function loadOn(fn){LOADN++;document.getElementById("loadmsg").textContent=LOADMSG[fn]||"読み込み中…";clearTimeout(LOADT);LOADT=setTimeout(()=>{if(LOADN>0)document.getElementById("loader").hidden=false},fn==="getMaster"?0:250)}
+function loadOff(){LOADN=Math.max(0,LOADN-1);if(!LOADN){clearTimeout(LOADT);document.getElementById("loader").hidden=true}}
+function callApi(fn,args){loadOn(fn);return callApi0(fn,args).then(r=>{loadOff();return r},e=>{loadOff();throw e})}
+function callApi0(fn,args){
   return fetch(API,{method:"POST",body:JSON.stringify({fn:fn,args:args})})
     .then(r=>r.json(),()=>{throw new Error("電波が届かないか、通信できませんでした。電波のよい所でもう一度試してください。入力した内容は下書きとして残っています。")})
     .then(j=>{if(!j||!j.ok)throw new Error((j&&j.error)||"エラーが出ました。");return j.result});
@@ -703,9 +788,11 @@ function startJiko(M){
 // ---- 画面の切り替え ----
 let MASTER=null,nippoStarted=false,jikoStarted=false;
 function scr(k){try{sessionStorage.setItem("screen",k)}catch(e){}}
-function showMenu(){scr("");["app","savebar","jiko","jsavebar","listbox","done"].forEach(i=>$(i).hidden=true);$("menu").hidden=false;window.scrollTo(0,0)}
-function openNippo(){scr("nippo");$("menu").hidden=true;$("app").hidden=false;$("savebar").hidden=false;if(!nippoStarted){nippoStarted=true;start(MASTER)}window.scrollTo(0,0)}
-function openJiko(){scr("jiko");$("menu").hidden=true;$("jiko").hidden=false;$("jsavebar").hidden=false;if(!jikoStarted){jikoStarted=true;startJiko(MASTER)}window.scrollTo(0,0)}
+function setTitle(t){const e=document.getElementById("apptitle");if(e)e.textContent=t}
+function showMenu(){scr("");setTitle("日報・報告");["app","savebar","jiko","jsavebar","listbox","done"].forEach(i=>$(i).hidden=true);$("menu").hidden=false;window.scrollTo(0,0)}
+function openNippo(){scr("nippo");setTitle("作業日報");$("menu").hidden=true;$("app").hidden=false;$("savebar").hidden=false;if(!nippoStarted){nippoStarted=true;start(MASTER)}window.scrollTo(0,0)}
+function openJiko(){scr("jiko");setTitle("事故・トラブル報告");$("menu").hidden=true;$("jiko").hidden=false;$("jsavebar").hidden=false;if(!jikoStarted){jikoStarted=true;startJiko(MASTER)}window.scrollTo(0,0)}
+(function(){const d=new Date();const w="日月火水木金土"[d.getDay()];$("today").textContent=(d.getMonth()+1)+"月"+d.getDate()+"日（"+w+"）"})();
 $("goNippo").addEventListener("click",openNippo);$("goJiko").addEventListener("click",openJiko);
 $("nback").addEventListener("click",showMenu);$("jback").addEventListener("click",showMenu);
 function reload(){location.reload()}
