@@ -267,6 +267,45 @@ body{padding-top:0}
 @media (prefers-reduced-motion:reduce){#loader .rg .fgc{stroke-dasharray:none;opacity:.5}}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes fadein{from{opacity:0}}
+
+/* 工場長確認 */
+.mbtn.kakunin .mi{background:linear-gradient(145deg,#2e9a6b,#1d6e4b)}
+#kakunin{display:flex;flex-direction:column;gap:10px}
+#kakunin[hidden]{display:none!important}
+.kbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.kdate{display:flex;align-items:center;gap:6px;background:var(--sheet);border:1px solid var(--hair);border-radius:12px;padding:4px;box-shadow:var(--shadow)}
+.kdate button{font:inherit;font-size:18px;width:40px;height:40px;border:0;border-radius:10px;background:var(--head);color:var(--fg);cursor:pointer}
+.kdate input{font:inherit;font-size:16px;border:0;background:transparent;color:var(--fg);padding:6px}
+.kfilter{display:flex;gap:6px}
+.kfilter button{font:inherit;font-size:13px;padding:8px 12px;border-radius:999px;border:1px solid var(--hair);background:var(--sheet);color:var(--fg);cursor:pointer}
+.kfilter button.on{background:var(--accent);border-color:var(--accent);color:var(--accent-fg);font-weight:700}
+.ksum{font-size:13px;color:var(--muted)}
+.kcard{background:var(--sheet);border:1px solid var(--hair);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+.khead{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;width:100%;border:0;background:none;color:inherit;font:inherit;text-align:left}
+.kno{flex:none;min-width:46px;height:46px;border-radius:12px;background:var(--tint);color:var(--accent);display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700;font-size:18px;line-height:1}
+.kno small{font-size:10px;font-weight:400;margin-top:2px}
+.kmain{flex:1;min-width:0}
+.kmain b{display:block;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kmain span{display:block;font-size:12px;color:var(--muted)}
+.kst{flex:none;font-size:12px;font-weight:700;padding:5px 10px;border-radius:999px}
+.kst.no{background:#fff1e0;color:#a15c00}
+.kst.ok{background:#e3f5ec;color:#1d6e4b}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .kst.no{background:#3a2c12;color:#ffc069}:root:not([data-theme="light"]) .kst.ok{background:#173a2a;color:#7fd8a9}}
+.kbody{border-top:1px solid var(--hair);padding:10px 14px 14px;display:flex;flex-direction:column;gap:8px;font-size:14px}
+.kbody dl{margin:0;display:grid;grid-template-columns:6.2em minmax(0,1fr);gap:4px 10px}
+.kbody dt{color:var(--muted);font-size:12px;padding-top:2px}
+.kbody dd{margin:0;overflow-wrap:anywhere}
+.ktime{display:flex;flex-direction:column;gap:3px}
+.ktime i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:6px;vertical-align:middle}
+.kact{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:4px}
+.kallbar{display:flex;gap:10px;align-items:center}
+.kallbar .sum{flex:1;font-size:12px;color:var(--muted)}
+.kconfirm{background:var(--warnbg);color:var(--fg);border:1px solid var(--warn);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:10px}
+#kpinbox{background:var(--sheet);border:1px solid var(--hair);border-radius:18px;box-shadow:var(--shadow);padding:22px;display:flex;flex-direction:column;gap:10px;max-width:360px;margin:20px auto;width:100%;box-sizing:border-box;text-align:center}
+#kpinbox input{font:inherit;font-size:20px;padding:10px;border:1px solid var(--rule);border-radius:12px;text-align:center;letter-spacing:.5em;background:var(--sheet);color:var(--fg)}
+#kpinbox h2{margin:0;font-size:18px}
+#kpinbox p{margin:0;font-size:13px;color:var(--muted)}
+.kempty{text-align:center;color:var(--muted);padding:30px 10px;font-size:14px}
 </style>
 </head><body>
 <header class="appbar"><div class="in"><svg viewBox="0 0 100 100" aria-hidden="true" class=""><defs><mask id="mkA"><rect width="100" height="100" fill="#fff"/><rect x="45" y="7" width="10" height="6.5" fill="#000"/><rect x="46.5" y="75" width="7" height="18" fill="#000"/></mask></defs><g mask="url(#mkA)" fill="currentColor" stroke="currentColor"><circle cx="50" cy="50" r="47" fill="none" stroke-width="3.6"/><circle cx="50" cy="50" r="35" fill="none" stroke-width="14"/><rect x="42.5" y="19" width="15" height="12" rx="5" stroke="none"/></g></svg><span><span class="co">丸門建設</span><span class="ttl" id="apptitle">日報・報告</span></span></div></header>
@@ -315,6 +354,7 @@ body{padding-top:0}
     <div class="hello"><span class="d" id="today"></span><span class="g">おつかれさまです</span></div>
     <button type="button" class="mbtn nippo" id="goNippo"><span class="mi">日報</span><span><b>作業日報</b><small>その日の作業時間・出来高・人員を入力</small></span></button>
     <button type="button" class="mbtn jiko" id="goJiko"><span class="mi">事故</span><span><b>事故・トラブル報告</b><small>事故や機械の損傷があったときに報告</small></span></button>
+    <button type="button" class="mbtn kakunin" id="goKakunin"><span class="mi">確認</span><span><b>工場長確認</b><small>その日の日報を見て確認のチェックを付ける</small></span></button>
   </div>
 
   <div id="jiko" hidden>
@@ -355,6 +395,25 @@ body{padding-top:0}
     <div id="litems"><p class="lmsg">号機No.を選んでください。</p></div>
   </div>
 
+  <div id="kakunin" hidden>
+    <div class="topbar"><button type="button" class="backbtn" id="kback">← メニュー</button></div>
+    <form id="kpinform"><div id="kpinbox" hidden>
+      <h2>工場長確認</h2>
+      <p>確認用の暗証番号を入れてください</p>
+      <input id="kpin" type="password" inputmode="numeric" autocomplete="off" aria-label="確認用の暗証番号">
+      <button type="submit" class="save">開く</button>
+      <p id="kpinmsg" style="color:var(--danger)"></p>
+    </div></form>
+    <div id="kmainbox" hidden>
+      <div class="kbar">
+        <div class="kdate"><button type="button" id="kprev" aria-label="前の日">‹</button><input type="date" id="kday" aria-label="日付"><button type="button" id="knext" aria-label="次の日">›</button></div>
+        <div class="kfilter"><button type="button" data-f="no" class="on">未確認</button><button type="button" data-f="all">すべて</button></div>
+      </div>
+      <div class="ksum" id="ksum"></div>
+      <div id="kconfirmbox" class="kconfirm" hidden></div>
+      <div id="klist"></div>
+    </div>
+  </div>
   <div id="app" hidden>
   <div class="topbar"><button type="button" class="backbtn" id="nback">← メニュー</button><button type="button" class="sub" id="copylast">前回の日報をコピーして入力</button><button type="button" class="sub" id="openlist">過去の日報を見る・直す</button></div>
   <div class="copybar" id="copybar" hidden></div>
@@ -434,6 +493,10 @@ body{padding-top:0}
   <div class="sum" id="sumline"></div>
   <button type="button" class="save" id="save">保存</button>
 </div></div>
+<div class="savebar" id="ksavebar" hidden><div class="in kallbar">
+  <div class="sum" id="kallsum"></div>
+  <button type="button" class="save" id="kall" style="background:#1d6e4b">まとめて確認</button>
+</div></div>
 <div class="savebar" id="jsavebar" hidden><div class="in">
   <div class="sum">kintoneの「事故・トラブル報告書」に登録します</div>
   <button type="button" class="save" id="jsave" style="background:#c0392b">報告する</button>
@@ -442,7 +505,7 @@ body{padding-top:0}
 // ---- Apps Script（kintoneとのやり取り）を呼ぶ ----
 const API="https://script.google.com/macros/s/AKfycbz3XtpAENLFsbaxg5d2NkTzvQRbgPChqxP7kFwWoaKdVQHPw2h0E89fyx4bvzGOTRgV-w/exec";
 let LOADN=0,LOADT=null;
-const LOADMSG={getMaster:"データを読み込んでいます…",saveNippo:"日報を保存しています…",updateNippo:"日報を保存しています…",saveJiko:"報告を送っています…",listNippo:"日報の一覧を読み込んでいます…",getNippo:"日報を読み込んでいます…"};
+const LOADMSG={getMaster:"データを読み込んでいます…",saveNippo:"日報を保存しています…",updateNippo:"日報を保存しています…",saveJiko:"報告を送っています…",listKakunin:"日報を読み込んでいます…",kakuninNippo:"確認のチェックを付けています…",listNippo:"日報の一覧を読み込んでいます…",getNippo:"日報を読み込んでいます…"};
 function loadOn(fn){LOADN++;document.getElementById("loadmsg").textContent=LOADMSG[fn]||"読み込み中…";clearTimeout(LOADT);LOADT=setTimeout(()=>{if(LOADN>0)document.getElementById("loader").hidden=false},fn==="getMaster"?0:250)}
 function loadOff(){LOADN=Math.max(0,LOADN-1);if(!LOADN){clearTimeout(LOADT);document.getElementById("loader").hidden=true}}
 function callApi(fn,args){loadOn(fn);return callApi0(fn,args).then(r=>{loadOff();return r},e=>{loadOff();throw e})}
@@ -785,22 +848,92 @@ function startJiko(M){
       .withFailureHandler(err=>{busy=false;$("jsave").textContent="報告する";$("jsave").disabled=false;showMsg("報告できませんでした",[err.message||String(err)])})
       .saveJiko(PIN,r)});
 }
+
+// ---- 工場長確認 ----
+const KLS="kanri_pin";let KPIN="",KROWS=[],KFILTER="no",kStarted=false;
+const KTL=[["移動行き","ドロップダウン_1","ドロップダウン_2","var(--ido)"],["搬入","ドロップダウン_3","ドロップダウン_4","var(--hannyu)"],["実作業","ドロップダウン_6","ドロップダウン_5","var(--jitsu)"],["搬出","ドロップダウン_8","ドロップダウン_7","var(--hanshutsu)"],["移動帰り","ドロップダウン_12","ドロップダウン_11","var(--kaeri)"]];
+function esc(t){return String(t==null?"":t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+function kToday(off){return new Date(Date.now()+9*3600e3+(off||0)*864e5).toISOString().slice(0,10)}
+function kShiftDay(n){const d=new Date($("kday").value+"T00:00:00Z");d.setUTCDate(d.getUTCDate()+n);$("kday").value=d.toISOString().slice(0,10);kLoad()}
+function kStart(){
+  $("kprev").addEventListener("click",()=>kShiftDay(-1));$("knext").addEventListener("click",()=>kShiftDay(1));
+  $("kday").addEventListener("change",kLoad);
+  document.querySelectorAll(".kfilter button").forEach(b=>b.addEventListener("click",()=>{KFILTER=b.dataset.f;document.querySelectorAll(".kfilter button").forEach(x=>x.classList.toggle("on",x===b));kDraw()}));
+  $("kpinform").addEventListener("submit",e=>{e.preventDefault();KPIN=$("kpin").value.trim();kLoad(true)});
+  $("kall").addEventListener("click",kAskAll);
+  $("kday").value=kToday(-1);
+  KPIN=lsGet(KLS);
+  if(KPIN)kLoad(true);else{$("kpinbox").hidden=false;$("kmainbox").hidden=true;$("ksavebar").hidden=true}
+}
+function kLoad(first){
+  $("kconfirmbox").hidden=true;
+  google.script.run.withSuccessHandler(rows=>{lsSet(KLS,KPIN);$("kpinbox").hidden=true;$("kmainbox").hidden=false;$("ksavebar").hidden=false;KROWS=rows;kDraw()})
+    .withFailureHandler(err=>{const m=err.message||String(err);
+      if(/工場長確認用の暗証番号/.test(m)){try{localStorage.removeItem(KLS)}catch(e){}KPIN="";$("kpinbox").hidden=false;$("kmainbox").hidden=true;$("ksavebar").hidden=true;$("kpinmsg").textContent=first&&!$("kpin").value?"":m}
+      else{$("klist").innerHTML='<p class="kempty">'+esc(m)+'</p>'}})
+    .listKakunin(PIN,KPIN,$("kday").value)}
+function kDraw(){
+  const no=KROWS.filter(r=>!r.工場長確認).length;
+  $("ksum").textContent=KROWS.length?("この日の日報 "+KROWS.length+"件（未確認 "+no+"件）"):"";
+  const rows=KFILTER==="no"?KROWS.filter(r=>!r.工場長確認):KROWS;
+  const box=$("klist");box.innerHTML="";
+  if(!rows.length)box.innerHTML='<p class="kempty">'+(KROWS.length?"この日の日報はすべて確認済みです":"この日の日報はまだありません")+'</p>';
+  rows.forEach(r=>box.appendChild(kCard(r)));
+  $("kallsum").textContent=no?("未確認 "+no+"件"):"未確認はありません";$("kall").disabled=!no;
+}
+function kCard(r){
+  const c=document.createElement("div");c.className="kcard";
+  const people=[["オペ",r.ルックアップ_5],["クレーン",r.ルックアップ_11],["バス",r.ルックアップ_3],["2t",r.ルックアップ_0],["4t",r.ルックアップ_1],["溶接",r.ルックアップ_2]].filter(x=>x[1]).map(x=>x[0]+"："+x[1]);
+  (r.手元||[]).forEach(t=>{if(t[0])people.push("手元："+t[0]+(t[1]?"（応援）":""))});
+  const times=KTL.filter(t=>r[t[1]]&&r[t[2]]).map(t=>'<span><i style="background:'+t[3]+'"></i>'+esc(t[0])+"　"+esc(r[t[1]])+" 〜 "+esc(r[t[2]])+"</span>").join("");
+  const deki=(r.出来高||[]).filter(d=>d.some(Boolean)).map(d=>"φ"+esc(d[0])+"　L"+esc(d[1])+"m　"+esc(d[2])+"本"+(d[3]?"　ヤットコ"+esc(d[3])+"m":"")).join("<br>");
+  const awa=[["杭打機","杭打機号車","数値_2"],["クレーン","クレーン号車","数値_3"],["ユンボ","ユンボ号車","数値_4"],["発電機1","発電機No1","数値_5"],["発電機2","発電機No2","数値_6"]].filter(a=>r[a[2]]).map(a=>esc(a[0])+(r[a[1]]?"（"+esc(r[a[1]])+"）":"")+"　"+esc(r[a[2]])).join("<br>");
+  const work=(r.当日作業||[]).concat((r.作業開始終了||[]).map(x=>x==="初日"?"搬入初日":"搬出最終")).join("・");
+  c.innerHTML='<button type="button" class="khead" aria-expanded="false"><span class="kno">'+esc(r.号車番号||"-")+'<small>号機</small></span><span class="kmain"><b>'+esc(r.工事名||"（工事名なし）")+'</b><span>'+esc(r.ルックアップ||"")+(work?"　"+esc(work):"")+'</span></span><span class="kst '+(r.工場長確認?"ok":"no")+'">'+(r.工場長確認?"確認済":"未確認")+'</span></button>'+
+   '<div class="kbody" hidden><dl>'+
+   '<dt>元請・場所</dt><dd>'+esc([r.元請名,r.場所].filter(Boolean).join("　")||"－")+'</dd>'+
+   '<dt>作業時間</dt><dd class="ktime">'+(times||"－")+'</dd>'+
+   '<dt>人員</dt><dd>'+(people.map(esc).join("<br>")||"－")+'</dd>'+
+   '<dt>出来高</dt><dd>'+(deki||"－")+'</dd>'+
+   '<dt>アワメーター</dt><dd>'+(awa||"－")+'</dd>'+
+   (r.コメント?'<dt>コメント</dt><dd>'+esc(r.コメント).replace(/\n/g,"<br>")+'</dd>':'')+
+   '<dt>レコード</dt><dd>'+esc(r.id)+'</dd></dl>'+
+   '<div class="kact">'+(r.工場長確認?'<button type="button" class="sub" data-a="off">確認を取り消す</button>':'<button type="button" class="save" data-a="on" style="background:#1d6e4b">確認する</button>')+'</div></div>';
+  const h=c.querySelector(".khead"),body=c.querySelector(".kbody");
+  h.addEventListener("click",()=>{body.hidden=!body.hidden;h.setAttribute("aria-expanded",String(!body.hidden))});
+  c.querySelector("[data-a]").addEventListener("click",e=>kSet([r],e.currentTarget.dataset.a==="on"));
+  return c;
+}
+function kSet(rows,on){
+  google.script.run.withSuccessHandler(()=>kLoad())
+    .withFailureHandler(err=>{const b=$("kconfirmbox");b.innerHTML="";const p=document.createElement("div");p.textContent=(err.message||String(err));b.appendChild(p);b.hidden=false;window.scrollTo(0,0)})
+    .kakuninNippo(PIN,KPIN,rows.map(r=>({id:r.id,revision:r.revision})),on)}
+function kAskAll(){
+  const rows=KROWS.filter(r=>!r.工場長確認);if(!rows.length)return;
+  const b=$("kconfirmbox");b.innerHTML="";
+  const p=document.createElement("div");p.innerHTML="<b>"+esc($("kday").value)+" の未確認 "+rows.length+"件</b>に、まとめて確認のチェックを付けます。中身を見ていない日報がないか確かめてから押してください。";
+  const bb=document.createElement("div");bb.className="draftbtns";
+  const y=document.createElement("button");y.type="button";y.className="save";y.style.background="#1d6e4b";y.textContent=rows.length+"件を確認する";
+  const n=document.createElement("button");n.type="button";n.className="sub";n.textContent="やめる";
+  y.addEventListener("click",()=>{b.hidden=true;kSet(rows,true)});n.addEventListener("click",()=>{b.hidden=true});
+  bb.append(y,n);b.append(p,bb);b.hidden=false;window.scrollTo(0,0)}
+function openKakunin(){scr("kakunin");setTitle("工場長確認");$("menu").hidden=true;$("kakunin").hidden=false;if(!kStarted){kStarted=true;kStart()}else if(KPIN){$("ksavebar").hidden=false;kLoad()}window.scrollTo(0,0)}
 // ---- 画面の切り替え ----
 let MASTER=null,nippoStarted=false,jikoStarted=false;
 function scr(k){try{sessionStorage.setItem("screen",k)}catch(e){}}
 function setTitle(t){const e=document.getElementById("apptitle");if(e)e.textContent=t}
-function showMenu(){scr("");setTitle("日報・報告");["app","savebar","jiko","jsavebar","listbox","done"].forEach(i=>$(i).hidden=true);$("menu").hidden=false;window.scrollTo(0,0)}
+function showMenu(){scr("");setTitle("日報・報告");["app","savebar","jiko","jsavebar","kakunin","ksavebar","listbox","done"].forEach(i=>$(i).hidden=true);$("menu").hidden=false;window.scrollTo(0,0)}
 function openNippo(){scr("nippo");setTitle("作業日報");$("menu").hidden=true;$("app").hidden=false;$("savebar").hidden=false;if(!nippoStarted){nippoStarted=true;start(MASTER)}window.scrollTo(0,0)}
 function openJiko(){scr("jiko");setTitle("事故・トラブル報告");$("menu").hidden=true;$("jiko").hidden=false;$("jsavebar").hidden=false;if(!jikoStarted){jikoStarted=true;startJiko(MASTER)}window.scrollTo(0,0)}
 (function(){const d=new Date();const w="日月火水木金土"[d.getDay()];$("today").textContent=(d.getMonth()+1)+"月"+d.getDate()+"日（"+w+"）"})();
-$("goNippo").addEventListener("click",openNippo);$("goJiko").addEventListener("click",openJiko);
+$("goNippo").addEventListener("click",openNippo);$("goKakunin").addEventListener("click",openKakunin);$("kback").addEventListener("click",showMenu);$("goJiko").addEventListener("click",openJiko);
 $("nback").addEventListener("click",showMenu);$("jback").addEventListener("click",showMenu);
 function reload(){location.reload()}
 function login(pin){
   $("pinmsg").textContent="読み込み中…";
   google.script.run.withSuccessHandler(M=>{PIN=pin;lsSet(LS,pin);MASTER=M;$("pinbox").hidden=true;
       let s="";try{s=sessionStorage.getItem("screen")||""}catch(e){}
-      if(s==="nippo")openNippo();else if(s==="jiko")openJiko();else showMenu()})
+      if(s==="nippo")openNippo();else if(s==="jiko")openJiko();else if(s==="kakunin")openKakunin();else showMenu()})
     .withFailureHandler(err=>{$("pinmsg").textContent=err.message||String(err);$("pinbox").hidden=false})
     .getMaster(pin);
 }
