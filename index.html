@@ -389,7 +389,7 @@ function addMemb(v,o){const d=document.createElement("div");d.className="m v";co
   d.append(s,lb,x);$("memb").appendChild(d);nameBtn(s,"メンバー")}
 addMemb();$("addMemb").addEventListener("click",()=>addMemb());
 // ---- kintoneの欄との対応 ----
-const KT={iki:["ドロップダウン_1","ドロップダウン_2",26.5],hannyu:["ドロップダウン_3","ドロップダウン_4",23.5],jitsu:["ドロップダウン_6","ドロップダウン_5",23.5],hanshutsu:["ドロップダウン_8","ドロップダウン_7",23.5],kaeri:["ドロップダウン_12","ドロップダウン_11",26.5]};
+const KT={iki:["ドロップダウン_1","ドロップダウン_2",26.5],hannyu:["ドロップダウン_3","ドロップダウン_4",26.5],jitsu:["ドロップダウン_6","ドロップダウン_5",23.5],hanshutsu:["ドロップダウン_8","ドロップダウン_7",26.5],kaeri:["ドロップダウン_12","ドロップダウン_11",26.5]};
 function buildRecord(){
   const errs=[];const k=KOJI[$("koji").value];
   if(!k)errs.push("工事名を選んでください。");
