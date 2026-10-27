@@ -174,6 +174,24 @@ button.add{font:inherit;font-size:13px;border:0;border-top:1px dashed var(--hair
 .instarrow{position:fixed;left:50%;bottom:calc(6px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:60;background:var(--accent);color:var(--accent-fg);font-weight:700;font-size:14px;padding:8px 14px;border-radius:20px;box-shadow:0 2px 8px rgba(0,0,0,.25);white-space:nowrap}
 @media (prefers-reduced-motion:no-preference){.instarrow{animation:bob 1.2s ease-in-out infinite}}
 @keyframes bob{50%{transform:translate(-50%,-6px)}}
+/* メニュー */
+#menu{display:flex;flex-direction:column;gap:14px;max-width:460px;margin:20px auto 0;width:100%}
+#menu h1{margin:0;font-size:20px;letter-spacing:.2em;text-align:center}
+.mbtn{font:inherit;display:flex;align-items:center;gap:16px;text-align:left;background:var(--sheet);color:var(--fg);border:2px solid var(--rule);border-radius:12px;padding:20px 18px;cursor:pointer;min-height:96px}
+.mbtn b{display:block;font-size:22px}
+.mbtn small{display:block;font-size:13px;color:var(--muted);margin-top:2px}
+.mbtn .mi{flex:none;width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;color:#fff}
+.mbtn.nippo .mi{background:var(--accent)}
+.mbtn.jiko .mi{background:#c0392b}
+.mbtn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.backbtn{font:inherit;font-size:14px;border:1px solid var(--hair);background:var(--sheet);color:var(--fg);border-radius:8px;padding:9px 14px;cursor:pointer;margin-right:auto}
+/* 事故報告 */
+#jiko .sheet{border-color:#c0392b}
+#jiko .title h1{color:#c0392b;letter-spacing:.08em;font-size:18px}
+#jiko .th{flex-direction:column;gap:1px}
+.jbtns{display:flex;flex-wrap:wrap;gap:6px;padding:8px}
+.req{color:#c0392b;font-size:11px;display:block}
+#jiko textarea{min-height:90px}
 </style>
 </head><body>
 <div class="wrap">
@@ -202,7 +220,7 @@ button.add{font:inherit;font-size:13px;border:0;border-top:1px dashed var(--hair
   </div>
   <div id="instArrow" class="instarrow" hidden>↓ 下の共有ボタンを押してください</div>
   <form id="pinform"><div id="pinbox">
-    <h1>作業日報</h1>
+    <h1>丸門建設</h1>
     <label for="pin">暗証番号</label>
     <input id="pin" type="password" inputmode="numeric" autocomplete="off">
     <button type="submit" class="save">開く</button>
@@ -211,7 +229,41 @@ button.add{font:inherit;font-size:13px;border:0;border-top:1px dashed var(--hair
   <div id="done" class="donebox" hidden>
     <h1 id="doneh">保存しました</h1>
     <p><span id="donemsg">kintoneの日報に登録しました</span>（レコード番号 <b id="doneid"></b>）。</p>
-    <button type="button" class="save" id="again">続けて入力する</button>
+    <button type="button" class="save" id="again">メニューに戻る</button>
+  </div>
+
+  <div id="menu" hidden>
+    <h1>丸門建設</h1>
+    <button type="button" class="mbtn nippo" id="goNippo"><span class="mi">日報</span><span><b>作業日報</b><small>その日の作業時間・出来高・人員を入力</small></span></button>
+    <button type="button" class="mbtn jiko" id="goJiko"><span class="mi">事故</span><span><b>事故・トラブル報告</b><small>事故や機械の損傷があったときに報告</small></span></button>
+  </div>
+
+  <div id="jiko" hidden>
+  <div class="topbar"><button type="button" class="backbtn" id="jback">← メニュー</button></div>
+  <div class="copybar" id="jdraftbar" hidden></div>
+  <div class="sheet">
+    <div class="title"><h1>事故・トラブル報告書</h1><span>丸門建設株式会社</span></div>
+    <div class="tr r-2">
+      <div class="td"><div class="th">作成者<span class="req">必須</span></div><div class="v"><select id="j_sakusei" class="jname" aria-label="作成者"></select></div></div>
+      <div class="td"><div class="th">当事者<span class="req">必須</span></div><div class="v"><select id="j_touji" class="jname" aria-label="当事者"></select></div></div>
+    </div>
+    <div class="tr"><div class="td"><div class="th">ポジ<br>ション</div><div class="v"><div class="jbtns" id="j_pos"></div></div></div></div>
+    <div class="tr"><div class="td"><div class="th">発生日<span class="req">必須</span></div><div class="v"><input type="date" id="j_date" aria-label="トラブル発生日"></div></div></div>
+    <div class="tr"><div class="td"><div class="th">現場名<span class="req">必須</span></div><div class="v" style="flex-direction:column;align-items:stretch">
+      <input type="search" id="j_kojiq" placeholder="ここに打つと絞り込めます" aria-label="現場名の絞り込み" style="font-size:14px;padding:6px 8px;border-bottom:1px dotted var(--hair)">
+      <select id="j_koji" aria-label="現場名"></select></div></div></div>
+    <div class="tr"><div class="td"><div class="th">機械</div><div class="v"><div class="jbtns" id="j_kikai"></div></div></div></div>
+    <div class="tr"><div class="td"><div class="th">機械<br>番号</div><div class="v"><input type="text" id="j_kno" list="j_knolist" placeholder="例：3" aria-label="機械番号"><datalist id="j_knolist"></datalist></div></div></div>
+    <div class="secth">損傷等の内容<span class="req">必須</span></div>
+    <div class="v"><textarea id="j_sonsyou" aria-label="損傷等の内容" placeholder="どこが、どう壊れたか"></textarea></div>
+    <div class="secth">発生状況<span class="req">必須</span></div>
+    <div class="v"><textarea id="j_jokyo" aria-label="発生状況" placeholder="いつ、何をしていて、どうなったか"></textarea></div>
+    <div class="secth">原因<span class="req">必須</span></div>
+    <div class="v"><textarea id="j_genin" aria-label="原因"></textarea></div>
+    <div class="secth">対策<span class="req">必須</span></div>
+    <div class="v"><textarea id="j_taisaku" aria-label="対策" placeholder="同じことが起きないためにどうするか"></textarea></div>
+  </div>
+  <div id="joutcard" class="sheet" style="padding:12px" hidden><h2 id="jouth" style="font-size:15px;margin:0 0 6px"></h2><div id="jout"></div></div>
   </div>
 
   <div id="listbox" class="sheet" hidden>
@@ -225,7 +277,7 @@ button.add{font:inherit;font-size:13px;border:0;border-top:1px dashed var(--hair
   </div>
 
   <div id="app" hidden>
-  <div class="topbar"><button type="button" class="sub" id="copylast">前回の日報をコピーして入力</button><button type="button" class="sub" id="openlist">過去の日報を見る・直す</button></div>
+  <div class="topbar"><button type="button" class="backbtn" id="nback">← メニュー</button><button type="button" class="sub" id="copylast">前回の日報をコピーして入力</button><button type="button" class="sub" id="openlist">過去の日報を見る・直す</button></div>
   <div class="copybar" id="copybar" hidden></div>
   <div class="editbar" id="editbar" hidden><span id="edittext"></span><button type="button" class="sub" id="newentry">新しく入力する</button></div>
   <div class="sheet">
@@ -302,6 +354,10 @@ button.add{font:inherit;font-size:13px;border:0;border-top:1px dashed var(--hair
   <div class="sum" id="sumline"></div>
   <button type="button" class="save" id="save">保存</button>
 </div></div>
+<div class="savebar" id="jsavebar" hidden><div class="in">
+  <div class="sum">kintoneの「事故・トラブル報告書」に登録します</div>
+  <button type="button" class="save" id="jsave" style="background:#c0392b">報告する</button>
+</div></div>
 <script>
 // ---- Apps Script（kintoneとのやり取り）を呼ぶ ----
 const API="https://script.google.com/macros/s/AKfycbz3XtpAENLFsbaxg5d2NkTzvQRbgPChqxP7kFwWoaKdVQHPw2h0E89fyx4bvzGOTRgV-w/exec";
@@ -353,7 +409,7 @@ function drawPicker(q){const box=$("plist");box.innerHTML="";
   const hit=NAMES.filter(n=>!q||n.includes(q));
   hit.forEach(n=>{const b=document.createElement("button");b.type="button";b.textContent=n;b.addEventListener("click",()=>pick(n));box.appendChild(b)});
   if(!hit.length){const p=document.createElement("p");p.className="lmsg";p.textContent="見つかりません。名前の一部（名字だけなど）で探してください。";box.appendChild(p)}}
-function pick(n){if(PSEL)setSel(PSEL,n);$("picker").hidden=true;PSEL=null;if(window.__sched)__sched()}
+function pick(n){if(PSEL)setSel(PSEL,n);$("picker").hidden=true;PSEL=null;if(window.__sched)__sched();if(window.__jsched)__jsched()}
 $("pq").addEventListener("input",e=>drawPicker(e.target.value.trim()));
 $("pclose").addEventListener("click",()=>{$("picker").hidden=true;PSEL=null});
 $("picker").addEventListener("click",e=>{if(e.target.id==="picker"){$("picker").hidden=true;PSEL=null}});
@@ -590,15 +646,79 @@ $("save").addEventListener("click",()=>{
   else google.script.run.withSuccessHandler(ok).withFailureHandler(ng).saveNippo(PIN,rec);
 });
 }
+// ---- 事故・トラブル報告 ----
+const JDK="jiko_draft";
+function startJiko(M){
+  if(!NAMES.length)NAMES=M.names;
+  const POS=["杭打機オペ","クレーンオペ","手元","プラント"],KIKAI=["杭打機","クレーン","ユンボ","発電機","オーガ","プラント","エコ装置","その他"];
+  let pos="",kikai="";
+  const mk=(box,list,get,set)=>{list.forEach(t=>{const b=document.createElement("button");b.type="button";b.className="ck";b.textContent=t;b.dataset.t=t;
+    b.addEventListener("click",()=>{set(get()===t?"":t);paint()});$(box).appendChild(b)})};
+  function paint(){document.querySelectorAll("#j_pos .ck").forEach(b=>{b.classList.toggle("on",b.dataset.t===pos);b.setAttribute("aria-pressed",b.dataset.t===pos)});
+    document.querySelectorAll("#j_kikai .ck").forEach(b=>{b.classList.toggle("on",b.dataset.t===kikai);b.setAttribute("aria-pressed",b.dataset.t===kikai)});
+    const nl={杭打機:M.kui,クレーン:M.crane,ユンボ:M.yunbo,発電機:M.hatsu}[kikai]||[];const dl=$("j_knolist");dl.innerHTML="";nl.forEach(n=>dl.appendChild(new Option(n)))}
+  mk("j_pos",POS,()=>pos,v=>pos=v);mk("j_kikai",KIKAI,()=>kikai,v=>kikai=v);
+  document.querySelectorAll(".jname").forEach(s=>{s.add(new Option("",""));M.names.forEach(n=>s.add(new Option(n,n)));nameBtn(s,s.getAttribute("aria-label"))});
+  $("j_date").value=new Date(Date.now()+9*3600e3).toISOString().slice(0,10);
+  function fill(q){const s=$("j_koji"),cur=s.value;s.innerHTML="";s.add(new Option("（現場を選択）",""));
+    M.koji.forEach(k=>{if(!q||k[1].includes(q)||k[2].includes(q))s.add(new Option(k[1],k[1]))});s.value=cur;if(s.value!==cur)s.value=""}
+  $("j_kojiq").addEventListener("input",e=>fill(e.target.value.trim()));fill("");
+  const T={損傷等の内容:"j_sonsyou",発生状況:"j_jokyo",原因:"j_genin",対策:"j_taisaku"};
+  function collect(){const r={当事者_0:$("j_sakusei").value,当事者:$("j_touji").value,ドロップダウン:pos,トラブル発生日:$("j_date").value,
+      現場名:$("j_koji").value,ドロップダウン_1:kikai,文字列__1行__2:$("j_kno").value.trim()};
+    Object.entries(T).forEach(([k,id])=>r[k]=$(id).value.trim());return r}
+  function load(r){setSel($("j_sakusei"),r.当事者_0||"");setSel($("j_touji"),r.当事者||"");pos=r.ドロップダウン||"";kikai=r.ドロップダウン_1||"";
+    if(r.トラブル発生日)$("j_date").value=r.トラブル発生日;if(r.現場名){const s=$("j_koji");if(![...s.options].some(o=>o.value===r.現場名))s.add(new Option(r.現場名,r.現場名));s.value=r.現場名}
+    $("j_kno").value=r.文字列__1行__2||"";Object.entries(T).forEach(([k,id])=>$(id).value=r[k]||"");paint()}
+  paint();
+  // 下書き
+  let tm;const sched=()=>{clearTimeout(tm);tm=setTimeout(()=>{try{const r=collect();r._t=Date.now();localStorage.setItem(JDK,JSON.stringify(r))}catch(e){}},700)};
+  ["input","change","click"].forEach(t=>$("jiko").addEventListener(t,sched));
+  $("jiko").addEventListener("input",()=>{$("joutcard").hidden=true});
+  window.__jsched=sched;
+  (function(){let d=null;try{d=JSON.parse(localStorage.getItem(JDK)||"null")}catch(e){}
+    if(!d||!(d.現場名||d.発生状況||d.損傷等の内容))return;const bar=$("jdraftbar");bar.innerHTML="";
+    const t=new Date(d._t||Date.now());const p=document.createElement("div");p.textContent=(t.getMonth()+1)+"/"+t.getDate()+" "+t.getHours()+":"+String(t.getMinutes()).padStart(2,"0")+" に書きかけの報告があります（"+(d.現場名||"現場名なし")+"）。";
+    const bb=document.createElement("div");bb.className="draftbtns";
+    const b1=document.createElement("button");b1.type="button";b1.className="save";b1.textContent="続きから書く";
+    const b2=document.createElement("button");b2.type="button";b2.className="sub";b2.textContent="下書きを消す";
+    b1.addEventListener("click",()=>{load(d);bar.hidden=true});b2.addEventListener("click",()=>{try{localStorage.removeItem(JDK)}catch(e){}bar.hidden=true});
+    bb.append(b1,b2);bar.append(p,bb);bar.hidden=false})();
+  // 報告する
+  let busy=false;
+  $("jsave").addEventListener("click",()=>{if(busy)return;const r=collect(),errs=[];
+    if(!r.当事者_0)errs.push("作成者を選んでください。");if(!r.当事者)errs.push("当事者を選んでください。");
+    if(!r.トラブル発生日)errs.push("発生日を入れてください。");if(!r.現場名)errs.push("現場名を選んでください。");
+    Object.keys(T).forEach(k=>{if(!r[k])errs.push(k+"を書いてください。")});
+    const out=$("jout");out.innerHTML="";
+    const showMsg=(h,list)=>{$("jouth").textContent=h;list.forEach(e=>{const d=document.createElement("div");d.textContent=e;out.appendChild(d)});$("joutcard").hidden=false;$("joutcard").scrollIntoView({behavior:"smooth"})};
+    if(errs.length)return showMsg("報告できません。次を直してください",errs);
+    busy=true;$("jsave").textContent="送信中…";$("jsave").disabled=true;$("joutcard").hidden=true;
+    google.script.run.withSuccessHandler(id=>{try{localStorage.removeItem(JDK)}catch(e){}
+        $("doneh").textContent="報告しました";$("donemsg").textContent="kintoneの事故・トラブル報告書に登録しました";$("doneid").textContent=id;
+        $("jiko").hidden=true;$("jsavebar").hidden=true;$("done").hidden=false;window.scrollTo(0,0)})
+      .withFailureHandler(err=>{busy=false;$("jsave").textContent="報告する";$("jsave").disabled=false;showMsg("報告できませんでした",[err.message||String(err)])})
+      .saveJiko(PIN,r)});
+}
+// ---- 画面の切り替え ----
+let MASTER=null,nippoStarted=false,jikoStarted=false;
+function scr(k){try{sessionStorage.setItem("screen",k)}catch(e){}}
+function showMenu(){scr("");["app","savebar","jiko","jsavebar","listbox","done"].forEach(i=>$(i).hidden=true);$("menu").hidden=false;window.scrollTo(0,0)}
+function openNippo(){scr("nippo");$("menu").hidden=true;$("app").hidden=false;$("savebar").hidden=false;if(!nippoStarted){nippoStarted=true;start(MASTER)}window.scrollTo(0,0)}
+function openJiko(){scr("jiko");$("menu").hidden=true;$("jiko").hidden=false;$("jsavebar").hidden=false;if(!jikoStarted){jikoStarted=true;startJiko(MASTER)}window.scrollTo(0,0)}
+$("goNippo").addEventListener("click",openNippo);$("goJiko").addEventListener("click",openJiko);
+$("nback").addEventListener("click",showMenu);$("jback").addEventListener("click",showMenu);
 function reload(){location.reload()}
 function login(pin){
   $("pinmsg").textContent="読み込み中…";
-  google.script.run.withSuccessHandler(M=>{PIN=pin;lsSet(LS,pin);$("pinbox").hidden=true;$("app").hidden=false;$("savebar").hidden=false;start(M)})
+  google.script.run.withSuccessHandler(M=>{PIN=pin;lsSet(LS,pin);MASTER=M;$("pinbox").hidden=true;
+      let s="";try{s=sessionStorage.getItem("screen")||""}catch(e){}
+      if(s==="nippo")openNippo();else if(s==="jiko")openJiko();else showMenu()})
     .withFailureHandler(err=>{$("pinmsg").textContent=err.message||String(err);$("pinbox").hidden=false})
     .getMaster(pin);
 }
 $("pinform").addEventListener("submit",e=>{e.preventDefault();login($("pin").value.trim())});
-$("again").addEventListener("click",reload);
+$("again").addEventListener("click",()=>{scr("");reload()});
 $("newentry").addEventListener("click",reload);
 (function(){const p=lsGet(LS);if(p){$("pinbox").hidden=true;login(p)}})();
 </script>
