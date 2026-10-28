@@ -779,7 +779,8 @@ if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.ser
   const isAndroid=/Android/.test(ua);
   const inApp=/Line\/|FBAN|FBAV|Instagram|KAKAOTALK|; wv\)/i.test(ua);
   let later=0;try{later=+localStorage.getItem("inst_later")||0}catch(e){}
-  if(standalone||(!isIOS&&!isAndroid)||Date.now()-later<3*864e5)return;
+  const force=/[?&]inst\b/.test(location.search);
+  if(!force&&(standalone||(!isIOS&&!isAndroid)||Date.now()-later<3*864e5))return;
   const box=$("inst"),show=id=>{box.hidden=false;$(id).hidden=false};
   const hideAll=()=>{box.hidden=true;$("instArrow").hidden=true};
   $("instLater").onclick=()=>{try{localStorage.setItem("inst_later",String(Date.now()))}catch(e){}hideAll()};
