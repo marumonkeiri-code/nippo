@@ -429,8 +429,16 @@ body{padding-top:0}
       <div class="tr"><div class="td"><div class="th">現場<span class="req">必須</span></div><div class="v" style="flex-direction:column;align-items:stretch">
         <input type="search" id="t_kojiq" placeholder="ここに打つと絞り込めます" aria-label="現場の絞り込み" style="font-size:14px;padding:6px 8px;border-bottom:1px dotted var(--hair)">
         <select id="t_koji" aria-label="現場"></select></div></div></div>
-      <div class="tr"><div class="td"><div class="th"><span id="tkiki">機械</span><span class="req">必須</span></div><div class="v"><select id="t_no" aria-label="機械"></select></div></div></div>
+      <div class="tr" id="tpick"><div class="td"><div class="th"><span id="tkiki">機械</span><span class="req">必須</span></div><div class="v"><select id="t_no" aria-label="機械"></select></div></div></div>
+      <div class="tr r-2" id="tfree" hidden>
+        <div class="td"><div class="th">管理No.<span class="req">必須</span></div><div class="v"><input type="text" id="t_kno" aria-label="管理No."></div></div>
+        <div class="td"><div class="th">型式</div><div class="v"><input type="text" id="t_kata" aria-label="型式"></div></div>
+      </div>
       <div class="tr" id="tmeter"><div class="td"><div class="th">アワ<br>メーター</div><div class="v"><input type="text" id="t_awa" inputmode="decimal" placeholder="例：28753" aria-label="アワメーター"></div></div></div>
+      <div class="tr r-2" id="tpress" hidden>
+        <div class="td"><div class="th">レギュレーター<br>セット圧力</div><div class="v"><input type="text" id="t_reg" inputmode="decimal" placeholder="kg/㎠" aria-label="レギュレーターのセット圧力"></div></div>
+        <div class="td"><div class="th">安全弁<br>セット圧力</div><div class="v"><input type="text" id="t_ben" inputmode="decimal" placeholder="kg/㎠" aria-label="安全弁のセット圧力"></div></div>
+      </div>
       <div class="tallbar"><span id="tcount"></span><button type="button" class="sub" id="tall">全部OKにする</button></div>
       <div class="titems" id="titems"></div>
       <div class="secth">備考（異常があったときは内容を書いてください）</div>
@@ -972,7 +980,8 @@ const TFORMS={
   hatsudenki:{name:"発電機",master:"hatsu",meter:true,items:["エンジンに異常はないか。","エンジンオイルは規定まであるか。","エンジンオイルの汚れはないか。","水漏れ、油漏れはないか。","Vベルトの緩みはないか。","取り付けボルトに緩みはないか。","各エレメントの損傷、汚れはないか。","バッテリー液量、ターミナルの異常はないか。","指定の回数を指示しているか。","周波数計が指定指示しているか。","規定電圧を指示しているか。","投入遮断操作がスムーズにできるか。","出力端子の緩みはないか。","ボデー、漏電リレーアースは取付けているか。","内部の整理、清掃は出来ているか。","外かんに損傷、変形などの異常はないか。","安全装置各部の作動はよいか。"]},
   crane:{name:"クローラクレーン",master:"craneK",pick:"号車",meter:true,items:["エンジンに異常はないか。", "エンジンオイルは規定まであるか。", "エンジンオイルの汚れはないか。", "水漏れ、油漏れはないか。", "燃料タンクの水抜きはよいか。漏れはないか。", "取付けボルトに弛みはないか。", "各エレメントの損傷、汚れはないか。", "バッテリー液量、ターミナルの異常はないか。", "計器類、電装品の作動状況はよいか。", "巻胴クラッチ、ブレーキの作動状況はよいか。", "ブームクラッチ、ブレーキの作動状況はよいか。", "ブレーキロック爪の作動状態はよいか。", "旋回ブレーキ、旋回ロック作動状態はよいか。", "走行ブレーキの作動状態はよいか。", "タンブラーより油漏れはないか。", "フロントアタッチメント（含む）ワイヤーロープはよいか。", "安全装置各部の作動はよいか。", "各部の給脂状態はよいか。", "キャブ、ハウスに変形損傷はないか。"]},
   plant:{name:"プラント",master:"plantK",pick:"No.・機種・型式",meter:false,items:["機体に変形がないか。", "取り付けボルトに弛みがないか。", "ベルト、安全カバーは良いか。", "槽内に異物が入ってないか。", "入力電源（定額電圧、定格周波数）であるか。", "回転方向。（回転方向の確認）", "ヒューズの溶断。（規定ヒューズを使用しているか）", "配電盤、スイッチに異常がないか。", "操作スイッチに異常がないか。", "アースは確実か。", "モーターの異常、冠水がないか。", "漏電遮断器は正常に作動するか。", "サクションホースに破損、異常がないか。", "デリベリーホースに破損、異常がないか。", "ギヤーボックスの油量はよいか。", "作動油の油量はよいか。", "安全棚はしっかりと入っているか。", "機体の敷木（台木）は設置しているか。"]},
-  shovel:{name:"油圧ショベル",master:"yunboK",pick:"号車",meter:true,items:["エンジンに異常はないか。","エンジンオイルは規定まであるか。","エンジンオイルの汚れはないか。","ラジエーターの水量、汚れはないか。","水漏れ、油漏れはないか。","電装品の作動状況はよいか。","計器類の作動状況はよいか。","燃料タンクの油量、及び漏れはないか。","作動油タンクの油量、及び漏れはないか。","油圧ホース、配管、継手の漏れ、損傷はないか。","コントロールレバーの作動状況はよいか。","油圧機器の作動状況、漏れはないか。","ブーム、アーム、バケット、他の給脂はないか。","機体全般の損傷汚れはないか。","バッテリー液量、ターミナルの異常はないか。","スイッチ・ライト類の作動状態はよいか。","バケット爪のゆるみ・摩耗・欠損はないか。"]}
+  shovel:{name:"油圧ショベル",master:"yunboK",pick:"号車",meter:true,items:["エンジンに異常はないか。","エンジンオイルは規定まであるか。","エンジンオイルの汚れはないか。","ラジエーターの水量、汚れはないか。","水漏れ、油漏れはないか。","電装品の作動状況はよいか。","計器類の作動状況はよいか。","燃料タンクの油量、及び漏れはないか。","作動油タンクの油量、及び漏れはないか。","油圧ホース、配管、継手の漏れ、損傷はないか。","コントロールレバーの作動状況はよいか。","油圧機器の作動状況、漏れはないか。","ブーム、アーム、バケット、他の給脂はないか。","機体全般の損傷汚れはないか。","バッテリー液量、ターミナルの異常はないか。","スイッチ・ライト類の作動状態はよいか。","バケット爪のゆるみ・摩耗・欠損はないか。"]},
+  comp:{name:"コンプレッサー",free:true,meter:false,items:["エンジンに異常はないか。", "エンジンオイルは規定まであるか。", "エンジンオイルの汚れはないか。", "水漏れ、油漏れはないか。", "Vベルトの弛みはないか。", "取付けボルトに弛みはないか。", "各エレメントの損傷、汚れはないか。", "各計器の作動状況はよいか。", "レギュレーターの作動状態はよいか。", "安全弁の作動状態はよいか。", "レシーバータンクの油量、よごれ。", "振動、騒音、油漏れはないか。", "各部の亀裂チェック", "バッテリー液量、ターミナルの異常はないか。"]}
 };
 let TKIND="kui",TCHK=new Set(),tStarted=false;
 function tStart(M){
@@ -993,9 +1002,9 @@ function tRender(reset){
   const f=TFORMS[TKIND];
   document.querySelectorAll("#tkinds button[data-k]").forEach(b=>b.classList.toggle("on",b.dataset.k===TKIND));
   $("ttitle").textContent=f.name+"作業開始前点検表";
-  $("tkiki").textContent=f.name;$("tmeter").hidden=!f.meter;
+  $("tkiki").textContent=f.name;$("tmeter").hidden=!f.meter;$("tpick").hidden=!!f.free;$("tfree").hidden=!f.free;$("tpress").hidden=!f.free;
   const sel=$("t_no"),cur=reset?"":sel.value;sel.innerHTML="";sel.add(new Option("（"+f.name+"を選択　"+(f.pick||"管理No.-型式")+"）",""));(MASTER[f.master]||[]).forEach(n=>Array.isArray(n)?sel.add(new Option(n[1],n[0])):sel.add(new Option(n,n)));sel.value=cur;
-  if(reset){TCHK=new Set();$("t_biko").value="";$("t_awa").value=""}
+  if(reset){TCHK=new Set();["t_biko","t_awa","t_kno","t_kata","t_reg","t_ben"].forEach(i=>$(i).value="")}
   const box=$("titems");box.innerHTML="";
   f.items.forEach((t,i)=>{const b=document.createElement("button");b.type="button";b.className="titem";b.dataset.t=t;
     b.innerHTML='<span class="n">'+(i+1)+'</span><span class="t">'+esc(t)+'</span><span class="b"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>';
@@ -1009,8 +1018,9 @@ function tMsg(html,btns){const b=$("tconfirm");b.innerHTML="";const p=document.c
   if(btns){const bb=document.createElement("div");bb.className="draftbtns";btns.forEach(x=>bb.appendChild(x));b.appendChild(bb)}b.hidden=false;b.scrollIntoView({behavior:"smooth",block:"center"})}
 function tSave(force){
   const f=TFORMS[TKIND];
-  const r={点検年月日:$("t_date").value,工事名:$("t_koji").value,機械:$("t_no").value,アワメーター:f.meter?$("t_awa").value.replace(/[^0-9.]/g,""):"",点検者名:$("t_name").value,備考:$("t_biko").value.trim(),点検項目:f.items.filter(x=>TCHK.has(x))};
-  const errs=[];if(!r.点検年月日)errs.push("点検日を入れてください。");if(!r.点検者名)errs.push("点検者を選んでください。");if(!r.工事名)errs.push("現場を選んでください。");if(!r.機械)errs.push(f.name+"を選んでください。");
+  const r={点検年月日:$("t_date").value,工事名:$("t_koji").value,機械:f.free?$("t_kno").value.trim():$("t_no").value,アワメーター:f.meter?$("t_awa").value.replace(/[^0-9.]/g,""):"",点検者名:$("t_name").value,備考:$("t_biko").value.trim(),点検項目:f.items.filter(x=>TCHK.has(x))};
+  if(f.free){const nm=v=>v.replace(/[^0-9.]/g,"");r.型式=$("t_kata").value.trim();r.レギュレータの作動状態セット圧力=nm($("t_reg").value);r.安全弁作動状態セット圧力=nm($("t_ben").value)}
+  const errs=[];if(!r.点検年月日)errs.push("点検日を入れてください。");if(!r.点検者名)errs.push("点検者を選んでください。");if(!r.工事名)errs.push("現場を選んでください。");if(!r.機械)errs.push(f.free?"管理No.を入れてください。":f.name+"を選んでください。");
   if(errs.length)return tMsg("<b>記録できません。次を直してください</b><br>"+errs.map(esc).join("<br>"));
   const miss=f.items.filter(x=>!TCHK.has(x));
   if(miss.length&&!force){
