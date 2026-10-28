@@ -530,6 +530,8 @@ body{padding-top:0}
       </div>
       <input type="file" id="h_file" accept="image/*" hidden>
       <div id="hstatus"></div>
+      <div id="hpic" class="sheet" hidden style="padding:10px;display:none;gap:10px;align-items:center"><img id="hpicimg" alt="撮った手配帳の写真" style="width:72px;height:72px;object-fit:cover;border-radius:8px;flex:none"><div style="flex:1;font-size:14px">この写真も「登録する」で一緒にkintoneに保存します。</div><button type="button" class="sub" id="hpicdel">外す</button></div>
+      <div id="hpicnote" style="font-size:13px;color:var(--muted,#9aa4b2)" hidden></div>
       <div id="hconfirm" class="kconfirm" hidden></div>
       <div id="hrows" style="display:flex;flex-direction:column;gap:10px"></div>
       <div><button type="button" class="sub" id="haddrow">＋ 機械（行）を追加</button></div>
@@ -1394,8 +1396,10 @@ function hFill(d){$("hrows").innerHTML="";(d.rows||[]).forEach(r=>hRow(r));if(!(
   $("hyasumi").innerHTML="";(d.yasumi||[]).forEach(n=>hPerson($("hyasumi"),{n:n},false));$("hcmt").value=d.comment||"";hMark()}
 function hStatus(t,cls){const e=$("hstatus");e.textContent=t;e.className=cls||""}
 function hMD(d){return d?Number(d.slice(5,7))+"月"+Number(d.slice(8,10))+"日":""}
-function hLoad(first){$("hconfirm").hidden=true;
+let HIMG=null;function hPic(b64){HIMG=b64?{data:b64,type:"image/jpeg"}:null;$("hpic").hidden=!b64;$("hpic").style.display=b64?"flex":"none";if(b64)$("hpicimg").src="data:image/jpeg;base64,"+b64}
+function hLoad(first){$("hconfirm").hidden=true;hPic(null);$("hpicnote").hidden=true;
   google.script.run.withSuccessHandler(d=>{lsSet(HLS,HPIN);$("hpinbox").hidden=true;$("hmainbox").hidden=false;$("hsavebar").hidden=false;hFill(d);hDirty=false;
+      if(d.photos){$("hpicnote").textContent="kintoneにはこの日の写真が"+d.photos+"枚保存されています。";$("hpicnote").hidden=false}
       if(d.id)hStatus(hMD($("hday").value)+"の手配帳です（登録済み）。直したら「登録する」で上書きします。","ok");
       else hStatus(hMD($("hday").value)+"の手配帳はまだありません。「写真から読み取る」か「前の日をコピー」で入れてから、「登録する」を押してください。","copy")})
     .withFailureHandler(err=>{const m=err.message||String(err);
@@ -1414,9 +1418,10 @@ function hCollect(){return{rows:[...$("hrows").children].map(c=>({kikai:c.queryS
 function hSave(){hMark();const bad=[...document.querySelectorAll("#tehai select.hname")].map(s=>s.value).filter(v=>v&&!NAMES.includes(v));
   if(bad.length)return boxMsg("hconfirm","<b>登録できません。</b>従業員リストにない名前があります（赤い枠）：<br>"+[...new Set(bad)].map(esc).join("、")+"<br>押して正しい名前を選び直してください。");
   $("hsave").disabled=true;
-  google.script.run.withSuccessHandler(res=>{$("hsave").disabled=false;hDirty=false;$("hconfirm").hidden=true;hStatus(hMD($("hday").value)+"の手配帳を"+(res.updated?"上書きしました":"登録しました")+"（レコード番号 "+res.id+"）。","ok");window.scrollTo(0,0)})
+  const withPic=!!HIMG,data=hCollect();if(HIMG)data.photo=HIMG;
+  google.script.run.withSuccessHandler(res=>{$("hsave").disabled=false;hDirty=false;$("hconfirm").hidden=true;hPic(null);hStatus(hMD($("hday").value)+"の手配帳を"+(res.updated?"上書きしました":"登録しました")+(withPic?"。写真も保存しました":"")+"（レコード番号 "+res.id+"）。","ok");window.scrollTo(0,0)})
     .withFailureHandler(err=>{$("hsave").disabled=false;boxMsg("hconfirm","<b>登録できませんでした</b><br>"+esc(err.message||String(err)))})
-    .saveTehai(PIN,HPIN,$("hday").value,hCollect())}
+    .saveTehai(PIN,HPIN,$("hday").value,data)}
 function hCopy(){$("hconfirm").hidden=true;
   google.script.run.withSuccessHandler(d=>{if(!d.copyFrom){boxMsg("hconfirm","コピーできる前の日の手配帳がありません。");return}
       hFill(d);hDirty=true;hStatus(hMD(d.copyFrom)+"の内容をコピーしました。変わったところを直して「登録する」を押してください（まだ登録されていません）。","copy");window.scrollTo(0,0)})
@@ -1427,6 +1432,7 @@ function hShrink(file){return new Promise((ok,ng)=>{const u=URL.createObjectURL(
     c.getContext("2d").drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);ok(c.toDataURL("image/jpeg",0.85).split(",")[1])};
   im.onerror=()=>{URL.revokeObjectURL(u);ng(new Error("この写真は読み込めませんでした。"))};im.src=u})}
 async function hPhoto(file){let b64;try{b64=await hShrink(file)}catch(e){return boxMsg("hconfirm",esc(e.message))}
+  hPic(b64);hDirty=true;
   google.script.run.withSuccessHandler(d=>{hFill(d);hDirty=true;
       const note=d.date&&d.date!==$("hday").value?"（写真の日付は"+hMD(d.date)+"でした。日付が合っているか確かめてください）":"";
       hStatus("写真から読み取りました"+note+"。読み間違いがないか、紙と見比べて直してから「登録する」を押してください。赤い枠の名前は、従業員リストにない名前です。","copy");window.scrollTo(0,0)})
@@ -1436,7 +1442,7 @@ function hStart(){if(!NAMES.length&&MASTER)NAMES=MASTER.names;
   $("hday").value=new Date(Date.now()+9*3600e3).toISOString().slice(0,10);$("hday").dataset.v=$("hday").value;
   $("hprev").addEventListener("click",()=>hGo(-1));$("hnext").addEventListener("click",()=>hGo(1));$("hday").addEventListener("change",()=>hGo(0,$("hday").value));
   $("haddrow").addEventListener("click",()=>{hRow();hDirty=true});$("haddyasumi").addEventListener("click",()=>{hPerson($("hyasumi"),{n:""},false);hDirty=true});
-  $("hphoto").addEventListener("click",()=>$("h_file").click());$("hcopy").addEventListener("click",hCopy);$("h_file").addEventListener("change",e=>{const f=e.target.files[0];e.target.value="";if(f)hPhoto(f)});
+  $("hphoto").addEventListener("click",()=>$("h_file").click());$("hcopy").addEventListener("click",hCopy);$("hpicdel").addEventListener("click",()=>hPic(null));$("h_file").addEventListener("change",e=>{const f=e.target.files[0];e.target.value="";if(f)hPhoto(f)});
   $("hsave").addEventListener("click",hSave);$("tehai").addEventListener("input",()=>{hDirty=true});window.__hsched=()=>{hDirty=true;hMark()};
   $("hpinform").addEventListener("submit",e=>{e.preventDefault();HPIN=$("hpin").value.trim();hLoad(true)});
   HPIN=lsGet(HLS);if(HPIN)hLoad(true);else{$("hpinbox").hidden=false;$("hmainbox").hidden=true}}
