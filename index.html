@@ -1018,7 +1018,7 @@ function tMsg(html,btns){const b=$("tconfirm");b.innerHTML="";const p=document.c
   if(btns){const bb=document.createElement("div");bb.className="draftbtns";btns.forEach(x=>bb.appendChild(x));b.appendChild(bb)}b.hidden=false;b.scrollIntoView({behavior:"smooth",block:"center"})}
 function tSave(force){
   const f=TFORMS[TKIND];
-  const r={点検年月日:$("t_date").value,工事名:$("t_koji").value,機械:f.free?$("t_kno").value.trim():$("t_no").value,アワメーター:f.meter?$("t_awa").value.replace(/[^0-9.]/g,""):"",点検者名:$("t_name").value,備考:$("t_biko").value.trim(),点検項目:f.items.filter(x=>TCHK.has(x))};
+  const r={点検年月日:$("t_date").value,工事名:$("t_koji").value,機械:f.free?$("t_kno").value.trim():$("t_no").value,機械名:f.free?($("t_kno").value.trim()+" "+$("t_kata").value.trim()).trim():($("t_no").selectedIndex>0?$("t_no").options[$("t_no").selectedIndex].text:""),アワメーター:f.meter?$("t_awa").value.replace(/[^0-9.]/g,""):"",点検者名:$("t_name").value,備考:$("t_biko").value.trim(),点検項目:f.items.filter(x=>TCHK.has(x))};
   if(f.free){const nm=v=>v.replace(/[^0-9.]/g,"");r.型式=$("t_kata").value.trim();r.レギュレータの作動状態セット圧力=nm($("t_reg").value);r.安全弁作動状態セット圧力=nm($("t_ben").value)}
   const errs=[];if(!r.点検年月日)errs.push("点検日を入れてください。");if(!r.点検者名)errs.push("点検者を選んでください。");if(!r.工事名)errs.push("現場を選んでください。");if(!r.機械)errs.push(f.free?"管理No.を入れてください。":f.name+"を選んでください。");
   if(errs.length)return tMsg("<b>記録できません。次を直してください</b><br>"+errs.map(esc).join("<br>"));
