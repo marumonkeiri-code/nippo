@@ -372,6 +372,13 @@ body{padding-top:0}
 .brow.done{opacity:.5}
 .brow.done .b{border-style:dashed;cursor:default}
 .btag{font-size:11px;padding:1px 6px;border-radius:6px;background:var(--tint);color:var(--accent);margin-left:4px;font-weight:400}
+#buppin .bph{display:flex;flex-wrap:wrap;gap:8px}
+.bthumb{width:88px;height:88px;border-radius:10px;border:1px solid var(--hair);background:var(--head);color:var(--muted);font:inherit;font-size:11px;padding:0;overflow:hidden;cursor:zoom-in;display:flex;align-items:center;justify-content:center;text-align:center;overflow-wrap:anywhere}
+.bthumb img{width:100%;height:100%;object-fit:cover;display:block}
+#bzoom{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.9);display:flex;align-items:center;justify-content:center;padding:16px}
+#bzoom[hidden]{display:none}
+#bzoom img{max-width:100%;max-height:100%;object-fit:contain}
+#bzoom button{position:absolute;top:calc(12px + env(safe-area-inset-top));right:12px;width:44px;height:44px;border-radius:50%;border:0;background:rgba(255,255,255,.25);color:#fff;font-size:24px;cursor:pointer}
 </style>
 </head><body>
 <header class="appbar"><div class="in"><svg viewBox="0 0 100 100" aria-hidden="true" class=""><defs><mask id="mkA"><rect width="100" height="100" fill="#fff"/><rect x="45" y="7" width="10" height="6.5" fill="#000"/><rect x="46.5" y="75" width="7" height="18" fill="#000"/></mask></defs><g mask="url(#mkA)" fill="currentColor" stroke="currentColor"><circle cx="50" cy="50" r="47" fill="none" stroke-width="3.6"/><circle cx="50" cy="50" r="35" fill="none" stroke-width="14"/><rect x="42.5" y="19" width="15" height="12" rx="5" stroke="none"/></g></svg><span><span class="co">丸門建設</span><span class="ttl" id="apptitle">日報・報告</span></span></div></header>
@@ -1274,7 +1281,7 @@ function bCard(x){const k=x.kind==="kounyu",c=document.createElement("div");c.cl
   const left=x.rows.filter(r=>!r.done).length,sel=new Set();
   const yen=n=>"¥"+Number(n||0).toLocaleString("ja-JP");
   const total=k?x.rows.reduce((s,r)=>s+(Number(r.kosu)||0)*(Number(r.tanka)||0),0):0;
-  c.innerHTML='<button type="button" class="khead" aria-expanded="false"><span class="bkind '+x.kind+'">'+(k?"購入":"持出")+'<small>'+esc(bMD(x.date))+'</small></span><span class="kmain"><b>'+esc(x.koji||"（現場なし）")+'</b><span>'+esc(x.name)+(x.no?"　No."+esc(x.no):"")+"　"+x.rows.length+"品"+(k?"　"+yen(total):"")+'</span></span><span class="kst no">残り'+left+'</span></button><div class="kbody" hidden></div>';
+  c.innerHTML='<button type="button" class="khead" aria-expanded="false"><span class="bkind '+x.kind+'">'+(k?"購入":"持出")+'<small>'+esc(bMD(x.date))+'</small></span><span class="kmain"><b>'+esc(x.koji||"（現場なし）")+'</b><span>'+esc(x.name)+(x.no?"　No."+esc(x.no):"")+"　"+x.rows.length+"品"+(x.photos.length?"　写真"+x.photos.length:"")+(k?"　"+yen(total):"")+'</span></span><span class="kst no">残り'+left+'</span></button><div class="kbody" hidden></div>';
   const h=c.querySelector(".khead"),body=c.querySelector(".kbody");
   function paint(){body.innerHTML="";
     const rows=document.createElement("div");
@@ -1284,7 +1291,7 @@ function bCard(x){const k=x.kind==="kounyu",c=document.createElement("div");c.cl
       if(!r.done)d.querySelector(".b").addEventListener("click",()=>{sel.has(r.id)?sel.delete(r.id):sel.add(r.id);paint()});
       rows.appendChild(d)});
     body.appendChild(rows);
-    const dl=document.createElement("dl");dl.innerHTML=(x.cmt?'<dt>'+(k?"理由・原因":"コメント")+'</dt><dd>'+esc(x.cmt).replace(/\n/g,"<br>")+'</dd>':"")+(x.photos?'<dt>写真</dt><dd>'+x.photos+'枚（kintoneで見られます）</dd>':"")+'<dt>伝票</dt><dd>'+(k?"物品購入伝票":"持出伝票")+'　No.'+esc(x.id)+'</dd>';body.appendChild(dl);
+    const dl=document.createElement("dl");dl.innerHTML=(x.cmt?'<dt>'+(k?"理由・原因":"コメント")+'</dt><dd>'+esc(x.cmt).replace(/\n/g,"<br>")+'</dd>':"")+(x.photos.length?'<dt>写真</dt><dd><div class="bph"></div><small style="color:var(--muted);font-size:11px">押すと大きく見られます</small></dd>':"")+'<dt>伝票</dt><dd>'+(k?"物品購入伝票":"持出伝票")+'　No.'+esc(x.id)+'</dd>';body.appendChild(dl);const ph=dl.querySelector(".bph");if(ph)bPhotos(ph,x);
     const act=document.createElement("div");act.className="kact";
     {const undone=x.rows.filter(r=>!r.done).map(r=>r.id);
       if(sel.size&&sel.size<undone.length)act.appendChild(bBtn("選んだ"+sel.size+"品を納品済にする",x,[...sel],c));
@@ -1292,6 +1299,15 @@ function bCard(x){const k=x.kind==="kounyu",c=document.createElement("div");c.cl
     body.appendChild(act)}
   h.addEventListener("click",()=>{body.hidden=!body.hidden;h.setAttribute("aria-expanded",String(!body.hidden));if(!body.hidden)paint()});
   return c}
+const BPH={};
+function bPhotos(box,x){x.photos.forEach(p=>{const t=document.createElement("button");t.type="button";t.className="bthumb";
+  if(p.type&&!/^image\//.test(p.type)){t.textContent=p.name;t.disabled=true;box.appendChild(t);return}
+  t.setAttribute("aria-label",p.name+"を大きく見る");t.textContent="読み込み中…";box.appendChild(t);
+  const show=u=>{t.textContent="";const im=document.createElement("img");im.src=u;im.alt=p.name;t.appendChild(im);t.onclick=()=>bZoom(u,p.name)};
+  if(BPH[p.key])return show(BPH[p.key]);
+  callApi0("buppinPhoto",[PIN,BPIN,x.kind,p.key]).then(u=>{BPH[p.key]=u;show(u)},()=>{t.textContent="読み込めませんでした"})})}
+function bZoom(u,name){let z=$("bzoom");if(!z){z=document.createElement("div");z.id="bzoom";z.setAttribute("role","dialog");z.setAttribute("aria-label","写真");z.innerHTML='<img alt=""><button type="button" aria-label="閉じる">×</button>';document.body.appendChild(z);z.addEventListener("click",()=>{z.hidden=true})}
+  const im=z.querySelector("img");im.src=u;im.alt=name;z.hidden=false}
 function bBtn(label,x,ids,card){const b=document.createElement("button");b.type="button";b.className="save";b.style.background=x.kind==="kounyu"?"#8e2f55":"#1f6f7c";b.textContent=label;
   b.addEventListener("click",()=>{b.disabled=true;
     google.script.run.withSuccessHandler(res=>{x.rev=res.revision;x.rows.forEach(r=>{if(ids.includes(r.id))r.done=true});
