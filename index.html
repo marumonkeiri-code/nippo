@@ -967,7 +967,8 @@ function openKakunin(){scr("kakunin");setTitle("工場長確認");$("menu").hidd
 
 // ---- 始業前点検 ----
 const TFORMS={
-  hatsudenki:{name:"発電機",master:"hatsu",items:["エンジンに異常はないか。","エンジンオイルは規定まであるか。","エンジンオイルの汚れはないか。","水漏れ、油漏れはないか。","Vベルトの緩みはないか。","取り付けボルトに緩みはないか。","各エレメントの損傷、汚れはないか。","バッテリー液量、ターミナルの異常はないか。","指定の回数を指示しているか。","周波数計が指定指示しているか。","規定電圧を指示しているか。","投入遮断操作がスムーズにできるか。","出力端子の緩みはないか。","ボデー、漏電リレーアースは取付けているか。","内部の整理、清掃は出来ているか。","外かんに損傷、変形などの異常はないか。","安全装置各部の作動はよいか。"]}
+  hatsudenki:{name:"発電機",master:"hatsu",items:["エンジンに異常はないか。","エンジンオイルは規定まであるか。","エンジンオイルの汚れはないか。","水漏れ、油漏れはないか。","Vベルトの緩みはないか。","取り付けボルトに緩みはないか。","各エレメントの損傷、汚れはないか。","バッテリー液量、ターミナルの異常はないか。","指定の回数を指示しているか。","周波数計が指定指示しているか。","規定電圧を指示しているか。","投入遮断操作がスムーズにできるか。","出力端子の緩みはないか。","ボデー、漏電リレーアースは取付けているか。","内部の整理、清掃は出来ているか。","外かんに損傷、変形などの異常はないか。","安全装置各部の作動はよいか。"]},
+  shovel:{name:"油圧ショベル",master:"yunboK",pick:"号車",items:["エンジンに異常はないか。","エンジンオイルは規定まであるか。","エンジンオイルの汚れはないか。","ラジエーターの水量、汚れはないか。","水漏れ、油漏れはないか。","電装品の作動状況はよいか。","計器類の作動状況はよいか。","燃料タンクの油量、及び漏れはないか。","作動油タンクの油量、及び漏れはないか。","油圧ホース、配管、継手の漏れ、損傷はないか。","コントロールレバーの作動状況はよいか。","油圧機器の作動状況、漏れはないか。","ブーム、アーム、バケット、他の給脂はないか。","機体全般の損傷汚れはないか。","バッテリー液量、ターミナルの異常はないか。","スイッチ・ライト類の作動状態はよいか。","バケット爪のゆるみ・摩耗・欠損はないか。"]}
 };
 let TKIND="hatsudenki",TCHK=new Set(),tStarted=false;
 function tStart(M){
@@ -989,7 +990,7 @@ function tRender(reset){
   document.querySelectorAll("#tkinds button[data-k]").forEach(b=>b.classList.toggle("on",b.dataset.k===TKIND));
   $("ttitle").textContent=f.name+"作業開始前点検表";
   $("tkiki").textContent=f.name;
-  const sel=$("t_no"),cur=reset?"":sel.value;sel.innerHTML="";sel.add(new Option("（"+f.name+"を選択　管理No.-型式）",""));(MASTER[f.master]||[]).forEach(n=>sel.add(new Option(n,n)));sel.value=cur;
+  const sel=$("t_no"),cur=reset?"":sel.value;sel.innerHTML="";sel.add(new Option("（"+f.name+"を選択　"+(f.pick||"管理No.-型式")+"）",""));(MASTER[f.master]||[]).forEach(n=>Array.isArray(n)?sel.add(new Option(n[1],n[0])):sel.add(new Option(n,n)));sel.value=cur;
   if(reset){TCHK=new Set();$("t_biko").value=""}
   const box=$("titems");box.innerHTML="";
   f.items.forEach((t,i)=>{const b=document.createElement("button");b.type="button";b.className="titem";b.dataset.t=t;
