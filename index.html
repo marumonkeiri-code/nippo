@@ -333,6 +333,21 @@ body{padding-top:0}
 .tph button{position:absolute;top:4px;right:4px;width:26px;height:26px;border-radius:50%;border:0;background:rgba(0,0,0,.6);color:#fff;font-size:15px;line-height:26px;padding:0;cursor:pointer}
 .tphadd{width:88px;height:88px;border-radius:10px;border:2px dashed var(--rule);background:none;color:var(--muted);font:inherit;font-size:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer}
 .tphadd svg{width:26px;height:26px}
+/* 有給・伝票 */
+.mbtn.yukyu .mi{background:linear-gradient(145deg,#8a6fd6,#5b3fae)}
+.mbtn.mochi .mi{background:linear-gradient(145deg,#3aa0b0,#1f6f7c)}
+.mbtn.kounyu .mi{background:linear-gradient(145deg,#c2577f,#8e2f55)}
+#yukyu,#denpyo{display:flex;flex-direction:column;gap:10px}
+#yukyu[hidden],#denpyo[hidden]{display:none!important}
+#yukyu .title h1{color:#5b3fae;font-size:18px;letter-spacing:.08em}
+#denpyo .title h1{color:var(--dcol,#1f6f7c);font-size:18px;letter-spacing:.08em}
+.yrow{display:flex;align-items:center;border-bottom:1px solid var(--hair)}
+.yrow .v{flex:1;min-width:0}
+.yx{flex:none;width:44px;height:44px;border:0;background:none;color:var(--muted);font-size:20px;cursor:pointer}
+.yadd{padding:8px 10px;border-bottom:1px solid var(--hair)}
+.ditem{border-bottom:2px solid var(--rule)}
+.dhead{display:flex;justify-content:space-between;align-items:center;padding:0 0 0 10px;background:var(--head);font-size:12px;color:var(--muted);font-weight:700}
+#yukyu textarea,#denpyo textarea{min-height:70px}
 </style>
 </head><body>
 <header class="appbar"><div class="in"><svg viewBox="0 0 100 100" aria-hidden="true" class=""><defs><mask id="mkA"><rect width="100" height="100" fill="#fff"/><rect x="45" y="7" width="10" height="6.5" fill="#000"/><rect x="46.5" y="75" width="7" height="18" fill="#000"/></mask></defs><g mask="url(#mkA)" fill="currentColor" stroke="currentColor"><circle cx="50" cy="50" r="47" fill="none" stroke-width="3.6"/><circle cx="50" cy="50" r="35" fill="none" stroke-width="14"/><rect x="42.5" y="19" width="15" height="12" rx="5" stroke="none"/></g></svg><span><span class="co">丸門建設</span><span class="ttl" id="apptitle">日報・報告</span></span></div></header>
@@ -382,6 +397,9 @@ body{padding-top:0}
     <button type="button" class="mbtn nippo" id="goNippo"><span class="mi">日報</span><span><b>作業日報</b><small>その日の作業時間・出来高・人員を入力</small></span></button>
     <button type="button" class="mbtn jiko" id="goJiko"><span class="mi">事故</span><span><b>事故・トラブル報告</b><small>事故や機械の損傷があったときに報告</small></span></button>
     <button type="button" class="mbtn tenken" id="goTenken"><span class="mi">点検</span><span><b>始業前点検</b><small>機械の作業開始前点検表を入力</small></span></button>
+    <button type="button" class="mbtn yukyu" id="goYukyu"><span class="mi">有給</span><span><b>有給休暇願い</b><small>有給を取る日と理由を届け出る</small></span></button>
+    <button type="button" class="mbtn mochi" id="goMochi"><span class="mi">持出</span><span><b>持出伝票</b><small>現場に持ち出す物品を記録</small></span></button>
+    <button type="button" class="mbtn kounyu" id="goKounyu"><span class="mi">購入</span><span><b>物品購入伝票</b><small>買った物品・単価・発注先を記録</small></span></button>
     <button type="button" class="mbtn kakunin" id="goKakunin"><span class="mi">確認</span><span><b>工場長確認</b><small>その日の日報を見て確認のチェックを付ける</small></span></button>
   </div>
 
@@ -421,6 +439,46 @@ body{padding-top:0}
       <button type="button" class="sub" id="lclose" style="margin-left:auto">入力画面に戻る</button>
     </div>
     <div id="litems"><p class="lmsg">号機No.を選んでください。</p></div>
+  </div>
+
+  <div id="yukyu" hidden>
+    <div class="topbar"><button type="button" class="backbtn" id="yback">← メニュー</button></div>
+    <div class="sheet">
+      <div class="title"><h1>有給休暇願い</h1><span>丸門建設株式会社</span></div>
+      <div class="secth">名前<span class="req">必須</span></div>
+      <div id="y_names"></div>
+      <div class="yadd"><button type="button" class="sub" id="y_addname">＋ 人を追加</button></div>
+      <div class="secth">有給を取る日<span class="req">必須</span></div>
+      <div id="y_dates"></div>
+      <div class="yadd"><button type="button" class="sub" id="y_adddate">＋ 日を追加</button></div>
+      <div class="secth">理由</div>
+      <div class="v"><textarea id="y_riyu" aria-label="理由" placeholder="例：私用のため"></textarea></div>
+    </div>
+    <div id="yconfirm" class="kconfirm" hidden></div>
+  </div>
+
+  <div id="denpyo" hidden>
+    <div class="topbar"><button type="button" class="backbtn" id="dback">← メニュー</button></div>
+    <div class="sheet">
+      <div class="title"><h1 id="dtitle">持出伝票</h1><span>丸門建設株式会社</span></div>
+      <div class="tr r-2">
+        <div class="td"><div class="th">日付</div><div class="v"><input type="date" id="d_date" aria-label="日付"></div></div>
+        <div class="td"><div class="th">名前<span class="req">必須</span></div><div class="v"><select id="d_name" aria-label="名前"></select></div></div>
+      </div>
+      <div class="tr"><div class="td"><div class="th">現場名<span class="req">必須</span></div><div class="v" style="flex-direction:column;align-items:stretch">
+        <input type="search" id="d_kojiq" placeholder="ここに打つと絞り込めます" aria-label="現場名の絞り込み" style="font-size:14px;padding:6px 8px;border-bottom:1px dotted var(--hair)">
+        <select id="d_koji" aria-label="現場名"></select></div></div></div>
+      <div class="tr"><div class="td"><div class="th">No.<span class="req">必須</span></div><div class="v"><select id="d_no" aria-label="No."></select></div></div></div>
+      <div class="secth">品物<span class="req">必須</span></div>
+      <div id="d_items"></div>
+      <div class="yadd"><button type="button" class="sub" id="d_additem">＋ 品物を追加</button></div>
+      <div class="secth" id="d_cmth">その他・コメント</div>
+      <div class="v"><textarea id="d_cmt" aria-label="コメント"></textarea></div>
+      <div class="secth">写真（3枚まで・レシートなど。なくても大丈夫です）</div>
+      <div class="tphotos" id="dphotos"></div>
+      <input type="file" id="d_file" accept="image/*" multiple hidden>
+    </div>
+    <div id="dconfirm" class="kconfirm" hidden></div>
   </div>
 
   <div id="tenken" hidden>
@@ -553,6 +611,14 @@ body{padding-top:0}
   <div class="sum" id="sumline"></div>
   <button type="button" class="save" id="save">保存</button>
 </div></div>
+<div class="savebar" id="ysavebar" hidden><div class="in">
+  <div class="sum">kintoneの「有給休暇願い」に登録します</div>
+  <button type="button" class="save" id="ysave" style="background:#5b3fae">届け出る</button>
+</div></div>
+<div class="savebar" id="dsavebar" hidden><div class="in">
+  <div class="sum" id="dsum">kintoneの「持出伝票」に登録します</div>
+  <button type="button" class="save" id="dsave" style="background:#1f6f7c">登録する</button>
+</div></div>
 <div class="savebar" id="tsavebar" hidden><div class="in">
   <div class="sum" id="tsum">チェックした項目を記録します</div>
   <button type="button" class="save" id="tsave" style="background:#b06a10">点検を記録する</button>
@@ -569,7 +635,7 @@ body{padding-top:0}
 // ---- Apps Script（kintoneとのやり取り）を呼ぶ ----
 const API="https://script.google.com/macros/s/AKfycbz3XtpAENLFsbaxg5d2NkTzvQRbgPChqxP7kFwWoaKdVQHPw2h0E89fyx4bvzGOTRgV-w/exec";
 let LOADN=0,LOADT=null;
-const LOADMSG={getMaster:"データを読み込んでいます…",saveNippo:"日報を保存しています…",updateNippo:"日報を保存しています…",saveJiko:"報告を送っています…",listKakunin:"日報を読み込んでいます…",kakuninNippo:"確認のチェックを付けています…",saveTenken:"点検を記録しています…",listNippo:"日報の一覧を読み込んでいます…",getNippo:"日報を読み込んでいます…"};
+const LOADMSG={getMaster:"データを読み込んでいます…",saveNippo:"日報を保存しています…",updateNippo:"日報を保存しています…",saveJiko:"報告を送っています…",listKakunin:"日報を読み込んでいます…",kakuninNippo:"確認のチェックを付けています…",saveTenken:"点検を記録しています…",saveYukyu:"有給休暇願いを送っています…",saveDenpyo:"伝票を登録しています…",listNippo:"日報の一覧を読み込んでいます…",getNippo:"日報を読み込んでいます…"};
 function loadOn(fn){LOADN++;document.getElementById("loadmsg").textContent=LOADMSG[fn]||"読み込み中…";clearTimeout(LOADT);LOADT=setTimeout(()=>{if(LOADN>0)document.getElementById("loader").hidden=false},fn==="getMaster"?0:250)}
 function loadOff(){LOADN=Math.max(0,LOADN-1);if(!LOADN){clearTimeout(LOADT);document.getElementById("loader").hidden=true}}
 function callApi(fn,args){loadOn(fn);return callApi0(fn,args).then(r=>{loadOff();return r},e=>{loadOff();throw e})}
@@ -611,13 +677,19 @@ function lsGet(k){try{return localStorage.getItem(k)||""}catch(e){return ""}}
 function lsSet(k,v){try{localStorage.setItem(k,v)}catch(e){}}
 function setSel(s,v){v=v==null?"":String(v);if(v&&![...s.options].some(o=>o.value===v))s.add(new Option(v.trim(),v));s.value=v;if(s._btn)paintNB(s)}
 // ---- 名前は検索して選ぶ ----
-let PSEL=null;
+let PSEL=null,PLIST=null,PFREE=false;
+const nz=t=>String(t||"").normalize("NFKC").replace(/[\s\u3000]/g,"").toLowerCase().replace(/[\u3041-\u3096]/g,c=>String.fromCharCode(c.charCodeAt(0)+96));
 function paintNB(s){const b=s._btn;b.innerHTML="";const t=document.createElement("span");if(s.value){t.textContent=s.value}else{t.textContent="（タップして選ぶ）";t.className="ph"}b.appendChild(t)}
-function nameBtn(s,label){s.hidden=true;const b=document.createElement("button");b.type="button";b.className="namebtn";b.setAttribute("aria-label",label);s._btn=b;s.after(b);paintNB(s);
-  b.addEventListener("click",()=>openPicker(s,label))}
-function openPicker(s,label){PSEL=s;$("ptitle").textContent=label;$("pq").value="";drawPicker("");$("picker").hidden=false;setTimeout(()=>$("pq").focus(),50)}
+function nameBtn(s,label,list,free){s.hidden=true;const b=document.createElement("button");b.type="button";b.className="namebtn";b.setAttribute("aria-label",label);s._btn=b;s.after(b);paintNB(s);
+  b.addEventListener("click",()=>openPicker(s,label,list,free))}
+function openPicker(s,label,list,free){PSEL=s;PLIST=list?(typeof list==="function"?list():list):null;PFREE=!!free;$("ptitle").textContent=label;$("pq").value="";drawPicker("");$("picker").hidden=false;setTimeout(()=>$("pq").focus(),50)}
 function drawPicker(q){const box=$("plist");box.innerHTML="";
   const c=document.createElement("button");c.type="button";c.className="clear";c.textContent="（空にする）";c.addEventListener("click",()=>pick(""));box.appendChild(c);
+  if(PLIST){const qq=nz(q),all=PLIST.filter(x=>!qq||nz(x[0]+(x[1]||"")).includes(qq)),hit=all.slice(0,150);
+    hit.forEach(x=>{const b=document.createElement("button");b.type="button";b.textContent=x[0];b.addEventListener("click",()=>pick(x[0]));box.appendChild(b)});
+    if(all.length>hit.length){const p=document.createElement("p");p.className="lmsg";p.textContent="ほか"+(all.length-hit.length)+"件。上に名前の一部を打って絞り込んでください。";box.appendChild(p)}
+    if(PFREE&&q&&!PLIST.some(x=>nz(x[0])===nz(q))){const a=document.createElement("button");a.type="button";a.textContent="＋「"+q+"」をリストに新しく追加して使う";a.style.color="var(--accent)";a.addEventListener("click",()=>pick(q));box.appendChild(a)}
+    if(!all.length&&!PFREE){const p=document.createElement("p");p.className="lmsg";p.textContent="見つかりません。";box.appendChild(p)}return}
   const hit=NAMES.filter(n=>!q||n.includes(q));
   hit.forEach(n=>{const b=document.createElement("button");b.type="button";b.textContent=n;b.addEventListener("click",()=>pick(n));box.appendChild(b)});
   if(!hit.length){const p=document.createElement("p");p.className="lmsg";p.textContent="見つかりません。名前の一部（名字だけなど）で探してください。";box.appendChild(p)}}
@@ -1053,23 +1125,100 @@ function tSave(force){
       $("tenken").hidden=true;$("tsavebar").hidden=true;$("done").hidden=false;window.scrollTo(0,0)})
     .withFailureHandler(err=>{$("tsave").disabled=false;tMsg("<b>記録できませんでした</b><br>"+esc(err.message||String(err)))})
     .saveTenken(PIN,TKIND,r)}
+// ---- 有給休暇願い・持出伝票・物品購入伝票 ----
+const todayJ=()=>new Date(Date.now()+9*3600e3).toISOString().slice(0,10);
+function boxMsg(id,html){const b=$(id);b.innerHTML=html;b.hidden=false;b.scrollIntoView({behavior:"smooth",block:"center"})}
+function doneShow(h,msg,id,hide){$("doneh").textContent=h;$("donemsg").textContent=msg;$("doneid").textContent=id;hide.forEach(i=>$(i).hidden=true);$("done").hidden=false;window.scrollTo(0,0)}
+function delBtn(label,fn){const x=document.createElement("button");x.type="button";x.className="yx";x.textContent="×";x.setAttribute("aria-label",label);x.addEventListener("click",fn);return x}
+let yStarted=false;
+function yNameRow(v){const row=document.createElement("div");row.className="yrow";const w=document.createElement("div");w.className="v";const s=document.createElement("select");s.setAttribute("aria-label","名前");
+  s.add(new Option("",""));NAMES.forEach(n=>s.add(new Option(n,n)));w.appendChild(s);row.appendChild(w);$("y_names").appendChild(row);nameBtn(s,"名前");if(v)setSel(s,v);
+  row.appendChild(delBtn("この人を外す",()=>{if($("y_names").children.length>1)row.remove();else setSel(s,"")}))}
+function yDateRow(v){const row=document.createElement("div");row.className="yrow";const w=document.createElement("div");w.className="v";const i=document.createElement("input");i.type="date";i.setAttribute("aria-label","有給を取る日");i.value=v||"";
+  w.appendChild(i);row.appendChild(w);row.appendChild(delBtn("この日を外す",()=>{if($("y_dates").children.length>1)row.remove();else i.value=""}));$("y_dates").appendChild(row);return i}
+function startYukyu(M){if(!NAMES.length)NAMES=M.names;yNameRow(lsGet("yname"));yDateRow(todayJ());
+  $("y_addname").addEventListener("click",()=>yNameRow(""));$("y_adddate").addEventListener("click",()=>{const l=[...document.querySelectorAll("#y_dates input")].pop();let d=l&&l.value?new Date(l.value+"T12:00:00"):null;if(d)d.setDate(d.getDate()+1);yDateRow(d?d.toISOString().slice(0,10):"").focus()});
+  $("ysave").addEventListener("click",ySave);$("yukyu").addEventListener("input",()=>{$("yconfirm").hidden=true})}
+function ySave(){const names=[...new Set([...document.querySelectorAll("#y_names select")].map(s=>s.value).filter(Boolean))];
+  const dates=[...new Set([...document.querySelectorAll("#y_dates input")].map(i=>i.value).filter(Boolean))].sort();const riyu=$("y_riyu").value.trim();
+  const errs=[];if(!names.length)errs.push("名前を選んでください。");if(!dates.length)errs.push("有給を取る日を入れてください。");
+  if(errs.length)return boxMsg("yconfirm","<b>届け出できません。次を直してください</b><br>"+errs.map(esc).join("<br>"));
+  $("ysave").disabled=true;
+  google.script.run.withSuccessHandler(ids=>{$("ysave").disabled=false;lsSet("yname",names[0]);
+      doneShow("届け出ました","kintoneの有給休暇願いに登録しました（"+dates.length+"日分）",ids,["yukyu","ysavebar"])})
+    .withFailureHandler(err=>{$("ysave").disabled=false;boxMsg("yconfirm","<b>届け出できませんでした</b><br>"+esc(err.message||String(err)))})
+    .saveYukyu(PIN,{名前:names,日付:dates,理由:riyu})}
+function openYukyu(){scr("yukyu");setTitle("有給休暇願い");$("menu").hidden=true;$("yukyu").hidden=false;$("ysavebar").hidden=false;if(!yStarted){yStarted=true;startYukyu(MASTER)}window.scrollTo(0,0)}
+
+function makePhotos(boxId,fileId){let L=[];const box=$(boxId),inp=$(fileId);
+  function draw(){box.innerHTML="";L.forEach((p,i)=>{const d=document.createElement("div");d.className="tph";const im=document.createElement("img");im.alt="写真"+(i+1);im.src="data:image/jpeg;base64,"+p.data;d.appendChild(im);
+      const x=document.createElement("button");x.type="button";x.textContent="×";x.setAttribute("aria-label","写真"+(i+1)+"を外す");x.addEventListener("click",()=>{L.splice(i,1);draw()});d.appendChild(x);box.appendChild(d)});
+    if(L.length<3){const a=document.createElement("button");a.type="button";a.className="tphadd";a.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h3l2-3h8l2 3h3v12H3z"/><circle cx="12" cy="13" r="4"/></svg>撮る・選ぶ';a.addEventListener("click",()=>inp.click());box.appendChild(a)}}
+  inp.addEventListener("change",async e=>{const fs=[...e.target.files];e.target.value="";for(const f of fs){if(L.length>=3)break;try{const data=await tShrink(f);const d=new Date(Date.now()+9*3600e3).toISOString().slice(0,19).replace(/[-:T]/g,"");L.push({name:"写真_"+d+"_"+(L.length+1)+".jpg",type:"image/jpeg",data})}catch(err){}}draw()});
+  draw();return{get:()=>L.map(p=>({name:p.name,type:p.type,data:p.data})),reset:()=>{L=[];draw()}}}
+const DUNITS=["つ","コ","枚","kg","㍍","㍑","本","組","巻","箱","式","台","ロール","セット"],DNOS=["1","3","5","6","7","8","11","13","16","21","23"];
+const DK={mochi:{name:"持出伝票",col:"#1f6f7c",cmt:"その他・コメント",need:false},kounyu:{name:"物品購入伝票",col:"#8e2f55",cmt:"理由・原因",need:true}};
+let DKIND="",dStarted=false,DPH=null;
+function dItemRow(){const k=DKIND==="kounyu";const c=document.createElement("div");c.className="ditem";
+  c.innerHTML='<div class="dhead"><span class="dn"></span></div>'+
+    '<div class="tr"><div class="td"><div class="th">物品名<span class="req">必須</span></div><div class="v"><select class="d_hin" aria-label="物品名"></select></div></div></div>'+
+    '<div class="tr r-2"><div class="td"><div class="th">個数<span class="req">必須</span></div><div class="v"><input type="text" inputmode="decimal" class="d_kosu" aria-label="個数"></div></div>'+
+    '<div class="td"><div class="th">単位<span class="req">必須</span></div><div class="v"><select class="d_tani" aria-label="単位"></select></div></div></div>'+
+    (k?'<div class="tr r-2"><div class="td"><div class="th">単価<span class="req">必須</span></div><div class="v"><input type="text" inputmode="numeric" class="d_tanka" placeholder="円" aria-label="単価"></div></div>'+
+      '<div class="td"><div class="th">納品日</div><div class="v"><input type="date" class="d_nohin" aria-label="納品日"></div></div></div>'+
+      '<div class="tr"><div class="td"><div class="th">発注先</div><div class="v"><select class="d_hacchu" aria-label="発注先"></select></div></div></div>':'');
+  $("d_items").appendChild(c);
+  c.querySelector(".dhead").appendChild(delBtn("この品物を消す",()=>{if($("d_items").children.length>1){c.remove();dNum()}}));
+  const h=c.querySelector(".d_hin");h.add(new Option("",""));nameBtn(h,"物品名",()=>MASTER.buppin||[],true);
+  const u=c.querySelector(".d_tani");u.add(new Option("（選ぶ）",""));DUNITS.forEach(x=>u.add(new Option(x,x)));
+  if(k){const hc=c.querySelector(".d_hacchu");hc.add(new Option("",""));nameBtn(hc,"発注先",()=>(MASTER.hacchu||[]).map(n=>[n,""]),true)}
+  dNum()}
+function dNum(){[...$("d_items").children].forEach((c,i)=>c.querySelector(".dn").textContent="品物 "+(i+1))}
+function dStart(M){if(!NAMES.length)NAMES=M.names;
+  const s=$("d_name");s.add(new Option("",""));M.names.forEach(n=>s.add(new Option(n,n)));nameBtn(s,"名前");if(lsGet("dname"))setSel(s,lsGet("dname"));
+  function fill(q){const s=$("d_koji"),cur=s.value;s.innerHTML="";s.add(new Option("（現場を選択）",""));
+    M.koji.forEach(k=>{if(!q||k[1].includes(q)||k[2].includes(q))s.add(new Option(k[1],k[1]))});s.value=cur;if(s.value!==cur)s.value=""}
+  $("d_kojiq").addEventListener("input",e=>fill(e.target.value.trim()));fill("");
+  const n=$("d_no");n.add(new Option("（選ぶ）",""));DNOS.forEach(x=>n.add(new Option(x,x)));if(lsGet("dno"))n.value=lsGet("dno");
+  DPH=makePhotos("dphotos","d_file");
+  $("d_additem").addEventListener("click",()=>dItemRow());$("dsave").addEventListener("click",dSave);$("denpyo").addEventListener("input",()=>{$("dconfirm").hidden=true})}
+function dReset(){const f=DK[DKIND];$("dtitle").textContent=f.name;$("denpyo").style.setProperty("--dcol",f.col);$("dsave").style.background=f.col;$("dsum").textContent="kintoneの「"+f.name+"」に登録します";
+  $("d_cmth").innerHTML=esc(f.cmt)+(f.need?'<span class="req">必須</span>':"");$("d_cmt").placeholder=f.need?"なぜ買ったか（壊れた・なくなった など）":"";
+  $("d_date").value=todayJ();$("d_items").innerHTML="";dItemRow();$("d_cmt").value="";DPH.reset();$("dconfirm").hidden=true}
+function dSave(){const k=DKIND==="kounyu",f=DK[DKIND];const q=(c,s)=>{const e=c.querySelector(s);return e?e.value.trim():""};
+  const rows=[...$("d_items").children].map(c=>({物品名:q(c,".d_hin"),個数:q(c,".d_kosu").replace(/[^0-9.]/g,""),単位:q(c,".d_tani"),単価:q(c,".d_tanka").replace(/[^0-9]/g,""),納品日:q(c,".d_nohin"),発注先:q(c,".d_hacchu")}))
+    .filter(r=>r.物品名||r.個数||r.単価);
+  const r={日付:$("d_date").value,名前:$("d_name").value,現場名:$("d_koji").value,No:$("d_no").value,コメント:$("d_cmt").value.trim(),品物:rows,写真:DPH.get()};
+  const errs=[];if(!r.名前)errs.push("名前を選んでください。");if(!r.現場名)errs.push("現場名を選んでください。");if(!r.No)errs.push("No.を選んでください。");if(!rows.length)errs.push("品物を入れてください。");
+  rows.forEach((x,i)=>{const l=[];if(!x.物品名)l.push("物品名");if(!x.個数)l.push("個数");if(!x.単位)l.push("単位");if(k&&!x.単価)l.push("単価");if(l.length)errs.push("品物"+(i+1)+"の"+l.join("・")+"を入れてください。")});
+  if(f.need&&!r.コメント)errs.push(f.cmt+"を書いてください。");
+  if(errs.length)return boxMsg("dconfirm","<b>登録できません。次を直してください</b><br>"+errs.map(esc).join("<br>"));
+  $("dsave").disabled=true;
+  google.script.run.withSuccessHandler(res=>{$("dsave").disabled=false;lsSet("dname",r.名前);lsSet("dno",r.No);
+      const add=[].concat(res.added||[],res.addedH||[]);
+      doneShow("登録しました","kintoneの"+f.name+"に登録しました"+(add.length?"。リストになかった「"+add.join("」「")+"」を新しく追加しました":""),res.id,["denpyo","dsavebar"]);
+      (res.added||[]).forEach(n=>{if(MASTER.buppin)MASTER.buppin.push([n,""])});(res.addedH||[]).forEach(n=>{if(MASTER.hacchu)MASTER.hacchu.push(n)})})
+    .withFailureHandler(err=>{$("dsave").disabled=false;boxMsg("dconfirm","<b>登録できませんでした</b><br>"+esc(err.message||String(err)))})
+    .saveDenpyo(PIN,DKIND,r)}
+function openDenpyo(kind){scr(kind);setTitle(DK[kind].name);$("menu").hidden=true;$("denpyo").hidden=false;$("dsavebar").hidden=false;
+  if(!dStarted){dStarted=true;dStart(MASTER)}if(DKIND!==kind){DKIND=kind;dReset()}window.scrollTo(0,0)}
 function openTenken(){scr("tenken");setTitle("始業前点検");$("menu").hidden=true;$("tenken").hidden=false;$("tsavebar").hidden=false;if(!tStarted){tStarted=true;tStart(MASTER)}window.scrollTo(0,0)}
 // ---- 画面の切り替え ----
 let MASTER=null,nippoStarted=false,jikoStarted=false;
 function scr(k){try{sessionStorage.setItem("screen",k)}catch(e){}}
 function setTitle(t){const e=document.getElementById("apptitle");if(e)e.textContent=t}
-function showMenu(){scr("");setTitle("日報・報告");["app","savebar","jiko","jsavebar","kakunin","ksavebar","tenken","tsavebar","listbox","done"].forEach(i=>$(i).hidden=true);$("menu").hidden=false;window.scrollTo(0,0)}
+function showMenu(){scr("");setTitle("日報・報告");["app","savebar","jiko","jsavebar","kakunin","ksavebar","tenken","tsavebar","yukyu","ysavebar","denpyo","dsavebar","listbox","done"].forEach(i=>$(i).hidden=true);$("menu").hidden=false;window.scrollTo(0,0)}
 function openNippo(){scr("nippo");setTitle("作業日報");$("menu").hidden=true;$("app").hidden=false;$("savebar").hidden=false;if(!nippoStarted){nippoStarted=true;start(MASTER)}window.scrollTo(0,0)}
 function openJiko(){scr("jiko");setTitle("事故・トラブル報告");$("menu").hidden=true;$("jiko").hidden=false;$("jsavebar").hidden=false;if(!jikoStarted){jikoStarted=true;startJiko(MASTER)}window.scrollTo(0,0)}
 (function(){const d=new Date();const w="日月火水木金土"[d.getDay()];$("today").textContent=(d.getMonth()+1)+"月"+d.getDate()+"日（"+w+"）"})();
-$("goNippo").addEventListener("click",openNippo);$("goKakunin").addEventListener("click",openKakunin);$("goTenken").addEventListener("click",openTenken);$("tback").addEventListener("click",showMenu);$("kback").addEventListener("click",showMenu);$("goJiko").addEventListener("click",openJiko);
+$("goNippo").addEventListener("click",openNippo);$("goKakunin").addEventListener("click",openKakunin);$("goTenken").addEventListener("click",openTenken);$("tback").addEventListener("click",showMenu);$("kback").addEventListener("click",showMenu);$("goJiko").addEventListener("click",openJiko);$("goYukyu").addEventListener("click",openYukyu);$("goMochi").addEventListener("click",()=>openDenpyo("mochi"));$("goKounyu").addEventListener("click",()=>openDenpyo("kounyu"));$("yback").addEventListener("click",showMenu);$("dback").addEventListener("click",showMenu);
 $("nback").addEventListener("click",showMenu);$("jback").addEventListener("click",showMenu);
 function reload(){location.reload()}
 function login(pin){
   $("pinmsg").textContent="読み込み中…";
   google.script.run.withSuccessHandler(M=>{PIN=pin;lsSet(LS,pin);MASTER=M;$("pinbox").hidden=true;
       let s="";try{s=sessionStorage.getItem("screen")||""}catch(e){}
-      if(s==="nippo")openNippo();else if(s==="jiko")openJiko();else if(s==="kakunin")openKakunin();else if(s==="tenken")openTenken();else showMenu()})
+      if(s==="nippo")openNippo();else if(s==="jiko")openJiko();else if(s==="kakunin")openKakunin();else if(s==="tenken")openTenken();else if(s==="yukyu")openYukyu();else if(s==="mochi"||s==="kounyu")openDenpyo(s);else showMenu()})
     .withFailureHandler(err=>{$("pinmsg").textContent=err.message||String(err);$("pinbox").hidden=false})
     .getMaster(pin);
 }
