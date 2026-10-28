@@ -1274,20 +1274,19 @@ function bCard(x){const k=x.kind==="kounyu",c=document.createElement("div");c.cl
   const left=x.rows.filter(r=>!r.done).length,sel=new Set();
   const yen=n=>"¥"+Number(n||0).toLocaleString("ja-JP");
   const total=k?x.rows.reduce((s,r)=>s+(Number(r.kosu)||0)*(Number(r.tanka)||0),0):0;
-  c.innerHTML='<button type="button" class="khead" aria-expanded="false"><span class="bkind '+x.kind+'">'+(k?"購入":"持出")+'<small>'+esc(bMD(x.date))+'</small></span><span class="kmain"><b>'+esc(x.koji||"（現場なし）")+'</b><span>'+esc(x.name)+(x.no?"　No."+esc(x.no):"")+"　"+x.rows.length+"品"+(k?"　"+yen(total):"")+'</span></span><span class="kst no">'+(k?"未処理":"残り"+left)+'</span></button><div class="kbody" hidden></div>';
+  c.innerHTML='<button type="button" class="khead" aria-expanded="false"><span class="bkind '+x.kind+'">'+(k?"購入":"持出")+'<small>'+esc(bMD(x.date))+'</small></span><span class="kmain"><b>'+esc(x.koji||"（現場なし）")+'</b><span>'+esc(x.name)+(x.no?"　No."+esc(x.no):"")+"　"+x.rows.length+"品"+(k?"　"+yen(total):"")+'</span></span><span class="kst no">残り'+left+'</span></button><div class="kbody" hidden></div>';
   const h=c.querySelector(".khead"),body=c.querySelector(".kbody");
   function paint(){body.innerHTML="";
     const rows=document.createElement("div");
     x.rows.forEach(r=>{const d=document.createElement("div");d.className="brow"+(r.done?" done":"")+(sel.has(r.id)?" sel":"");
-      const sub=k?[r.tanka?"単価"+yen(r.tanka):"",r.hacchu,r.nohin?"納品"+bMD(r.nohin):""].filter(Boolean).join("　"):(r.done?"納品済":"")+(r.kaishu?'<span class="btag">回収</span>':"");
-      d.innerHTML='<span class="t">'+esc(r.hin)+(sub?"<small>"+(k?esc(sub):sub)+"</small>":"")+'</span><span class="q">'+esc(r.kosu)+esc(r.tani)+'</span>'+(k?"":'<button type="button" class="b" aria-label="'+esc(r.hin)+'を選ぶ">'+CHK+'</button>');
-      if(!k&&!r.done)d.querySelector(".b").addEventListener("click",()=>{sel.has(r.id)?sel.delete(r.id):sel.add(r.id);paint()});
+      const sub=esc([r.done?"納品済":"",k&&r.tanka?"単価"+yen(r.tanka):"",k?r.hacchu:"",k&&r.nohin?"納品"+bMD(r.nohin):""].filter(Boolean).join("　"))+(r.kaishu?'<span class="btag">回収</span>':"");
+      d.innerHTML='<span class="t">'+esc(r.hin)+(sub?"<small>"+sub+"</small>":"")+'</span><span class="q">'+esc(r.kosu)+esc(r.tani)+'</span><button type="button" class="b" aria-label="'+esc(r.hin)+'を選ぶ">'+CHK+'</button>';
+      if(!r.done)d.querySelector(".b").addEventListener("click",()=>{sel.has(r.id)?sel.delete(r.id):sel.add(r.id);paint()});
       rows.appendChild(d)});
     body.appendChild(rows);
     const dl=document.createElement("dl");dl.innerHTML=(x.cmt?'<dt>'+(k?"理由・原因":"コメント")+'</dt><dd>'+esc(x.cmt).replace(/\n/g,"<br>")+'</dd>':"")+(x.photos?'<dt>写真</dt><dd>'+x.photos+'枚（kintoneで見られます）</dd>':"")+'<dt>伝票</dt><dd>'+(k?"物品購入伝票":"持出伝票")+'　No.'+esc(x.id)+'</dd>';body.appendChild(dl);
     const act=document.createElement("div");act.className="kact";
-    if(k){act.appendChild(bBtn("処理済みにする",x,[],c))}
-    else{const undone=x.rows.filter(r=>!r.done).map(r=>r.id);
+    {const undone=x.rows.filter(r=>!r.done).map(r=>r.id);
       if(sel.size&&sel.size<undone.length)act.appendChild(bBtn("選んだ"+sel.size+"品を納品済にする",x,[...sel],c));
       act.appendChild(bBtn("全部納品済にする",x,undone,c))}
     body.appendChild(act)}
