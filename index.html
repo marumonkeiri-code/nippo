@@ -362,15 +362,15 @@ body{padding-top:0}
 .bkind{flex:none;min-width:46px;height:46px;border-radius:12px;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700;font-size:13px;line-height:1.1}
 .bkind small{font-size:10px;font-weight:400;margin-top:2px;opacity:.9}
 .bkind.mochi{background:#1f6f7c}.bkind.kounyu{background:#8e2f55}
-.brow{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--hair)}
-.brow:last-child{border-bottom:0}
-.brow .t{flex:1;min-width:0;overflow-wrap:anywhere}
-.brow .t small{display:block;color:var(--muted);font-size:12px}
-.brow .q{flex:none;font-variant-numeric:tabular-nums;font-weight:700}
-.brow .b{flex:none;width:32px;height:32px;border-radius:50%;border:2px solid var(--rule);display:flex;align-items:center;justify-content:center;color:transparent;background:none;cursor:pointer;padding:0}
-.brow.sel .b{background:#2e9a6b;border-color:#2e9a6b;color:#fff}
-.brow.done{opacity:.5}
-.brow.done .b{border-style:dashed;cursor:default}
+#buppin .bpr{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--hair)}
+#buppin .bpr:last-child{border-bottom:0}
+#buppin .bpr .t{flex:1;min-width:0;overflow-wrap:anywhere}
+#buppin .bpr .t small{display:block;color:var(--muted);font-size:12px}
+#buppin .bpr .q{flex:none;font-variant-numeric:tabular-nums;font-weight:700}
+#buppin .bpr .b{flex:none;width:32px;height:32px;border-radius:50%;border:2px solid var(--rule);display:flex;align-items:center;justify-content:center;color:transparent;background:none;cursor:pointer;padding:0}
+#buppin .bpr.sel .b{background:#2e9a6b;border-color:#2e9a6b;color:#fff}
+#buppin .bpr.done{opacity:.5}
+#buppin .bpr.done .b{border-style:dashed;cursor:default}
 .btag{font-size:11px;padding:1px 6px;border-radius:6px;background:var(--tint);color:var(--accent);margin-left:4px;font-weight:400}
 #buppin .bph{display:flex;flex-wrap:wrap;gap:8px}
 .bthumb{width:88px;height:88px;border-radius:10px;border:1px solid var(--hair);background:var(--head);color:var(--muted);font:inherit;font-size:11px;padding:0;overflow:hidden;cursor:zoom-in;display:flex;align-items:center;justify-content:center;text-align:center;overflow-wrap:anywhere}
@@ -379,6 +379,26 @@ body{padding-top:0}
 #bzoom[hidden]{display:none}
 #bzoom img{max-width:100%;max-height:100%;object-fit:contain}
 #bzoom button{position:absolute;top:calc(12px + env(safe-area-inset-top));right:12px;width:44px;height:44px;border-radius:50%;border:0;background:rgba(255,255,255,.25);color:#fff;font-size:24px;cursor:pointer}
+/* 人員手配帳 */
+.mbtn.tehai .mi{background:linear-gradient(145deg,#5a8f3c,#3a6624)}
+#tehai{display:flex;flex-direction:column;gap:10px}
+#tehai[hidden],#hpinbox[hidden],#hmainbox[hidden]{display:none!important}
+#hpinbox{background:var(--sheet);border:1px solid var(--hair);border-radius:18px;box-shadow:var(--shadow);padding:22px;display:flex;flex-direction:column;gap:10px;max-width:360px;margin:20px auto;width:100%;box-sizing:border-box;text-align:center}
+#hpinbox input{font:inherit;font-size:20px;padding:10px;border:1px solid var(--rule);border-radius:12px;text-align:center;letter-spacing:.5em;background:var(--sheet);color:var(--fg)}
+#hpinbox h2{margin:0;font-size:18px}
+#hpinbox p{margin:0;font-size:13px;color:var(--muted)}
+#hmainbox{display:flex;flex-direction:column;gap:10px}
+#hstatus{font-size:13px;color:var(--fg);background:var(--sheet);border:1px solid var(--hair);border-radius:12px;padding:10px 12px}
+#hstatus.copy{background:var(--warnbg);border-color:var(--warn)}
+#hstatus.ok{border-color:#2e9a6b}
+.hphoto{display:inline-flex;align-items:center;gap:6px}
+.hphoto svg{width:18px;height:18px}
+.hrow .dhead{font-size:13px}
+.hy{flex:none;font:inherit;font-size:12px;min-width:40px;height:32px;border-radius:8px;border:1px solid var(--rule);background:none;color:var(--muted);cursor:pointer;margin-right:2px}
+.hy.on{background:#c0392b;border-color:#c0392b;color:#fff;font-weight:700}
+.namebtn.hbad{box-shadow:inset 0 0 0 2px #c0392b;border-radius:8px}
+.namebtn.hbad .ph,.namebtn.hbad span{color:#c0392b}
+#tehai textarea{min-height:60px}
 </style>
 </head><body>
 <header class="appbar"><div class="in"><svg viewBox="0 0 100 100" aria-hidden="true" class=""><defs><mask id="mkA"><rect width="100" height="100" fill="#fff"/><rect x="45" y="7" width="10" height="6.5" fill="#000"/><rect x="46.5" y="75" width="7" height="18" fill="#000"/></mask></defs><g mask="url(#mkA)" fill="currentColor" stroke="currentColor"><circle cx="50" cy="50" r="47" fill="none" stroke-width="3.6"/><circle cx="50" cy="50" r="35" fill="none" stroke-width="14"/><rect x="42.5" y="19" width="15" height="12" rx="5" stroke="none"/></g></svg><span><span class="co">丸門建設</span><span class="ttl" id="apptitle">日報・報告</span></span></div></header>
@@ -432,6 +452,7 @@ body{padding-top:0}
     <button type="button" class="mbtn mochi" id="goMochi"><span class="mi">持出</span><span><b>持出伝票</b><small>現場に持ち出す物品を記録</small></span></button>
     <button type="button" class="mbtn kounyu" id="goKounyu"><span class="mi">購入</span><span><b>物品購入伝票</b><small>買った物品・単価・発注先を記録</small></span></button>
     <button type="button" class="mbtn buppin" id="goBuppin"><span class="mi">物品</span><span><b>物品管理</b><small>出ている持出・購入伝票を見て処理する</small></span></button>
+    <button type="button" class="mbtn tehai" id="goTehai"><span class="mi">手配</span><span><b>人員手配帳</b><small>だれがどの現場に行くか（写真から読み取りもできます）</small></span></button>
     <button type="button" class="mbtn kakunin" id="goKakunin"><span class="mi">確認</span><span><b>工場長確認</b><small>その日の日報を見て確認のチェックを付ける</small></span></button>
   </div>
 
@@ -489,6 +510,35 @@ body{padding-top:0}
       <div class="ksum" id="bsum"></div>
       <div id="bconfirmbox" class="kconfirm" hidden></div>
       <div id="blist" style="display:flex;flex-direction:column;gap:10px"></div>
+    </div>
+  </div>
+
+  <div id="tehai" hidden>
+    <div class="topbar"><button type="button" class="backbtn" id="hback">← メニュー</button></div>
+    <form id="hpinform"><div id="hpinbox" hidden>
+      <h2>人員手配帳</h2>
+      <p>手配帳用の暗証番号を入れてください</p>
+      <input id="hpin" type="password" inputmode="numeric" autocomplete="off" aria-label="手配帳用の暗証番号">
+      <button type="submit" class="save">開く</button>
+      <p id="hpinmsg" style="color:var(--danger)"></p>
+    </div></form>
+    <div id="hmainbox" hidden>
+      <div class="kbar">
+        <div class="kdate"><button type="button" id="hprev" aria-label="前の日">‹</button><input type="date" id="hday" aria-label="日付"><button type="button" id="hnext" aria-label="次の日">›</button></div>
+        <button type="button" class="sub hphoto" id="hphoto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h3l2-3h8l2 3h3v12H3z"/><circle cx="12" cy="13" r="4"/></svg>写真から読み取る</button>
+      </div>
+      <input type="file" id="h_file" accept="image/*" hidden>
+      <div id="hstatus"></div>
+      <div id="hconfirm" class="kconfirm" hidden></div>
+      <div id="hrows" style="display:flex;flex-direction:column;gap:10px"></div>
+      <div><button type="button" class="sub" id="haddrow">＋ 機械（行）を追加</button></div>
+      <div class="sheet">
+        <div class="secth">休み</div>
+        <div id="hyasumi"></div>
+        <div class="yadd"><button type="button" class="sub" id="haddyasumi">＋ 人を追加</button></div>
+        <div class="secth">コメント</div>
+        <div class="v"><textarea id="hcmt" aria-label="コメント"></textarea></div>
+      </div>
     </div>
   </div>
 
@@ -662,6 +712,10 @@ body{padding-top:0}
   <div class="sum" id="sumline"></div>
   <button type="button" class="save" id="save">保存</button>
 </div></div>
+<div class="savebar" id="hsavebar" hidden><div class="in">
+  <div class="sum" id="hsum">kintoneの人員手配帳に登録します</div>
+  <button type="button" class="save" id="hsave" style="background:#3a6624">登録する</button>
+</div></div>
 <div class="savebar" id="ysavebar" hidden><div class="in">
   <div class="sum">kintoneの「有給休暇願い」に登録します</div>
   <button type="button" class="save" id="ysave" style="background:#5b3fae">届け出る</button>
@@ -686,7 +740,7 @@ body{padding-top:0}
 // ---- Apps Script（kintoneとのやり取り）を呼ぶ ----
 const API="https://script.google.com/macros/s/AKfycbz3XtpAENLFsbaxg5d2NkTzvQRbgPChqxP7kFwWoaKdVQHPw2h0E89fyx4bvzGOTRgV-w/exec";
 let LOADN=0,LOADT=null;
-const LOADMSG={getMaster:"データを読み込んでいます…",saveNippo:"日報を保存しています…",updateNippo:"日報を保存しています…",saveJiko:"報告を送っています…",listKakunin:"日報を読み込んでいます…",kakuninNippo:"確認のチェックを付けています…",saveTenken:"点検を記録しています…",saveYukyu:"有給休暇願いを送っています…",saveDenpyo:"伝票を登録しています…",listBuppin:"伝票を読み込んでいます…",doneBuppin:"処理済みにしています…",listNippo:"日報の一覧を読み込んでいます…",getNippo:"日報を読み込んでいます…"};
+const LOADMSG={getMaster:"データを読み込んでいます…",saveNippo:"日報を保存しています…",updateNippo:"日報を保存しています…",saveJiko:"報告を送っています…",listKakunin:"日報を読み込んでいます…",kakuninNippo:"確認のチェックを付けています…",saveTenken:"点検を記録しています…",saveYukyu:"有給休暇願いを送っています…",saveDenpyo:"伝票を登録しています…",listBuppin:"伝票を読み込んでいます…",doneBuppin:"処理済みにしています…",getTehai:"手配帳を読み込んでいます…",saveTehai:"手配帳を登録しています…",readTehaiPhoto:"写真を読み取っています…（30秒ほどかかります）",listNippo:"日報の一覧を読み込んでいます…",getNippo:"日報を読み込んでいます…"};
 function loadOn(fn){LOADN++;document.getElementById("loadmsg").textContent=LOADMSG[fn]||"読み込み中…";clearTimeout(LOADT);LOADT=setTimeout(()=>{if(LOADN>0)document.getElementById("loader").hidden=false},fn==="getMaster"?0:250)}
 function loadOff(){LOADN=Math.max(0,LOADN-1);if(!LOADN){clearTimeout(LOADT);document.getElementById("loader").hidden=true}}
 function callApi(fn,args){loadOn(fn);return callApi0(fn,args).then(r=>{loadOff();return r},e=>{loadOff();throw e})}
@@ -744,7 +798,7 @@ function drawPicker(q){const box=$("plist");box.innerHTML="";
   const hit=NAMES.filter(n=>!q||n.includes(q));
   hit.forEach(n=>{const b=document.createElement("button");b.type="button";b.textContent=n;b.addEventListener("click",()=>pick(n));box.appendChild(b)});
   if(!hit.length){const p=document.createElement("p");p.className="lmsg";p.textContent="見つかりません。名前の一部（名字だけなど）で探してください。";box.appendChild(p)}}
-function pick(n){if(PSEL)setSel(PSEL,n);$("picker").hidden=true;PSEL=null;if(window.__sched)__sched();if(window.__jsched)__jsched()}
+function pick(n){if(PSEL)setSel(PSEL,n);$("picker").hidden=true;PSEL=null;if(window.__sched)__sched();if(window.__jsched)__jsched();if(window.__hsched&&PSEL===null&&!$("tehai").hidden)__hsched()}
 $("pq").addEventListener("input",e=>drawPicker(e.target.value.trim()));
 $("pclose").addEventListener("click",()=>{$("picker").hidden=true;PSEL=null});
 $("picker").addEventListener("click",e=>{if(e.target.id==="picker"){$("picker").hidden=true;PSEL=null}});
@@ -1285,7 +1339,7 @@ function bCard(x){const k=x.kind==="kounyu",c=document.createElement("div");c.cl
   const h=c.querySelector(".khead"),body=c.querySelector(".kbody");
   function paint(){body.innerHTML="";
     const rows=document.createElement("div");
-    x.rows.forEach(r=>{const d=document.createElement("div");d.className="brow"+(r.done?" done":"")+(sel.has(r.id)?" sel":"");
+    x.rows.forEach(r=>{const d=document.createElement("div");d.className="bpr"+(r.done?" done":"")+(sel.has(r.id)?" sel":"");
       const sub=esc([r.done?"納品済":"",k&&r.tanka?"単価"+yen(r.tanka):"",k?r.hacchu:"",k&&r.nohin?"納品"+bMD(r.nohin):""].filter(Boolean).join("　"))+(r.kaishu?'<span class="btag">回収</span>':"");
       d.innerHTML='<span class="t">'+esc(r.hin)+(sub?"<small>"+sub+"</small>":"")+'</span><span class="q">'+esc(r.kosu)+esc(r.tani)+'</span><button type="button" class="b" aria-label="'+esc(r.hin)+'を選ぶ">'+CHK+'</button>';
       if(!r.done)d.querySelector(".b").addEventListener("click",()=>{sel.has(r.id)?sel.delete(r.id):sel.add(r.id);paint()});
@@ -1316,23 +1370,89 @@ function bBtn(label,x,ids,card){const b=document.createElement("button");b.type=
       .doneBuppin(PIN,BPIN,x.kind,x.id,x.rev,ids)});return b}
 function bSum(){const nm=BLIST.filter(x=>x.kind==="mochi").length;$("bsum").textContent="未処理　持出 "+nm+"件・購入 "+(BLIST.length-nm)+"件"}
 function openBuppin(){scr("buppin");setTitle("物品管理");$("menu").hidden=true;$("buppin").hidden=false;if(!bStarted){bStarted=true;bStart()}else if(BPIN)bLoad();window.scrollTo(0,0)}
+// ---- 人員手配帳（前日コピー＋写真読み取り） ----
+const HLS="tehai_pin",HKIKAI=["No.1","No.３","No.7","No.8","No.11","No.13","No.16","No.21","No.23","SCX900","RT-200","650TLX","センター","下見"],HKUBUN=["現","土場","前入","帰省","講習","休"];
+let HPIN="",hStarted=false,hDirty=false;
+function hSel(opts,v,label){const s=document.createElement("select");s.setAttribute("aria-label",label);s.add(new Option("（なし）",""));opts.forEach(o=>s.add(new Option(o,o)));if(v&&!opts.includes(v))s.add(new Option(v,v));s.value=v||"";return s}
+function hMark(){document.querySelectorAll("#tehai select.hname").forEach(s=>{if(s._btn)s._btn.classList.toggle("hbad",!!s.value&&!NAMES.includes(s.value))})}
+function hPerson(list,p,withY){const row=document.createElement("div");row.className="yrow";const w=document.createElement("div");w.className="v";
+  const s=document.createElement("select");s.className="hname";s.setAttribute("aria-label","名前");s.add(new Option("",""));NAMES.forEach(n=>s.add(new Option(n,n)));w.appendChild(s);row.appendChild(w);list.appendChild(row);nameBtn(s,"名前");if(p&&p.n)setSel(s,p.n);
+  if(withY){const y=document.createElement("button");y.type="button";y.className="hy"+(p&&p.y?" on":"");y.textContent="休";y.setAttribute("aria-pressed",String(!!(p&&p.y)));y.addEventListener("click",()=>{y.classList.toggle("on");y.setAttribute("aria-pressed",String(y.classList.contains("on")));hDirty=true});row.appendChild(y)}
+  row.appendChild(delBtn("この人を外す",()=>{row.remove();hDirty=true}))}
+function hRow(r){r=r||{people:[]};const c=document.createElement("div");c.className="sheet hrow";
+  c.innerHTML='<div class="dhead"><span class="dn"></span></div><div class="tr r-2"><div class="td"><div class="th">機械</div><div class="v hk"></div></div><div class="td"><div class="th">区分</div><div class="v hb"></div></div></div>'+
+    '<div class="tr"><div class="td"><div class="th">現場</div><div class="v"><input type="text" class="hgenba" aria-label="現場" placeholder="例：長野"></div></div></div><div class="hpeople"></div><div class="yadd"><button type="button" class="sub">＋ 人を追加</button></div>';
+  c.querySelector(".hk").appendChild(hSel(HKIKAI,r.kikai,"機械"));c.querySelector(".hb").appendChild(hSel(HKUBUN,r.kubun,"区分"));c.querySelector(".hgenba").value=r.genba||"";
+  $("hrows").appendChild(c);
+  c.querySelector(".dhead").appendChild(delBtn("この行を消す",()=>{c.remove();hNum();hDirty=true}));
+  const pl=c.querySelector(".hpeople");(r.people.length?r.people:[{n:""}]).forEach(p=>hPerson(pl,p,true));
+  c.querySelector(".yadd button").addEventListener("click",()=>{if(pl.children.length>=9){boxMsg("hconfirm","1行に入れられるのは9人までです。行を分けてください。");return}hPerson(pl,{n:""},true);hDirty=true});
+  hNum()}
+function hNum(){[...$("hrows").children].forEach((c,i)=>{c.querySelector(".dn").textContent=(i+1)+"行目"})}
+function hFill(d){$("hrows").innerHTML="";(d.rows||[]).forEach(r=>hRow(r));if(!(d.rows||[]).length)hRow();
+  $("hyasumi").innerHTML="";(d.yasumi||[]).forEach(n=>hPerson($("hyasumi"),{n:n},false));$("hcmt").value=d.comment||"";hMark()}
+function hStatus(t,cls){const e=$("hstatus");e.textContent=t;e.className=cls||""}
+function hMD(d){return d?Number(d.slice(5,7))+"月"+Number(d.slice(8,10))+"日":""}
+function hLoad(first){$("hconfirm").hidden=true;
+  google.script.run.withSuccessHandler(d=>{lsSet(HLS,HPIN);$("hpinbox").hidden=true;$("hmainbox").hidden=false;$("hsavebar").hidden=false;hFill(d);hDirty=false;
+      if(d.id)hStatus(hMD($("hday").value)+"の手配帳です（登録済み）。直したら「登録する」で上書きします。","ok");
+      else if(d.copyFrom)hStatus(hMD($("hday").value)+"はまだ登録されていません。"+hMD(d.copyFrom)+"の内容をコピーして出しています。変わったところを直して「登録する」を押してください。","copy");
+      else hStatus(hMD($("hday").value)+"はまだ登録されていません。","copy")})
+    .withFailureHandler(err=>{const m=err.message||String(err);
+      if(/手配帳用の暗証番号/.test(m)){try{localStorage.removeItem(HLS)}catch(e){}HPIN="";$("hpinbox").hidden=false;$("hmainbox").hidden=true;$("hsavebar").hidden=true;$("hpinmsg").textContent=first&&!$("hpin").value?"":m}
+      else boxMsg("hconfirm",esc(m))})
+    .getTehai(PIN,HPIN,$("hday").value)}
+function hGo(n,to){const go=()=>{if(to)$("hday").value=to;else{const d=new Date($("hday").value+"T00:00:00Z");d.setUTCDate(d.getUTCDate()+n);$("hday").value=d.toISOString().slice(0,10)}$("hday").dataset.v=$("hday").value;hLoad()};
+  if(!hDirty)return go();
+  const b=$("hconfirm");b.innerHTML="<b>登録していない変更があります。</b>日付を変えると、今の変更は消えます。";const bb=document.createElement("div");bb.className="draftbtns";
+  const y=document.createElement("button");y.type="button";y.className="save";y.textContent="変更を捨てて移動";y.addEventListener("click",go);
+  const n2=document.createElement("button");n2.type="button";n2.className="sub";n2.textContent="やめる";n2.addEventListener("click",()=>{b.hidden=true;$("hday").value=$("hday").dataset.v});
+  bb.append(y,n2);b.appendChild(bb);b.hidden=false;b.scrollIntoView({behavior:"smooth",block:"center"})}
+function hCollect(){return{rows:[...$("hrows").children].map(c=>({kikai:c.querySelector(".hk select").value,kubun:c.querySelector(".hb select").value,genba:c.querySelector(".hgenba").value.trim(),
+    people:[...c.querySelectorAll(".hpeople .yrow")].map(r=>({n:r.querySelector("select").value,y:r.querySelector(".hy").classList.contains("on")})).filter(p=>p.n)})),
+  yasumi:[...$("hyasumi").querySelectorAll("select")].map(s=>s.value).filter(Boolean),comment:$("hcmt").value.trim()}}
+function hSave(){hMark();const bad=[...document.querySelectorAll("#tehai select.hname")].map(s=>s.value).filter(v=>v&&!NAMES.includes(v));
+  if(bad.length)return boxMsg("hconfirm","<b>登録できません。</b>従業員リストにない名前があります（赤い枠）：<br>"+[...new Set(bad)].map(esc).join("、")+"<br>押して正しい名前を選び直してください。");
+  $("hsave").disabled=true;
+  google.script.run.withSuccessHandler(res=>{$("hsave").disabled=false;hDirty=false;$("hconfirm").hidden=true;hStatus(hMD($("hday").value)+"の手配帳を"+(res.updated?"上書きしました":"登録しました")+"（レコード番号 "+res.id+"）。","ok");window.scrollTo(0,0)})
+    .withFailureHandler(err=>{$("hsave").disabled=false;boxMsg("hconfirm","<b>登録できませんでした</b><br>"+esc(err.message||String(err)))})
+    .saveTehai(PIN,HPIN,$("hday").value,hCollect())}
+function hShrink(file){return new Promise((ok,ng)=>{const u=URL.createObjectURL(file),im=new Image();
+  im.onload=()=>{const M=2000,k=Math.min(1,M/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);
+    c.getContext("2d").drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);ok(c.toDataURL("image/jpeg",0.85).split(",")[1])};
+  im.onerror=()=>{URL.revokeObjectURL(u);ng(new Error("この写真は読み込めませんでした。"))};im.src=u})}
+async function hPhoto(file){let b64;try{b64=await hShrink(file)}catch(e){return boxMsg("hconfirm",esc(e.message))}
+  google.script.run.withSuccessHandler(d=>{hFill(d);hDirty=true;
+      const note=d.date&&d.date!==$("hday").value?"（写真の日付は"+hMD(d.date)+"でした。日付が合っているか確かめてください）":"";
+      hStatus("写真から読み取りました"+note+"。読み間違いがないか、紙と見比べて直してから「登録する」を押してください。赤い枠の名前は、従業員リストにない名前です。","copy");window.scrollTo(0,0)})
+    .withFailureHandler(err=>boxMsg("hconfirm","<b>読み取れませんでした</b><br>"+esc(err.message||String(err))))
+    .readTehaiPhoto(PIN,HPIN,$("hday").value,b64,"image/jpeg")}
+function hStart(){if(!NAMES.length&&MASTER)NAMES=MASTER.names;
+  $("hday").value=new Date(Date.now()+9*3600e3).toISOString().slice(0,10);$("hday").dataset.v=$("hday").value;
+  $("hprev").addEventListener("click",()=>hGo(-1));$("hnext").addEventListener("click",()=>hGo(1));$("hday").addEventListener("change",()=>hGo(0,$("hday").value));
+  $("haddrow").addEventListener("click",()=>{hRow();hDirty=true});$("haddyasumi").addEventListener("click",()=>{hPerson($("hyasumi"),{n:""},false);hDirty=true});
+  $("hphoto").addEventListener("click",()=>$("h_file").click());$("h_file").addEventListener("change",e=>{const f=e.target.files[0];e.target.value="";if(f)hPhoto(f)});
+  $("hsave").addEventListener("click",hSave);$("tehai").addEventListener("input",()=>{hDirty=true});window.__hsched=()=>{hDirty=true;hMark()};
+  $("hpinform").addEventListener("submit",e=>{e.preventDefault();HPIN=$("hpin").value.trim();hLoad(true)});
+  HPIN=lsGet(HLS);if(HPIN)hLoad(true);else{$("hpinbox").hidden=false;$("hmainbox").hidden=true}}
+function openTehai(){scr("tehai");setTitle("人員手配帳");$("menu").hidden=true;$("tehai").hidden=false;if(!hStarted){hStarted=true;hStart()}else if(HPIN)$("hsavebar").hidden=false;window.scrollTo(0,0)}
 function openTenken(){scr("tenken");setTitle("始業前点検");$("menu").hidden=true;$("tenken").hidden=false;$("tsavebar").hidden=false;if(!tStarted){tStarted=true;tStart(MASTER)}window.scrollTo(0,0)}
 // ---- 画面の切り替え ----
 let MASTER=null,nippoStarted=false,jikoStarted=false;
 function scr(k){try{sessionStorage.setItem("screen",k)}catch(e){}}
 function setTitle(t){const e=document.getElementById("apptitle");if(e)e.textContent=t}
-function showMenu(){scr("");setTitle("日報・報告");["app","savebar","jiko","jsavebar","kakunin","ksavebar","tenken","tsavebar","yukyu","ysavebar","denpyo","dsavebar","buppin","listbox","done"].forEach(i=>$(i).hidden=true);$("menu").hidden=false;window.scrollTo(0,0)}
+function showMenu(){scr("");setTitle("日報・報告");["app","savebar","jiko","jsavebar","kakunin","ksavebar","tenken","tsavebar","yukyu","ysavebar","denpyo","dsavebar","buppin","tehai","hsavebar","listbox","done"].forEach(i=>$(i).hidden=true);$("menu").hidden=false;window.scrollTo(0,0)}
 function openNippo(){scr("nippo");setTitle("作業日報");$("menu").hidden=true;$("app").hidden=false;$("savebar").hidden=false;if(!nippoStarted){nippoStarted=true;start(MASTER)}window.scrollTo(0,0)}
 function openJiko(){scr("jiko");setTitle("事故・トラブル報告");$("menu").hidden=true;$("jiko").hidden=false;$("jsavebar").hidden=false;if(!jikoStarted){jikoStarted=true;startJiko(MASTER)}window.scrollTo(0,0)}
 (function(){const d=new Date();const w="日月火水木金土"[d.getDay()];$("today").textContent=(d.getMonth()+1)+"月"+d.getDate()+"日（"+w+"）"})();
-$("goNippo").addEventListener("click",openNippo);$("goKakunin").addEventListener("click",openKakunin);$("goTenken").addEventListener("click",openTenken);$("tback").addEventListener("click",showMenu);$("kback").addEventListener("click",showMenu);$("goJiko").addEventListener("click",openJiko);$("goYukyu").addEventListener("click",openYukyu);$("goBuppin").addEventListener("click",openBuppin);$("bback").addEventListener("click",showMenu);$("goMochi").addEventListener("click",()=>openDenpyo("mochi"));$("goKounyu").addEventListener("click",()=>openDenpyo("kounyu"));$("yback").addEventListener("click",showMenu);$("dback").addEventListener("click",showMenu);
+$("goNippo").addEventListener("click",openNippo);$("goKakunin").addEventListener("click",openKakunin);$("goTenken").addEventListener("click",openTenken);$("tback").addEventListener("click",showMenu);$("kback").addEventListener("click",showMenu);$("goJiko").addEventListener("click",openJiko);$("goYukyu").addEventListener("click",openYukyu);$("goBuppin").addEventListener("click",openBuppin);$("goTehai").addEventListener("click",openTehai);$("hback").addEventListener("click",showMenu);$("bback").addEventListener("click",showMenu);$("goMochi").addEventListener("click",()=>openDenpyo("mochi"));$("goKounyu").addEventListener("click",()=>openDenpyo("kounyu"));$("yback").addEventListener("click",showMenu);$("dback").addEventListener("click",showMenu);
 $("nback").addEventListener("click",showMenu);$("jback").addEventListener("click",showMenu);
 function reload(){location.reload()}
 function login(pin){
   $("pinmsg").textContent="読み込み中…";
   google.script.run.withSuccessHandler(M=>{PIN=pin;lsSet(LS,pin);MASTER=M;$("pinbox").hidden=true;
       let s="";try{s=sessionStorage.getItem("screen")||""}catch(e){}
-      if(s==="nippo")openNippo();else if(s==="jiko")openJiko();else if(s==="kakunin")openKakunin();else if(s==="tenken")openTenken();else if(s==="yukyu")openYukyu();else if(s==="buppin")openBuppin();else if(s==="mochi"||s==="kounyu")openDenpyo(s);else showMenu()})
+      if(s==="nippo")openNippo();else if(s==="jiko")openJiko();else if(s==="kakunin")openKakunin();else if(s==="tenken")openTenken();else if(s==="yukyu")openYukyu();else if(s==="buppin")openBuppin();else if(s==="tehai")openTehai();else if(s==="mochi"||s==="kounyu")openDenpyo(s);else showMenu()})
     .withFailureHandler(err=>{$("pinmsg").textContent=err.message||String(err);$("pinbox").hidden=false})
     .getMaster(pin);
 }
