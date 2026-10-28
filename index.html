@@ -526,6 +526,7 @@ body{padding-top:0}
       <div class="kbar">
         <div class="kdate"><button type="button" id="hprev" aria-label="前の日">‹</button><input type="date" id="hday" aria-label="日付"><button type="button" id="hnext" aria-label="次の日">›</button></div>
         <button type="button" class="sub hphoto" id="hphoto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h3l2-3h8l2 3h3v12H3z"/><circle cx="12" cy="13" r="4"/></svg>写真から読み取る</button>
+        <button type="button" class="sub" id="hcopy">前の日をコピー</button>
       </div>
       <input type="file" id="h_file" accept="image/*" hidden>
       <div id="hstatus"></div>
@@ -1396,8 +1397,7 @@ function hMD(d){return d?Number(d.slice(5,7))+"月"+Number(d.slice(8,10))+"日":
 function hLoad(first){$("hconfirm").hidden=true;
   google.script.run.withSuccessHandler(d=>{lsSet(HLS,HPIN);$("hpinbox").hidden=true;$("hmainbox").hidden=false;$("hsavebar").hidden=false;hFill(d);hDirty=false;
       if(d.id)hStatus(hMD($("hday").value)+"の手配帳です（登録済み）。直したら「登録する」で上書きします。","ok");
-      else if(d.copyFrom)hStatus(hMD($("hday").value)+"はまだ登録されていません。"+hMD(d.copyFrom)+"の内容をコピーして出しています。変わったところを直して「登録する」を押してください。","copy");
-      else hStatus(hMD($("hday").value)+"はまだ登録されていません。","copy")})
+      else hStatus(hMD($("hday").value)+"の手配帳はまだありません。「写真から読み取る」か「前の日をコピー」で入れてから、「登録する」を押してください。","copy")})
     .withFailureHandler(err=>{const m=err.message||String(err);
       if(/手配帳用の暗証番号/.test(m)){try{localStorage.removeItem(HLS)}catch(e){}HPIN="";$("hpinbox").hidden=false;$("hmainbox").hidden=true;$("hsavebar").hidden=true;$("hpinmsg").textContent=first&&!$("hpin").value?"":m}
       else boxMsg("hconfirm",esc(m))})
@@ -1417,6 +1417,11 @@ function hSave(){hMark();const bad=[...document.querySelectorAll("#tehai select.
   google.script.run.withSuccessHandler(res=>{$("hsave").disabled=false;hDirty=false;$("hconfirm").hidden=true;hStatus(hMD($("hday").value)+"の手配帳を"+(res.updated?"上書きしました":"登録しました")+"（レコード番号 "+res.id+"）。","ok");window.scrollTo(0,0)})
     .withFailureHandler(err=>{$("hsave").disabled=false;boxMsg("hconfirm","<b>登録できませんでした</b><br>"+esc(err.message||String(err)))})
     .saveTehai(PIN,HPIN,$("hday").value,hCollect())}
+function hCopy(){$("hconfirm").hidden=true;
+  google.script.run.withSuccessHandler(d=>{if(!d.copyFrom){boxMsg("hconfirm","コピーできる前の日の手配帳がありません。");return}
+      hFill(d);hDirty=true;hStatus(hMD(d.copyFrom)+"の内容をコピーしました。変わったところを直して「登録する」を押してください（まだ登録されていません）。","copy");window.scrollTo(0,0)})
+    .withFailureHandler(err=>boxMsg("hconfirm",esc(err.message||String(err))))
+    .getTehai(PIN,HPIN,$("hday").value,true)}
 function hShrink(file){return new Promise((ok,ng)=>{const u=URL.createObjectURL(file),im=new Image();
   im.onload=()=>{const M=2000,k=Math.min(1,M/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);
     c.getContext("2d").drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);ok(c.toDataURL("image/jpeg",0.85).split(",")[1])};
@@ -1431,7 +1436,7 @@ function hStart(){if(!NAMES.length&&MASTER)NAMES=MASTER.names;
   $("hday").value=new Date(Date.now()+9*3600e3).toISOString().slice(0,10);$("hday").dataset.v=$("hday").value;
   $("hprev").addEventListener("click",()=>hGo(-1));$("hnext").addEventListener("click",()=>hGo(1));$("hday").addEventListener("change",()=>hGo(0,$("hday").value));
   $("haddrow").addEventListener("click",()=>{hRow();hDirty=true});$("haddyasumi").addEventListener("click",()=>{hPerson($("hyasumi"),{n:""},false);hDirty=true});
-  $("hphoto").addEventListener("click",()=>$("h_file").click());$("h_file").addEventListener("change",e=>{const f=e.target.files[0];e.target.value="";if(f)hPhoto(f)});
+  $("hphoto").addEventListener("click",()=>$("h_file").click());$("hcopy").addEventListener("click",hCopy);$("h_file").addEventListener("change",e=>{const f=e.target.files[0];e.target.value="";if(f)hPhoto(f)});
   $("hsave").addEventListener("click",hSave);$("tehai").addEventListener("input",()=>{hDirty=true});window.__hsched=()=>{hDirty=true;hMark()};
   $("hpinform").addEventListener("submit",e=>{e.preventDefault();HPIN=$("hpin").value.trim();hLoad(true)});
   HPIN=lsGet(HLS);if(HPIN)hLoad(true);else{$("hpinbox").hidden=false;$("hmainbox").hidden=true}}
