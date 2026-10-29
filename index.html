@@ -271,6 +271,8 @@ body{padding-top:0}
 
 /* 工場長確認 */
 .mbtn.kakunin .mi{background:linear-gradient(145deg,#2e9a6b,#1d6e4b)}
+.mbtn.help{text-decoration:none}.mbtn.help .mi{background:linear-gradient(180deg,#3fa9e0 0%,#0069a6 60%,#2b8443 100%);font-size:26px}
+.helplink{align-self:flex-start;margin-top:8px;font-size:14px;font-weight:700;color:var(--sky);border:1px solid var(--sky);border-radius:999px;padding:4px 12px;text-decoration:none;background:var(--sheet)}
 #kakunin{display:flex;flex-direction:column;gap:10px}
 #kakunin[hidden]{display:none!important}
 .kbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
@@ -459,7 +461,7 @@ body{padding-top:0}
 
   <div id="menu" hidden>
     <h1>丸門建設</h1>
-    <div class="hello"><span class="d" id="today"></span><span class="g">おつかれさまです</span></div>
+    <div class="hello"><span class="d" id="today"></span><span class="g">おつかれさまです</span><a class="helplink" href="https://claude.ai/artifact/6gudgaZYGnbo1s2BLatdfm" target="_blank" rel="noopener">使い方を見る</a></div>
     <button type="button" class="mbtn nippo" id="goNippo"><span class="mi">日報</span><span><b>作業日報</b><small>その日の作業時間・出来高・人員を入力</small></span></button>
     <button type="button" class="mbtn jiko" id="goJiko"><span class="mi">事故</span><span><b>事故・トラブル報告</b><small>事故や機械の損傷があったときに報告</small></span></button>
     <button type="button" class="mbtn tenken" id="goTenken"><span class="mi">点検</span><span><b>始業前点検</b><small>機械の作業開始前点検表を入力</small></span></button>
@@ -469,6 +471,7 @@ body{padding-top:0}
     <button type="button" class="mbtn buppin" id="goBuppin"><span class="mi">物品</span><span><b>物品管理</b><small>出ている持出・購入伝票を見て処理する</small></span></button>
     <button type="button" class="mbtn tehai" id="goTehai"><span class="mi">手配</span><span><b>人員手配帳</b><small>だれがどの現場に行くか（写真から読み取りもできます）</small></span></button>
     <button type="button" class="mbtn kakunin" id="goKakunin"><span class="mi">確認</span><span><b>工場長確認</b><small>その日の日報を見て確認のチェックを付ける</small></span></button>
+    <a class="mbtn help" href="https://claude.ai/artifact/6gudgaZYGnbo1s2BLatdfm" target="_blank" rel="noopener"><span class="mi">？</span><span><b>使い方</b><small>このアプリの使い方（画面の写真つき）</small></span></a>
   </div>
 
   <div id="jiko" hidden>
