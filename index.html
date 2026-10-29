@@ -559,7 +559,7 @@ body{padding-top:0}
   <div id="wire" hidden>
     <div class="topbar"><button type="button" class="backbtn" id="wback">← メニュー</button><button type="button" class="sub" id="wlock">鍵を開ける</button></div>
     <form id="wpinform" hidden><div class="sheet" style="padding:14px">
-      <b>入出荷の鍵（清水さん用）</b>
+      <b>入出荷の鍵</b>
       <p style="margin:6px 0">ワイヤ管理用の暗証番号を入れてください</p>
       <div style="display:flex;gap:8px"><input id="wpin" type="password" inputmode="numeric" autocomplete="off" aria-label="ワイヤ管理用の暗証番号" style="flex:1;font-size:18px;padding:8px"><button type="submit" class="save">開く</button></div>
       <p id="wpinmsg" style="color:var(--danger);margin:6px 0 0"></p>
@@ -1567,7 +1567,7 @@ const WNAME={W:"ダブル",S:"シングル"};
 function wKey(o){return o.d+"-"+o.s+"-"+o.t}
 function wLoad(){$("wmsg").hidden=true;$("wsum").textContent="読み込み中…";
   callApi("getWire",[PIN]).then(d=>{WDATA=d;wDraw()},e=>{$("wsum").textContent="";boxMsg("wmsg",esc(e.message||String(e)))})}
-function wLockPaint(){const on=!!WPIN;$("wlock").textContent=on?"鍵を閉める":"鍵を開ける（清水さん）";$("wnewbox").hidden=!on;$("wpinform").hidden=true}
+function wLockPaint(){const on=!!WPIN;$("wlock").textContent=on?"鍵を閉める":"鍵を開ける";$("wnewbox").hidden=!on;$("wpinform").hidden=true}
 function wDraw(){
   const list=WDATA.filter(o=>o.t===WTYPE);
   const dias=[...new Set(list.map(o=>o.d))].sort((a,b)=>a-b);
