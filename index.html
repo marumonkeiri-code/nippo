@@ -479,6 +479,7 @@ body{padding-top:0}
   <div class="copybar" id="jdraftbar" hidden></div>
   <div class="sheet">
     <div class="title"><h1>事故・トラブル報告書</h1><span>丸門建設株式会社</span></div>
+    <div class="tr"><div class="td"><div class="th">会社<span class="req">必須</span></div><div class="v"><div class="jbtns" id="j_co"></div></div></div></div>
     <div class="tr r-2">
       <div class="td"><div class="th">作成者<span class="req">必須</span></div><div class="v"><select id="j_sakusei" class="jname" aria-label="作成者"></select></div></div>
       <div class="td"><div class="th">当事者<span class="req">必須</span></div><div class="v"><select id="j_touji" class="jname" aria-label="当事者"></select></div></div>
@@ -1071,23 +1072,24 @@ const JDK="jiko_draft";
 function startJiko(M){
   if(!NAMES.length)NAMES=M.names;
   const POS=["杭打機オペ","クレーンオペ","手元","プラント"],KIKAI=["杭打機","クレーン","ユンボ","発電機","オーガ","プラント","エコ装置","その他"];
-  let pos="",kikai="";
+  let pos="",kikai="",co=lsGet("jiko_co")||"丸門建設";
   const mk=(box,list,get,set)=>{list.forEach(t=>{const b=document.createElement("button");b.type="button";b.className="ck";b.textContent=t;b.dataset.t=t;
     b.addEventListener("click",()=>{set(get()===t?"":t);paint()});$(box).appendChild(b)})};
-  function paint(){document.querySelectorAll("#j_pos .ck").forEach(b=>{b.classList.toggle("on",b.dataset.t===pos);b.setAttribute("aria-pressed",b.dataset.t===pos)});
+  function paint(){document.querySelectorAll("#j_co .ck").forEach(b=>{b.classList.toggle("on",b.dataset.t===co);b.setAttribute("aria-pressed",b.dataset.t===co)});
+    document.querySelectorAll("#j_pos .ck").forEach(b=>{b.classList.toggle("on",b.dataset.t===pos);b.setAttribute("aria-pressed",b.dataset.t===pos)});
     document.querySelectorAll("#j_kikai .ck").forEach(b=>{b.classList.toggle("on",b.dataset.t===kikai);b.setAttribute("aria-pressed",b.dataset.t===kikai)});
     const nl={杭打機:M.kui,クレーン:M.crane,ユンボ:M.yunbo,発電機:M.hatsu}[kikai]||[];const dl=$("j_knolist");dl.innerHTML="";nl.forEach(n=>dl.appendChild(new Option(n)))}
-  mk("j_pos",POS,()=>pos,v=>pos=v);mk("j_kikai",KIKAI,()=>kikai,v=>kikai=v);
+  mk("j_co",["丸門建設","TKB"],()=>co,v=>{co=v||co;lsSet("jiko_co",co)});mk("j_pos",POS,()=>pos,v=>pos=v);mk("j_kikai",KIKAI,()=>kikai,v=>kikai=v);
   document.querySelectorAll(".jname").forEach(s=>{s.add(new Option("",""));M.names.forEach(n=>s.add(new Option(n,n)));nameBtn(s,s.getAttribute("aria-label"))});
   $("j_date").value=new Date(Date.now()+9*3600e3).toISOString().slice(0,10);
   function fill(q){const s=$("j_koji"),cur=s.value;s.innerHTML="";s.add(new Option("（現場を選択）",""));
     M.koji.forEach(k=>{if(!q||k[1].includes(q)||k[2].includes(q))s.add(new Option(k[1],k[1]))});s.value=cur;if(s.value!==cur)s.value=""}
   $("j_kojiq").addEventListener("input",e=>fill(e.target.value.trim()));fill("");
   const T={損傷等の内容:"j_sonsyou",発生状況:"j_jokyo",原因:"j_genin",対策:"j_taisaku"};
-  function collect(){const r={当事者_0:$("j_sakusei").value,当事者:$("j_touji").value,ドロップダウン:pos,トラブル発生日:$("j_date").value,
+  function collect(){const r={会社:co,当事者_0:$("j_sakusei").value,当事者:$("j_touji").value,ドロップダウン:pos,トラブル発生日:$("j_date").value,
       現場名:$("j_koji").value,ドロップダウン_1:kikai,文字列__1行__2:$("j_kno").value.trim()};
     Object.entries(T).forEach(([k,id])=>r[k]=$(id).value.trim());return r}
-  function load(r){setSel($("j_sakusei"),r.当事者_0||"");setSel($("j_touji"),r.当事者||"");pos=r.ドロップダウン||"";kikai=r.ドロップダウン_1||"";
+  function load(r){if(r.会社)co=r.会社;setSel($("j_sakusei"),r.当事者_0||"");setSel($("j_touji"),r.当事者||"");pos=r.ドロップダウン||"";kikai=r.ドロップダウン_1||"";
     if(r.トラブル発生日)$("j_date").value=r.トラブル発生日;if(r.現場名){const s=$("j_koji");if(![...s.options].some(o=>o.value===r.現場名))s.add(new Option(r.現場名,r.現場名));s.value=r.現場名}
     $("j_kno").value=r.文字列__1行__2||"";Object.entries(T).forEach(([k,id])=>$(id).value=r[k]||"");paint()}
   paint();
