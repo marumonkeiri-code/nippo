@@ -229,6 +229,7 @@ body{padding-top:0}
 .savebar{background:color-mix(in srgb,var(--sheet) 88%,transparent);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
   border-top:1px solid var(--hair);box-shadow:0 -4px 16px rgba(23,32,42,.08)}
 .copybar,.editbar{border-radius:12px}
+.pulse{outline:3px solid var(--grass);outline-offset:2px;border-radius:8px;transition:outline-color .3s}
 .backbtn{border-radius:12px;border-color:var(--hair);box-shadow:var(--shadow)}
 .namebtn::after{border-radius:6px}
 #pinbox,.donebox{border:1px solid var(--hair);border-radius:18px;box-shadow:var(--shadow);padding:26px 22px;margin:36px auto;gap:12px}
@@ -651,7 +652,7 @@ body{padding-top:0}
     </div>
   </div>
   <div id="app" hidden>
-  <div class="topbar"><button type="button" class="backbtn" id="nback">← メニュー</button><button type="button" class="sub" id="copylast">前回の日報をコピーして入力</button><button type="button" class="sub" id="openlist">過去の日報を見る・直す</button></div>
+  <div class="topbar"><button type="button" class="backbtn" id="nback">← メニュー</button><button type="button" class="sub" id="copylast">号機を選んで前回の日報をコピー</button><button type="button" class="sub" id="openlist">過去の日報を見る・直す</button></div>
   <div class="copybar" id="copybar" hidden></div>
   <div class="editbar" id="editbar" hidden><span id="edittext"></span><button type="button" class="sub" id="newentry">新しく入力する</button></div>
   <div class="sheet">
@@ -1003,17 +1004,26 @@ function loadList(g){
     .listNippo(PIN,g);
 }
 $("openlist").addEventListener("click",showList);
-$("copylast").addEventListener("click",()=>{
-  const g=$("gouki").value||lsGet("nippo_gouki");
-  if(!g){$("copybar").textContent="先に号機No.を選んでから押してください。";$("copybar").hidden=false;return}
+function copyLast(g){
   $("copybar").textContent=g+"号機の前回の日報を読み込んでいます…";$("copybar").hidden=false;
   google.script.run.withSuccessHandler(list=>{
     if(!list.length){$("copybar").textContent=g+"号機の直近1か月の日報がありません。";return}
-    google.script.run.withSuccessHandler(R=>{loadRec(R,true);window.scrollTo(0,0)})
+    google.script.run.withSuccessHandler(R=>{loadRec(R,true);$("copybar").textContent=g+"号機の前回（"+Number(list[0].日付.slice(5,7))+"/"+Number(list[0].日付.slice(8,10))+"）の日報をコピーしました。変わったところを直して保存してください。";$("copybar").hidden=false;window.scrollTo(0,0)})
       .withFailureHandler(err=>{$("copybar").textContent=err.message||String(err)}).getNippo(PIN,list[0].id);
   }).withFailureHandler(err=>{$("copybar").textContent=err.message||String(err)}).listNippo(PIN,g);
+}
+$("copylast").addEventListener("click",()=>{
+  const g=$("gouki").value;
+  if(!g){const b=$("copybar");b.textContent="下の「号機No.」を選んでください。選ぶと、その号機の前回の日報をコピーできます。";b.hidden=false;
+    const s=$("gouki");s.focus();(s._btn||s).scrollIntoView({behavior:"smooth",block:"center"});(s._btn||s.closest(".td")).classList.add("pulse");setTimeout(()=>(s._btn||s.closest(".td")).classList.remove("pulse"),2400);return}
+  copyLast(g);
 });
-$("gouki").addEventListener("change",()=>{if($("gouki").value)lsSet("nippo_gouki",$("gouki").value)});
+// 号機を選んだら「前回の日報をコピーする」を出す（新しく入力しているときだけ）
+$("gouki").addEventListener("change",()=>{const g=$("gouki").value;if(!g)return;lsSet("nippo_gouki",g);
+  if(EDIT)return;const b=$("copybar");b.innerHTML="";const t=document.createElement("span");t.textContent=g+"号機の前回の日報をコピーして入力できます。";
+  const y=document.createElement("button");y.type="button";y.className="save";y.style.cssText="padding:8px 16px;margin:8px 8px 0 0;font-size:15px";y.textContent="前回の日報をコピーする";y.addEventListener("click",()=>copyLast(g));
+  const n=document.createElement("button");n.type="button";n.className="sub";n.style.cssText="padding:8px 14px;margin-top:8px";n.textContent="使わない";n.addEventListener("click",()=>{b.hidden=true});
+  const d=document.createElement("div");d.append(y,n);b.append(t,d);b.hidden=false});
 $("lgouki").addEventListener("change",e=>{if(e.target.value)loadList(e.target.value)});
 $("lclose").addEventListener("click",()=>{$("listbox").hidden=true;$("app").hidden=false;$("savebar").hidden=false});
 // ---- 下書き（スマホの中に自動で残す） ----
