@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light"><meta name="theme-color" content="#0069a6">
+<title>作業日報アプリの入れ方</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&display=swap">
+<style>
+/* 配布用マニュアル：上にQRとLINE用の文、下にOSごとの手順（スマホ画面の図つき）。いつも白い画面 */
+:root{
+  --bg:#ffffff; --sheet:#ffffff; --fg:#1b2329; --muted:#56636c; --line:#d5dde2; --soft:#f2f7f9;
+  --sky:#0069a6; --grass:#2b8443; --tap:#e0662a; --tint:#e2f0f9;
+  --font:"BIZ UDPGothic","Hiragino Sans","Yu Gothic UI","Meiryo",sans-serif;
+  color-scheme:light;
+}
+body{background:var(--bg);color:var(--fg);font-family:var(--font);font-size:17px;line-height:1.7}
+.wrap{max-width:860px;margin:0 auto;padding-block:20px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:20px}
+header{display:flex;gap:14px;align-items:center;padding-bottom:12px;border-bottom:4px solid var(--grass)}
+header img{width:64px;height:64px;border-radius:14px;flex:none}
+header h1{margin:0;font-size:24px;color:var(--sky);text-wrap:balance}
+header p{margin:2px 0 0;color:var(--muted);font-size:14px}
+h2{margin:0 0 10px;font-size:20px;color:var(--sky);text-wrap:balance}
+h3{margin:0;font-size:17px}
+.sheet{background:var(--sheet);border:1px solid var(--line);border-radius:12px;padding:18px;min-width:0}
+.top{display:grid;grid-template-columns:auto minmax(0,1fr);gap:22px;align-items:center}
+@media (max-width:620px){.top{grid-template-columns:minmax(0,1fr)}.qrbox{justify-self:center}}
+.qrbox{display:flex;flex-direction:column;align-items:center;gap:6px}
+#qr{background:#fff;padding:10px;border-radius:8px;border:1px solid var(--line);line-height:0}
+#qr img,#qr canvas{width:180px;height:180px}
+.url{font-size:13px;color:var(--muted);word-break:break-all;text-align:center;max-width:220px}
+.tabs{display:flex;border:2px solid var(--sky);border-radius:14px;overflow:hidden;position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg)}
+.tabs button{flex:1;font:inherit;font-size:18px;font-weight:700;padding:12px 8px;border:0;background:var(--bg);color:var(--sky);cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--sky);color:#fff}
+.tabs button:focus-visible{outline:3px solid var(--tap);outline-offset:-3px}
+.steps{display:flex;flex-direction:column;gap:14px;margin:0;padding:0;list-style:none}
+.step{display:grid;grid-template-columns:minmax(0,1fr) 210px;gap:16px;align-items:center;border:1px solid var(--line);border-radius:14px;padding:16px}
+@media (max-width:560px){.step{grid-template-columns:minmax(0,1fr)}.step .ph{justify-self:center}}
+.step .no{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--grass);color:#fff;font-weight:700;margin-right:8px;flex:none}
+.step h3{display:flex;align-items:center;margin-bottom:6px}
+.step p{margin:0}
+.step .note{margin-top:8px;font-size:14px;color:var(--muted)}
+b.t{color:var(--tap)}
+/* スマホ画面の図 */
+.ph{width:200px;height:360px;border:8px solid #2a3238;border-radius:30px;background:#f7f8f9;position:relative;overflow:hidden;font-size:11px;line-height:1.4;color:#222;box-shadow:0 4px 14px rgba(20,40,60,.15)}
+.ph .bar{height:22px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;justify-content:center;font-size:9px;color:#777}
+.ph .page{position:absolute;inset:22px 0 0;background:#fff;padding:10px}
+.ph .appbar{height:34px;margin:-10px -10px 8px;background:linear-gradient(180deg,#0a7cc0,#0069a6);box-shadow:inset 0 -3px 0 #2b8443;color:#fff;font-weight:700;display:flex;align-items:center;padding:0 10px;font-size:12px}
+.ph .blk{height:10px;background:#e6ecef;border-radius:4px;margin:6px 0}
+.ph .blk.s{width:60%}
+.ph .btm{position:absolute;left:0;right:0;bottom:0;height:40px;background:#f1f3f4;border-top:1px solid #ddd;display:flex;align-items:center;justify-content:space-around;color:#0a6fd6;font-size:16px}
+.ph .addr{position:absolute;left:8px;right:8px;bottom:46px;height:26px;background:#e9ebed;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:9px;color:#555}
+.ph .chromebar{position:absolute;left:0;right:0;top:22px;height:34px;background:#f1f3f4;display:flex;align-items:center;gap:6px;padding:0 6px;border-bottom:1px solid #ddd}
+.ph .chromebar .u{flex:1;height:24px;border-radius:12px;background:#fff;font-size:9px;color:#555;display:flex;align-items:center;padding:0 8px;white-space:nowrap;overflow:hidden}
+.ph .dots{width:24px;text-align:center;font-size:16px;color:#333;font-weight:700}
+.ph .sheetup{position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:14px 14px 0 0;box-shadow:0 -4px 14px rgba(0,0,0,.18);padding:10px}
+.ph .menu{position:absolute;right:4px;top:52px;width:150px;background:#fff;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.25);padding:4px 0}
+.ph .mi{padding:7px 10px;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:center}
+.ph .mi:last-child{border-bottom:0}
+.ph .dim{position:absolute;inset:22px 0 0;background:rgba(0,0,0,.28)}
+.ph .tapme{position:relative;outline:3px solid var(--tap);outline-offset:1px;border-radius:6px;background:#fff3ec}
+.ph .tapme::after{content:"ここ";position:absolute;right:-4px;top:-18px;background:var(--tap);color:#fff;font-size:9px;font-weight:700;padding:1px 6px;border-radius:8px}
+.ph .tapicon{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;outline:3px solid var(--tap);background:#fff3ec}
+.ph .dialog{position:absolute;left:14px;right:14px;top:110px;background:#fff;border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,.3);padding:12px}
+.ph .row{display:flex;align-items:center;gap:8px}
+.ph .ic{width:34px;height:34px;border-radius:8px;flex:none}
+.ph .home{position:absolute;inset:22px 0 0;background:linear-gradient(160deg,#9bb7c9,#c9d8c4);display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:16px 10px;align-content:start}
+.ph .home .app{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:8px;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.4)}
+.ph .home .app i{display:block;width:34px;height:34px;border-radius:8px;background:rgba(255,255,255,.55)}
+.ph .home .app img{width:34px;height:34px;border-radius:8px}
+.ph .camera{position:absolute;inset:22px 0 0;background:#3c4449;display:flex;align-items:center;justify-content:center}
+.ph .camera .qrf{width:90px;height:90px;border:3px solid #ffd54a;border-radius:8px;background:repeating-conic-gradient(#fff 0 25%,#222 0 50%) 0 0/14px 14px}
+.ph .chip{position:absolute;left:30px;right:30px;top:60px;background:#ffd54a;color:#222;border-radius:14px;padding:5px 8px;font-size:9px;text-align:center;font-weight:700}
+.ph .toggle{display:inline-block;width:26px;height:15px;border-radius:8px;background:#34c759;position:relative;vertical-align:middle}
+.ph .toggle::after{content:"";position:absolute;right:2px;top:2px;width:11px;height:11px;border-radius:50%;background:#fff}
+.ph .banner{background:var(--tint);border:1px solid #b9d6ea;border-radius:8px;padding:6px;font-size:9px}
+.ph .gbtn{display:inline-block;background:#2b8443;color:#fff;border-radius:6px;padding:3px 8px;font-weight:700;margin-top:4px}
+.browsers{border:3px solid var(--sky);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px;background:var(--tint)}
+.browsers h2{margin:0}
+.browsers p{margin:0}
+.bgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media (max-width:420px){.bgrid{grid-template-columns:minmax(0,1fr)}}
+.bcard{background:var(--sheet);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.bcard .os{font-size:13px;color:var(--muted);font-weight:700;letter-spacing:.05em}
+.bcard b{font-size:20px;color:var(--fg)}
+.bcard span:last-child{font-size:13px;color:var(--muted)}
+.box{border-left:4px solid var(--tap);background:#fff6ef;border-radius:8px;padding:12px 14px}
+.box h3{margin-bottom:4px}
+.faq{display:flex;flex-direction:column;gap:12px}
+.faq div{border-bottom:1px dashed var(--line);padding-bottom:10px}
+.faq b{display:block}
+.msg{white-space:pre-wrap;background:var(--tint);border-radius:8px;padding:12px;font-size:15px;margin:0;overflow-wrap:anywhere}
+.row2{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:10px}
+button.copy{font:inherit;font-weight:700;background:var(--grass);color:#fff;border:0;border-radius:8px;padding:10px 18px;cursor:pointer}
+button.copy:focus-visible{outline:3px solid var(--fg);outline-offset:2px}
+.ok{font-size:14px;color:var(--muted)}
+.small{font-size:14px;color:var(--muted);margin:8px 0 0}
+</style>
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head><body>
+
+<div class="wrap">
+  <header>
+    <img alt="アプリのアイコン" src="apple-touch-icon.png">
+    <div><h1>作業日報アプリの入れ方</h1>
+    <p>丸門建設の作業日報・点検表・報告などをスマホから入力するアプリです。最初に1回だけ、ホーム画面に入れてください。</p></div>
+  </header>
+
+  <section class="browsers" aria-label="使うブラウザ">
+    <h2>はじめに：決まったブラウザで開いてください</h2>
+    <div class="bgrid">
+      <div class="bcard"><span class="os">iPhone</span><b>Safari（サファリ）</b><span>青いコンパスのアイコン</span></div>
+      <div class="bcard"><span class="os">Android</span><b>Chrome（クローム）</b><span>赤・黄・緑・青の丸いアイコン</span></div>
+    </div>
+    <p>LINE・Gmail・Yahoo!などのアプリの中や、ほかのブラウザで開くと、ホーム画面に入れられません。<b>必ず上のブラウザで開いてから</b>、下の手順に進んでください。</p>
+    <p class="small">確実な開き方：Safari（AndroidはChrome）を開いて、上のアドレス欄に <b>marumonkeiri-code.github.io/nippo</b> と打って開きます。QRコードを読んでも大丈夫です。</p>
+  </section>
+
+  <section class="sheet top">
+    <div class="qrbox">
+      <div id="qr" role="img" aria-label="アプリのQRコード"></div>
+      <div class="url">https://marumonkeiri-code.github.io/nippo/</div>
+    </div>
+    <div>
+      <h2>まずはスマホのカメラでQRコードを読む</h2>
+      <p style="margin:0">ページが開いたら、下の手順で「ホーム画面に追加」をします。自分のスマホの種類（iPhone か Android）を選んで、順番どおりに進めてください。</p>
+      <p class="small">LINEで届いたリンクから開いた人も、同じ手順です。</p>
+    </div>
+  </section>
+
+  <div class="tabs" role="tablist" aria-label="スマホの種類">
+    <button type="button" role="tab" id="tab-ios" aria-controls="ios" aria-selected="true">iPhone</button>
+    <button type="button" role="tab" id="tab-and" aria-controls="android" aria-selected="false">Android</button>
+  </div>
+
+  <section id="ios" role="tabpanel" aria-labelledby="tab-ios">
+    <h2>iPhone の手順（Safari）</h2>
+    <ol class="steps">
+      <li class="step"><div><h3><span class="no">1</span>QRコードを読んで開く</h3>
+        <p>カメラをQRコードに向けると、黄色いボタンが出ます。<b class="t">黄色いボタン</b>を押すと、Safari でページが開きます。</p>
+        <p class="note">Safari を開いて、アドレス欄に marumonkeiri-code.github.io/nippo と打って開いても同じです。</p></div>
+        <div class="ph" aria-hidden="true"><div class="bar">カメラ</div><div class="camera"><div class="qrf"></div></div><div class="chip tapme">Safariで開く（github.io）</div></div></li>
+
+      <li class="step"><div><h3><span class="no">2</span>下の「共有」ボタンを押す</h3>
+        <p>画面の下にある、<b class="t">四角から上向きの矢印が出たボタン</b>を押します。</p>
+        <p class="note">見当たらないときは、画面の下（または右下）の「…」を押してから「共有」を押してください。画面を少し下にずらすとボタンが出ることもあります。</p></div>
+        <div class="ph" aria-hidden="true"><div class="bar">9:41</div><div class="page"><div class="appbar">丸門建設 日報・報告</div><div class="banner">このアプリをホーム画面に入れましょう</div><div class="blk"></div><div class="blk s"></div><div class="blk"></div><div class="blk s"></div></div>
+          <div class="addr">marumonkeiri-code.github.io</div><div class="btm"><span>‹</span><span>›</span><span class="tapicon">⇪</span><span>▢</span><span>⋯</span></div></div></li>
+
+      <li class="step"><div><h3><span class="no">3</span>「ホーム画面に追加」を押す</h3>
+        <p>下から出てきたメニューを<b>上に指でずらす</b>と、<b class="t">「ホーム画面に追加」</b>があります。それを押します。</p>
+        <p class="note">一番下にあることが多いです。「ブックマークを追加」と間違えないでください。</p></div>
+        <div class="ph" aria-hidden="true"><div class="bar">9:41</div><div class="page"><div class="appbar">丸門建設 日報・報告</div><div class="blk"></div></div><div class="dim"></div>
+          <div class="sheetup"><div class="mi">コピー<span>⧉</span></div><div class="mi">リーディングリストに追加<span>◎</span></div><div class="mi">ブックマークを追加<span>☆</span></div><div class="mi tapme">ホーム画面に追加<span>⊞</span></div><div class="mi">ページを検索<span>⌕</span></div></div></div></li>
+
+      <li class="step"><div><h3><span class="no">4</span>右上の「追加」を押す</h3>
+        <p>名前が「作業日報」になっていることを確かめて、右上の<b class="t">「追加」</b>を押します。</p>
+        <p class="note">「Webアプリとして開く」が出たら、オン（緑）のままにしてください。</p></div>
+        <div class="ph" aria-hidden="true"><div class="bar">9:41</div><div class="page" style="background:#f2f2f7">
+          <div class="row" style="justify-content:space-between;margin-bottom:12px;font-size:11px"><span style="color:#0a6fd6">キャンセル</span><b>ホーム画面に追加</b><span class="tapme" style="color:#0a6fd6;font-weight:700;padding:0 4px">追加</span></div>
+          <div class="row" style="background:#fff;border-radius:10px;padding:8px"><img class="ic" alt="" src="apple-touch-icon.png"><div><b>作業日報</b><div style="color:#888;font-size:9px">marumonkeiri-code.github.io</div></div></div>
+          <div class="row" style="background:#fff;border-radius:10px;padding:8px;margin-top:10px;justify-content:space-between"><span>Webアプリとして開く</span><span class="toggle"></span></div></div></div></li>
+
+      <li class="step"><div><h3><span class="no">5</span>ホーム画面のアイコンから開く</h3>
+        <p>ホーム画面に<b>青と緑のアイコン（作業日報）</b>ができたら完了です。次からは、このアイコンを押して開いてください。</p>
+        <p class="note">最初に開いたときだけ、暗証番号を入れます。暗証番号は事務所に聞いてください。</p></div>
+        <div class="ph" aria-hidden="true"><div class="bar">9:41</div><div class="home">
+          <div class="app"><i></i>写真</div><div class="app"><i></i>カメラ</div><div class="app"><i></i>LINE</div><div class="app"><i></i>設定</div>
+          <div class="app"><i></i>地図</div><div class="app"><i></i>天気</div><div class="app" style="outline:3px solid var(--tap);border-radius:8px"><img alt="" src="apple-touch-icon.png">作業日報</div></div></div></li>
+    </ol>
+  </section>
+
+  <section id="android" role="tabpanel" aria-labelledby="tab-and" hidden>
+    <h2>Android の手順（Chrome）</h2>
+    <ol class="steps">
+      <li class="step"><div><h3><span class="no">1</span>QRコードを読んで開く</h3>
+        <p>カメラ（またはGoogleレンズ）をQRコードに向けて、出てきた<b class="t">リンク</b>を押します。Chrome でページが開きます。</p>
+        <p class="note">どのアプリで開くか聞かれたら「Chrome」を選んでください。Chrome を開いて、アドレス欄に marumonkeiri-code.github.io/nippo と打って開いても同じです。</p></div>
+        <div class="ph" aria-hidden="true"><div class="bar">カメラ</div><div class="camera"><div class="qrf"></div></div><div class="chip tapme">marumonkeiri-code.github.io</div></div></li>
+
+      <li class="step"><div><h3><span class="no">2</span>「ホーム画面に入れる」を押す</h3>
+        <p>ページの上に「このアプリをホーム画面に入れましょう」と出たら、緑の<b class="t">「ホーム画面に入れる」</b>を押して、手順4へ進みます。</p>
+        <p class="note">案内が出ないときは、手順3へ進んでください。</p></div>
+        <div class="ph" aria-hidden="true"><div class="bar">9:41</div><div class="chromebar"><span class="u">marumonkeiri-code.github.io/nippo</span><span class="dots">⋮</span></div>
+          <div class="page" style="top:56px"><div class="appbar">丸門建設 日報・報告</div><div class="banner">このアプリをホーム画面に入れましょう<br><span class="gbtn tapme">ホーム画面に入れる</span></div><div class="blk"></div><div class="blk s"></div></div></div></li>
+
+      <li class="step"><div><h3><span class="no">3</span>右上の「︙」から「ホーム画面に追加」</h3>
+        <p>右上の<b class="t">「︙」（縦に点が3つ）</b>を押して、メニューの<b class="t">「ホーム画面に追加」</b>または<b class="t">「アプリをインストール」</b>を押します。</p></div>
+        <div class="ph" aria-hidden="true"><div class="bar">9:41</div><div class="chromebar"><span class="u">marumonkeiri-code.github.io/nippo</span><span class="dots tapicon" style="width:24px;height:24px">⋮</span></div>
+          <div class="page" style="top:56px"><div class="appbar">丸門建設 日報・報告</div><div class="blk"></div></div>
+          <div class="menu"><div class="mi">新しいタブ</div><div class="mi">履歴</div><div class="mi">ブックマーク</div><div class="mi tapme">ホーム画面に追加</div><div class="mi">共有…</div><div class="mi">設定</div></div></div></li>
+
+      <li class="step"><div><h3><span class="no">4</span>「インストール」または「追加」を押す</h3>
+        <p>確認が出たら、<b class="t">「インストール」</b>（または「追加」）を押します。もう一度「ホーム画面に追加」と聞かれたら、「追加」を押します。</p></div>
+        <div class="ph" aria-hidden="true"><div class="bar">9:41</div><div class="page"><div class="appbar">丸門建設 日報・報告</div><div class="blk"></div></div><div class="dim"></div>
+          <div class="dialog"><b>アプリをインストール</b><div class="row" style="margin:10px 0"><img class="ic" alt="" src="apple-touch-icon.png"><div><b>作業日報</b><div style="color:#888;font-size:9px">marumonkeiri-code.github.io</div></div></div>
+          <div class="row" style="justify-content:flex-end;gap:14px;font-weight:700;color:#1a73e8"><span>キャンセル</span><span class="tapme" style="padding:0 4px">インストール</span></div></div></div></li>
+
+      <li class="step"><div><h3><span class="no">5</span>ホーム画面のアイコンから開く</h3>
+        <p>ホーム画面（またはアプリ一覧）に<b>青と緑のアイコン（作業日報）</b>ができたら完了です。次からは、このアイコンを押して開いてください。</p>
+        <p class="note">最初に開いたときだけ、暗証番号を入れます。暗証番号は事務所に聞いてください。</p></div>
+        <div class="ph" aria-hidden="true"><div class="bar">9:41</div><div class="home">
+          <div class="app"><i></i>Chrome</div><div class="app"><i></i>カメラ</div><div class="app"><i></i>LINE</div><div class="app"><i></i>設定</div>
+          <div class="app"><i></i>マップ</div><div class="app"><i></i>天気</div><div class="app" style="outline:3px solid var(--tap);border-radius:8px"><img alt="" src="apple-touch-icon.png">作業日報</div></div></div></li>
+    </ol>
+  </section>
+
+  <section class="box">
+    <h3>LINEの中でページが開いてしまったとき</h3>
+    <p style="margin:0">LINEの中の画面では、ホーム画面に入れられません。画面の右下（または右上）の<b class="t">「︙」や共有ボタン</b>を押して、iPhoneは<b class="t">「Safariで開く」</b>、Androidは<b class="t">「ブラウザで開く」</b>（または「他のアプリで開く」→ Chrome）を選んでから、上の手順2へ進んでください。</p>
+  </section>
+
+  <section class="sheet">
+    <h2>うまくいかないとき</h2>
+    <div class="faq">
+      <div><b>「ホーム画面に追加」が見つからない</b>LINEやGmailなど、ほかのアプリの中で開いていないか確かめてください。iPhoneは Safari、Androidは Chrome で開くと出てきます。</div>
+      <div><b>前のアイコン（古い色のアイコン）が残っている</b>古いアイコンを長押しして削除してから、もう一度この手順で入れてください。</div>
+      <div><b>アイコンを押すと、毎回ブラウザの画面になる</b>アイコンを一度削除して、Safari（Androidは Chrome）からもう一度入れ直してください。iPhoneでは「Webアプリとして開く」をオンにしてください。</div>
+      <div><b>画面が古い・新しいボタンが出てこない</b>アプリを完全に閉じて（画面の下から上にスワイプして、アプリを上に払う）、もう一度開いてください。</div>
+      <div><b>暗証番号が分からない</b>事務所に確認してください。</div>
+    </div>
+  </section>
+
+  <section class="sheet">
+    <h2>LINEで送るときの文</h2>
+    <p id="msg" class="msg">【作業日報アプリのお知らせ】
+作業日報・点検表などをスマホで入力できるアプリができました。
+下のリンクを押して、出てくる案内の通りに「ホーム画面に追加」をしてください（最初の1回だけです）。
+
+アプリ：https://marumonkeiri-code.github.io/nippo/?openExternalBrowser=1
+入れ方の説明（画像つき）：https://marumonkeiri-code.github.io/nippo/install.html
+
+暗証番号は事務所に確認してください。</p>
+    <div class="row2">
+      <button type="button" class="copy" id="copy">この文をコピー</button>
+      <span class="ok" id="copied" aria-live="polite"></span>
+    </div>
+    <p class="small">リンクの最後の「?openExternalBrowser=1」は、LINEの中ではなくSafariやChromeで開くための印です。消さずにそのまま送ってください。</p>
+  </section>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+try{new QRCode(document.getElementById("qr"),{text:"https://marumonkeiri-code.github.io/nippo/",width:360,height:360,colorDark:"#000000",colorLight:"#ffffff",correctLevel:QRCode.CorrectLevel.M})}
+catch(e){document.getElementById("qr").textContent="QRコードを表示できませんでした"}
+(function(){
+  const tabs=[["tab-ios","ios"],["tab-and","android"]];
+  function show(id){tabs.forEach(([t,p])=>{const on=p===id;document.getElementById(t).setAttribute("aria-selected",on);document.getElementById(p).hidden=!on})}
+  tabs.forEach(([t,p])=>document.getElementById(t).addEventListener("click",()=>{show(p);try{history.replaceState(null,"","#"+p)}catch(e){}}));
+  const h=(location.hash||"").slice(1);
+  if(h==="android"||h==="ios")show(h);else if(/Android/i.test(navigator.userAgent))show("android");
+  window.addEventListener("hashchange",()=>{const x=location.hash.slice(1);if(x==="android"||x==="ios")show(x)});
+})();
+document.getElementById("copy").addEventListener("click",()=>{
+  const t=document.getElementById("msg").textContent,ok=document.getElementById("copied");
+  const sel=()=>{const r=document.createRange();r.selectNodeContents(document.getElementById("msg"));const s=getSelection();s.removeAllRanges();s.addRange(r);ok.textContent="文を選びました。長押しでコピーしてください。"};
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(()=>{ok.textContent="コピーしました"},sel)}else sel();
+});
+</script>
+
+</body></html>
