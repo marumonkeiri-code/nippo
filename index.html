@@ -414,6 +414,9 @@ body{padding-top:0}
 .wchips{display:flex;gap:6px;flex-wrap:wrap}
 .wchips button{font:inherit;font-size:14px;padding:6px 12px;border-radius:999px;border:1px solid var(--hair);background:var(--sheet);color:var(--fg);cursor:pointer}
 .wchips button.on{background:var(--sky);border-color:var(--sky);color:#fff;font-weight:700}
+#wgou button{font-size:15px;padding:7px 14px}
+#wgou button.on{background:var(--grass);border-color:var(--grass)}
+.wgrp h3 .tag{margin-left:6px;font-size:12px;color:var(--grass)}
 .wgrp{background:var(--sheet);border:1px solid var(--hair);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;margin-bottom:10px}
 .wgrp h3{margin:0;padding:8px 14px;font-size:14px;background:var(--head);color:var(--muted);border-bottom:1px solid var(--hair)}
 .wrow{display:flex;align-items:center;gap:8px;padding:8px 10px 8px 14px;border-bottom:1px solid var(--hair)}
@@ -564,7 +567,8 @@ body{padding-top:0}
       <div style="display:flex;gap:8px"><input id="wpin" type="password" inputmode="numeric" autocomplete="off" aria-label="ワイヤ管理用の暗証番号" style="flex:1;font-size:18px;padding:8px"><button type="submit" class="save">開く</button></div>
       <p id="wpinmsg" style="color:var(--danger);margin:6px 0 0"></p>
     </div></form>
-    <div class="wseg" id="wtype"><button type="button" data-t="W" class="on">ダブル</button><button type="button" data-t="S">シングル</button></div>
+    <div class="wseg" id="wtype"><button type="button" data-t="W" class="on">ダブル</button><button type="button" data-t="S">シングル</button><button type="button" data-t="U">中古</button></div>
+    <div class="wchips" id="wgou" hidden></div>
     <div class="wchips" id="wdia"></div>
     <div class="ksum" id="wsum"></div>
     <div id="wmsg" class="kconfirm" hidden></div>
@@ -582,7 +586,7 @@ body{padding-top:0}
       </div>
       <div class="wgrid">
         <label>本数<span class="wstep"><button type="button" id="wminus" aria-label="1本へらす">－</button><input id="w_n" type="number" inputmode="numeric" min="1" max="100" value="1"><button type="button" id="wplus" aria-label="1本ふやす">＋</button></span></label>
-        <label><span id="wglabel">号機</span><select id="w_g"></select></label>
+        <label id="wglab"><span id="wglabel">号機</span><select id="w_g"></select></label>
         <label>日付<input id="w_date" type="date"></label>
         <label>備考<input id="w_memo" type="text" placeholder="なければ空欄"></label>
       </div>
@@ -1562,13 +1566,41 @@ let MASTER=null,nippoStarted=false,jikoStarted=false;
 function scr(k){try{sessionStorage.setItem("screen",k)}catch(e){}}
 function setTitle(t){const e=document.getElementById("apptitle");if(e)e.textContent=t}
 // ---- ワイヤ管理（見るのはだれでも。入出荷は鍵＝ワイヤ管理用の暗証番号） ----
-const WLS="wire_pin";let WPIN=lsGet(WLS),WDATA=[],WTYPE="W",WDIA="",wStarted=false,WCUR=null,WIO="入荷";
+const WLS="wire_pin";let WPIN=lsGet(WLS),WDATA=[],WTYPE="W",WDIA="",wStarted=false,WCUR=null,WIO="入荷",WUSED=null,WGOU="";
+const WGOUKI=["1","3","7","8","11","13","16","21","23"];
+function wUsedLoad(){$("wsum").textContent="読み込み中…";callApi("getWireUsed",[PIN]).then(d=>{WUSED=d;wDraw()},e=>{$("wsum").textContent="";boxMsg("wmsg",esc(e.message||String(e)))})}
 const WNAME={W:"ダブル",S:"シングル"};
 function wKey(o){return o.d+"-"+o.s+"-"+o.t}
-function wLoad(){$("wmsg").hidden=true;$("wsum").textContent="読み込み中…";
+function wLoad(){$("wmsg").hidden=true;$("wsum").textContent="読み込み中…";WUSED=null;
   callApi("getWire",[PIN]).then(d=>{WDATA=d;wDraw()},e=>{$("wsum").textContent="";boxMsg("wmsg",esc(e.message||String(e)))})}
-function wLockPaint(){const on=!!WPIN;$("wlock").textContent=on?"鍵を閉める":"鍵を開ける";$("wnewbox").hidden=!on;$("wpinform").hidden=true}
+function wLockPaint(){const on=!!WPIN;$("wlock").textContent=on?"鍵を閉める":"鍵を開ける";$("wnewbox").hidden=!on;$("wpinform").hidden=true;$("wnew").textContent=WTYPE==="U"?"＋ この号機に中古ワイヤを追加":"＋ 一覧にないワイヤを追加"}
+function wRow(o,g){const r=document.createElement("div");r.className="wrow"+(o.n<0?" neg":o.n===0?" zero":"");
+  const nm=document.createElement("button");nm.type="button";nm.className="nm";nm.innerHTML=esc(o.d+"mm × "+o.s)+"<small>"+esc(o.last?"最終 "+o.last.slice(2).replace(/-/g,"/"):"記録なし")+"</small>";
+  nm.addEventListener("click",()=>wOpen(o,null));
+  const q=document.createElement("span");q.className="qty";q.innerHTML=esc(o.n)+"<small>本</small>";r.append(nm,q);
+  if(WPIN){[["out","－","出荷"],["in","＋","入荷"]].forEach(([c,t,io])=>{const b=document.createElement("button");b.type="button";b.className="pm "+c;b.textContent=t;
+    b.setAttribute("aria-label",o.d+"mm×"+o.s+" "+(o.u?(io==="入荷"?"中古をふやす":"中古をへらす"):(io==="入荷"?"入荷・戻り":"出荷")));b.addEventListener("click",()=>wOpen(o,io));r.appendChild(b)})}
+  g.appendChild(r)}
+function wDrawUsed(){
+  $("wdia").hidden=true;$("wgou").hidden=false;
+  if(!WUSED){wUsedLoad();return}
+  if(!WGOU)WGOU=WGOUKI.find(g=>WUSED.some(o=>o.u===g&&o.n))||WGOUKI[0];
+  const ch=$("wgou");ch.innerHTML="";
+  WGOUKI.concat([...new Set(WUSED.map(o=>o.u))].filter(g=>g&&!WGOUKI.includes(g))).forEach(g=>{const tot=WUSED.filter(o=>o.u===g).reduce((a,o)=>a+Math.max(0,o.n),0);
+    const b=document.createElement("button");b.type="button";b.textContent=g+"号機"+(tot?"（"+tot+"）":"");b.classList.toggle("on",g===WGOU);b.addEventListener("click",()=>{WGOU=g;wDraw()});ch.appendChild(b)});
+  const show=WUSED.filter(o=>o.u===WGOU&&(o.n!==0)).sort((a,b)=>(a.t>b.t?1:a.t<b.t?-1:0)||a.s-b.s||a.d-b.d);
+  const tot=show.reduce((a,o)=>a+Math.max(0,o.n),0);
+  $("wsum").textContent="中古・"+WGOU+"号機　"+show.length+"種類・合計"+tot+"本"+(WPIN?"":"　※ふやす・へらすは鍵を開けると出ます");
+  const box=$("wlist");box.innerHTML="";
+  ["W","S"].forEach(t=>{const L=show.filter(o=>o.t===t);if(!L.length)return;
+    const g=document.createElement("div");g.className="wgrp";const h=document.createElement("h3");h.innerHTML=esc(WNAME[t])+'<span class="tag">中古</span>';g.appendChild(h);
+    L.forEach(o=>wRow(o,g));box.appendChild(g)});
+  if(!show.length)box.innerHTML='<p class="lmsg">'+esc(WGOU)+'号機の中古ワイヤはありません。'+(WPIN?"下の「＋ この号機に中古ワイヤを追加」から入れられます。":"")+'</p>';
+}
 function wDraw(){
+  $("wnew").textContent=WTYPE==="U"?"＋ この号機に中古ワイヤを追加":"＋ 一覧にないワイヤを追加";
+  if(WTYPE==="U")return wDrawUsed();
+  $("wdia").hidden=false;$("wgou").hidden=true;
   const list=WDATA.filter(o=>o.t===WTYPE);
   const dias=[...new Set(list.map(o=>o.d))].sort((a,b)=>a-b);
   if(WDIA&&!dias.includes(Number(WDIA)))WDIA="";
@@ -1582,28 +1614,22 @@ function wDraw(){
   show.forEach(o=>{(by[o.s]=by[o.s]||[]).push(o)});
   Object.keys(by).map(Number).sort((a,b)=>a-b).forEach(s=>{
     const g=document.createElement("div");g.className="wgrp";const h=document.createElement("h3");h.textContent="サイズ "+s;g.appendChild(h);
-    by[s].forEach(o=>{const r=document.createElement("div");r.className="wrow"+(o.n<0?" neg":o.n===0?" zero":"");
-      const nm=document.createElement("button");nm.type="button";nm.className="nm";nm.innerHTML=esc(o.d+"mm × "+o.s)+"<small>"+esc(o.last?"最終 "+o.last.slice(2).replace(/-/g,"/"):"記録なし")+"</small>";
-      nm.addEventListener("click",()=>wOpen(o,null));
-      const q=document.createElement("span");q.className="qty";q.innerHTML=esc(o.n)+"<small>本</small>";
-      r.append(nm,q);
-      if(WPIN){[["out","－","出荷"],["in","＋","入荷"]].forEach(([c,t,io])=>{const b=document.createElement("button");b.type="button";b.className="pm "+c;b.textContent=t;
-        b.setAttribute("aria-label",o.d+"mm×"+o.s+" "+(io==="入荷"?"入荷・戻り":"出荷"));b.addEventListener("click",()=>wOpen(o,io));r.appendChild(b)})}
-      g.appendChild(r)});
+    by[s].forEach(o=>wRow(o,g));
     box.appendChild(g)});
   if(!show.length)box.innerHTML='<p class="lmsg">このワイヤはまだありません。</p>';
 }
-function wIoPaint(){document.querySelectorAll("#wio button").forEach(b=>b.classList.toggle("on",b.dataset.io===WIO));
-  $("wglabel").textContent=WIO==="出荷"?"号機（持って行く先）":"号機（戻ってきた号機）";$("wsave").textContent=WIO==="出荷"?"出荷を登録する":"入荷を登録する"}
+function wIoPaint(){const used=WTYPE==="U";document.querySelectorAll("#wio button").forEach(b=>{b.classList.toggle("on",b.dataset.io===WIO);b.textContent=b.dataset.io==="入荷"?(used?"＋ ふやす":"＋ 入荷・戻り"):(used?"－ へらす":"－ 出荷")});
+  $("wglab").hidden=used;
+  $("wglabel").textContent=WIO==="出荷"?"号機（持って行く先）":"号機（戻ってきた号機）";$("wsave").textContent=used?(WIO==="出荷"?"中古をへらす":"中古をふやす"):(WIO==="出荷"?"出荷を登録する":"入荷を登録する")}
 function wOpen(o,io){WCUR=o;$("werr").textContent="";
   const isNew=!o;$("wnewf").hidden=!isNew;
-  $("wsh").textContent=isNew?"一覧にないワイヤを追加":WNAME[o.t]+" "+o.d+"mm × "+o.s+"（在庫 "+o.n+"本）";
+  $("wsh").textContent=isNew?(WTYPE==="U"?"中古ワイヤを追加（"+WGOU+"号機）":"一覧にないワイヤを追加"):(o.u?"中古・"+o.u+"号機　":"")+WNAME[o.t]+" "+o.d+"mm × "+o.s+"（"+(o.u?"":"在庫 ")+o.n+"本）";
   $("wform").hidden=!io;$("wclose2box").hidden=!!io;
   if(io){WIO=io;wIoPaint();$("w_n").value="1";$("w_g").value="";$("w_memo").value="";$("w_date").value=new Date(Date.now()+9*3600e3).toISOString().slice(0,10)}
-  if(isNew){$("wn_t").value=WTYPE;$("wn_d").value=WDIA||"";$("wn_s").value=""}
+  if(isNew){$("wn_t").value=WTYPE==="S"?"S":"W";$("wn_d").value=WTYPE==="U"?"":(WDIA||"");$("wn_s").value=""}
   const hb=$("whist");hb.innerHTML="";
   if(o){hb.innerHTML='<div class="whl"><b>最近の入出荷</b><div><span>読み込み中…</span></div></div>';
-    callApi0("wireHistory",[PIN,o.d,o.s,o.t]).then(list=>{if(WCUR!==o)return;
+    callApi0("wireHistory",[PIN,o.d,o.s,o.t,o.u||""]).then(list=>{if(WCUR!==o)return;
       hb.innerHTML='<div class="whl"><b>最近の入出荷（新しい順・10件まで）</b>'+(list.length?list.map(x=>'<div><span>'+esc(x.date.slice(2).replace(/-/g,"/"))+'</span><span class="'+(x.io==="出荷"?"o":"i")+'">'+esc(x.io==="出荷"?"出荷":"入荷")+" "+esc(x.n)+'本</span><span>'+esc(x.g?x.g+"号機":"")+(x.memo?"　"+esc(x.memo):"")+'</span></div>').join(""):'<div><span>記録がありません</span></div>')+'</div>'},
       ()=>{hb.innerHTML=""})}
   $("wsheet").hidden=false;document.body.style.overflow="hidden"}
@@ -1613,18 +1639,20 @@ function wSave(){const err=$("werr");err.textContent="";
   if(!o){const d=Number($("wn_d").value),s=Number($("wn_s").value),t=$("wn_t").value;
     if(!(d>=8&&d<=60))return err.textContent="ワイヤ径を入れてください（mm）。";
     if(!(s>=100&&s<=3000))return err.textContent="サイズを入れてください（例：700）。";
-    o=WDATA.find(x=>x.d===d&&x.s===s&&x.t===t)||{d,s,t,n:0,last:""}}
+    o=WTYPE==="U"?((WUSED||[]).find(x=>x.u===WGOU&&x.d===d&&x.s===s&&x.t===t)||{u:WGOU,d,s,t,n:0,last:""}):(WDATA.find(x=>x.d===d&&x.s===s&&x.t===t)||{d,s,t,n:0,last:""})}
   const n=Number($("w_n").value);if(!(Number.isInteger(n)&&n>=1&&n<=100))return err.textContent="本数は1〜100で入れてください。";
   if(!$("w_date").value)return err.textContent="日付を入れてください。";
-  if(WIO==="出荷"&&o.n-n<0&&!$("wsave").dataset.ok){$("wsave").dataset.ok="1";return err.textContent="在庫（"+o.n+"本）より多く出荷しようとしています。よければもう一度「出荷を登録する」を押してください。"}
+  if(WIO==="出荷"&&o.n-n<0&&!$("wsave").dataset.ok){$("wsave").dataset.ok="1";return err.textContent=(o.u?"中古の本数（":"在庫（")+o.n+"本）より多くへらそうとしています。よければもう一度「"+$("wsave").textContent+"」を押してください。"}
   delete $("wsave").dataset.ok;
   $("wsave").disabled=true;
-  callApi("saveWire",[PIN,WPIN,{d:o.d,s:o.s,t:o.t,io:WIO,n:n,g:$("w_g").value,date:$("w_date").value,memo:$("w_memo").value.trim()}]).then(res=>{
+  const gv=o.u?o.u:$("w_g").value;
+  callApi("saveWire",[PIN,WPIN,{d:o.d,s:o.s,t:o.t,io:WIO,n:n,g:gv,used:!!o.u,date:$("w_date").value,memo:$("w_memo").value.trim()}]).then(res=>{
     $("wsave").disabled=false;
-    let x=WDATA.find(y=>y.d===o.d&&y.s===o.s&&y.t===o.t);if(!x){x={d:o.d,s:o.s,t:o.t,n:0,last:""};WDATA.push(x)}
-    x.n=res.n;x.last=res.last||x.last;WTYPE=o.t;document.querySelectorAll("#wtype button").forEach(b=>b.classList.toggle("on",b.dataset.t===WTYPE));
+    if(o.u){let x=(WUSED=WUSED||[]).find(y=>y.u===o.u&&y.d===o.d&&y.s===o.s&&y.t===o.t);if(!x){x={u:o.u,d:o.d,s:o.s,t:o.t,n:0,last:""};WUSED.push(x)}x.n=res.n;x.last=res.last||x.last}
+    else{let x=WDATA.find(y=>y.d===o.d&&y.s===o.s&&y.t===o.t);if(!x){x={d:o.d,s:o.s,t:o.t,n:0,last:""};WDATA.push(x)}
+      x.n=res.n;x.last=res.last||x.last;WTYPE=o.t;document.querySelectorAll("#wtype button").forEach(b=>b.classList.toggle("on",b.dataset.t===WTYPE))}
     wClose();wDraw();
-    boxMsg("wmsg","<b>登録しました</b>："+esc(WNAME[o.t]+" "+o.d+"mm × "+o.s+"　"+(WIO==="出荷"?"出荷":"入荷")+" "+n+"本"+($("w_g").value?"（"+$("w_g").value+"号機）":""))+"　→ 在庫 <b>"+esc(res.n)+"本</b>")},
+    boxMsg("wmsg","<b>登録しました</b>："+esc((o.u?"中古・"+o.u+"号機　":"")+WNAME[o.t]+" "+o.d+"mm × "+o.s+"　"+(o.u?(WIO==="出荷"?"へらす":"ふやす"):(WIO==="出荷"?"出荷":"入荷"))+" "+n+"本"+(!o.u&&gv?"（"+gv+"号機）":""))+"　→ "+(o.u?"":"在庫 ")+"<b>"+esc(res.n)+"本</b>")},
    e=>{$("wsave").disabled=false;const m=e.message||String(e);
     if(/ワイヤ管理用の暗証番号/.test(m)){WPIN="";try{localStorage.removeItem(WLS)}catch(_){}wLockPaint();wDraw();wClose();boxMsg("wmsg",esc(m))}else err.textContent=m})}
 function wStart(){
@@ -1633,7 +1661,7 @@ function wStart(){
   $("wlock").addEventListener("click",()=>{if(WPIN){WPIN="";try{localStorage.removeItem(WLS)}catch(e){}wLockPaint();wDraw()}else{$("wpinform").hidden=!$("wpinform").hidden;$("wpinmsg").textContent="";if(!$("wpinform").hidden)$("wpin").focus()}});
   $("wpinform").addEventListener("submit",e=>{e.preventDefault();const p=$("wpin").value.trim();if(!p)return;
     callApi("checkWirePin",[PIN,p]).then(()=>{WPIN=p;lsSet(WLS,p);$("wpin").value="";wLockPaint();wDraw()},er=>{$("wpinmsg").textContent=er.message||String(er)})});
-  document.querySelectorAll("#wtype button").forEach(b=>b.addEventListener("click",()=>{WTYPE=b.dataset.t;WDIA="";document.querySelectorAll("#wtype button").forEach(x=>x.classList.toggle("on",x===b));wDraw()}));
+  document.querySelectorAll("#wtype button").forEach(b=>b.addEventListener("click",()=>{WTYPE=b.dataset.t;WDIA="";$("wmsg").hidden=true;document.querySelectorAll("#wtype button").forEach(x=>x.classList.toggle("on",x===b));wDraw()}));
   document.querySelectorAll("#wio button").forEach(b=>b.addEventListener("click",()=>{WIO=b.dataset.io;delete $("wsave").dataset.ok;wIoPaint()}));
   $("wminus").addEventListener("click",()=>{$("w_n").value=Math.max(1,(Number($("w_n").value)||1)-1)});
   $("wplus").addEventListener("click",()=>{$("w_n").value=Math.min(100,(Number($("w_n").value)||0)+1)});
