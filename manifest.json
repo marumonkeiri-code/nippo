@@ -1,6 +1,6 @@
 {
-  "name": "作業日報（丸門建設）",
-  "short_name": "作業日報",
+  "name": "丸門アプリ（丸門建設）",
+  "short_name": "丸門アプリ",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

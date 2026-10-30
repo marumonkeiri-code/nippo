@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="ja" data-theme="light"><head><meta charset="utf-8"><meta name="color-scheme" content="light">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>作業日報</title>
+<title>丸門アプリ</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0069a6">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="作業日報">
+<meta name="apple-mobile-web-app-title" content="丸門アプリ">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" href="icon-192.png">
@@ -463,7 +463,7 @@ body{padding-top:0}
 .title h1{color:var(--sky)}
 </style>
 </head><body>
-<header class="appbar"><div class="in"><svg viewBox="0 0 100 100" aria-hidden="true" class=""><defs><mask id="mkA"><rect width="100" height="100" fill="#fff"/><rect x="45" y="7" width="10" height="6.5" fill="#000"/><rect x="46.5" y="75" width="7" height="18" fill="#000"/></mask></defs><g mask="url(#mkA)" fill="currentColor" stroke="currentColor"><circle cx="50" cy="50" r="47" fill="none" stroke-width="3.6"/><circle cx="50" cy="50" r="35" fill="none" stroke-width="14"/><rect x="42.5" y="19" width="15" height="12" rx="5" stroke="none"/></g></svg><span><span class="co">丸門建設</span><span class="ttl" id="apptitle">日報・報告</span></span></div></header>
+<header class="appbar"><div class="in"><svg viewBox="0 0 100 100" aria-hidden="true" class=""><defs><mask id="mkA"><rect width="100" height="100" fill="#fff"/><rect x="45" y="7" width="10" height="6.5" fill="#000"/><rect x="46.5" y="75" width="7" height="18" fill="#000"/></mask></defs><g mask="url(#mkA)" fill="currentColor" stroke="currentColor"><circle cx="50" cy="50" r="47" fill="none" stroke-width="3.6"/><circle cx="50" cy="50" r="35" fill="none" stroke-width="14"/><rect x="42.5" y="19" width="15" height="12" rx="5" stroke="none"/></g></svg><span><span class="co">丸門建設</span><span class="ttl" id="apptitle">丸門アプリ</span></span></div></header>
 <div class="wrap">
   <div id="inst" class="inst" hidden>
     <h2>このアプリをホーム画面に入れましょう</h2>
@@ -1670,7 +1670,7 @@ function wStart(){
   $("wnew").addEventListener("click",()=>wOpen(null,"入荷"));
   wLockPaint();wLoad()}
 function openWire(){scr("wire");setTitle("ワイヤ管理");$("menu").hidden=true;$("wire").hidden=false;if(!wStarted){wStarted=true;wStart()}else wLoad();window.scrollTo(0,0)}
-function showMenu(){scr("");setTitle("日報・報告");["app","savebar","jiko","jsavebar","kakunin","ksavebar","tenken","tsavebar","yukyu","ysavebar","denpyo","dsavebar","buppin","tehai","hsavebar","wire","wsheet","listbox","done"].forEach(i=>$(i).hidden=true);$("menu").hidden=false;window.scrollTo(0,0)}
+function showMenu(){scr("");setTitle("丸門アプリ");["app","savebar","jiko","jsavebar","kakunin","ksavebar","tenken","tsavebar","yukyu","ysavebar","denpyo","dsavebar","buppin","tehai","hsavebar","wire","wsheet","listbox","done"].forEach(i=>$(i).hidden=true);$("menu").hidden=false;window.scrollTo(0,0)}
 function openNippo(){scr("nippo");setTitle("作業日報");$("menu").hidden=true;$("app").hidden=false;$("savebar").hidden=false;if(!nippoStarted){nippoStarted=true;start(MASTER)}window.scrollTo(0,0)}
 function openJiko(){scr("jiko");setTitle("事故・トラブル報告");$("menu").hidden=true;$("jiko").hidden=false;$("jsavebar").hidden=false;if(!jikoStarted){jikoStarted=true;startJiko(MASTER)}window.scrollTo(0,0)}
 (function(){const d=new Date();const w="日月火水木金土"[d.getDay()];$("today").textContent=(d.getMonth()+1)+"月"+d.getDate()+"日（"+w+"）"})();
