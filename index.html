@@ -271,7 +271,7 @@ body{padding-top:0}
 
 /* 工場長確認 */
 .mbtn.kakunin .mi{background:linear-gradient(145deg,#2e9a6b,#1d6e4b)}
-.mbtn.keihi{text-decoration:none;color:inherit}.mbtn.keihi .mi{background:linear-gradient(145deg,#e0a03f,#b36b0f)}.mbtn.keihi[hidden]{display:none!important}
+.mbtn.keihi{text-decoration:none;color:inherit}.mbtn.keihi .mi{background:linear-gradient(145deg,#e0a03f,#b36b0f)}.mbtn.keihi[hidden]{display:none!important}#menuTitle{touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 .mbtn.help{text-decoration:none}.mbtn.help .mi{background:linear-gradient(180deg,#3fa9e0 0%,#0069a6 60%,#2b8443 100%);font-size:26px}
 .helplink{align-self:flex-start;margin-top:8px;font-size:14px;font-weight:700;color:var(--sky);border:1px solid var(--sky);border-radius:999px;padding:4px 12px;text-decoration:none;background:var(--sheet)}
 #kakunin{display:flex;flex-direction:column;gap:10px}
@@ -892,9 +892,13 @@ function lsSet(k,v){try{localStorage.setItem(k,v)}catch(e){}}
 (function(){
   try{const q=new URLSearchParams(location.search).get("keihi");if(q==="on")lsSet("keihi_test","1");if(q==="off")lsSet("keihi_test","")}catch(e){}
   const show=()=>{const b=document.getElementById("goKeihi");if(b)b.hidden=lsGet("keihi_test")!=="1"};
-  let n=0,t=0;
-  document.addEventListener("click",e=>{if(!e.target||e.target.id!=="menuTitle")return;const now=Date.now();n=(now-t<800)?n+1:1;t=now;
-    if(n>=5){n=0;const on=lsGet("keihi_test")!=="1";lsSet("keihi_test",on?"1":"");show();alert(on?"経費・旅費精算（テスト中）をこの端末に出しました":"経費・旅費精算をこの端末から消しました")}});
+  let n=0,t=0,lp=null;
+  const toggle=()=>{const on=lsGet("keihi_test")!=="1";lsSet("keihi_test",on?"1":"");show();alert(on?"経費・旅費精算（テスト中）をこの端末に出しました":"経費・旅費精算をこの端末から消しました")};
+  const isT=e=>e.target&&e.target.closest&&e.target.closest("#menuTitle");
+  // 「丸門建設」を2秒長押し（または5回続けて押す）で出す／消す。押しても画面が拡大しないようにする
+  document.addEventListener("touchstart",e=>{if(!isT(e))return;clearTimeout(lp);lp=setTimeout(()=>{lp=null;toggle()},2000)},{passive:true});
+  ["touchend","touchmove","touchcancel"].forEach(ev=>document.addEventListener(ev,()=>{clearTimeout(lp)},{passive:true}));
+  document.addEventListener("click",e=>{if(!isT(e))return;e.preventDefault();const now=Date.now();n=(now-t<1500)?n+1:1;t=now;if(n>=5){n=0;toggle()}});
   document.addEventListener("DOMContentLoaded",show);show();
 })();
 function setSel(s,v){v=v==null?"":String(v);if(v&&![...s.options].some(o=>o.value===v))s.add(new Option(v.trim(),v));s.value=v;if(s._btn)paintNB(s)}
