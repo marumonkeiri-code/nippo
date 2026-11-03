@@ -271,6 +271,7 @@ body{padding-top:0}
 
 /* 工場長確認 */
 .mbtn.kakunin .mi{background:linear-gradient(145deg,#2e9a6b,#1d6e4b)}
+.mbtn.keihi{text-decoration:none;color:inherit}.mbtn.keihi .mi{background:linear-gradient(145deg,#e0a03f,#b36b0f)}.mbtn.keihi[hidden]{display:none!important}
 .mbtn.help{text-decoration:none}.mbtn.help .mi{background:linear-gradient(180deg,#3fa9e0 0%,#0069a6 60%,#2b8443 100%);font-size:26px}
 .helplink{align-self:flex-start;margin-top:8px;font-size:14px;font-weight:700;color:var(--sky);border:1px solid var(--sky);border-radius:999px;padding:4px 12px;text-decoration:none;background:var(--sheet)}
 #kakunin{display:flex;flex-direction:column;gap:10px}
@@ -505,7 +506,7 @@ body{padding-top:0}
   </div>
 
   <div id="menu" hidden>
-    <h1>丸門建設</h1>
+    <h1 id="menuTitle">丸門建設</h1>
     <div class="hello"><span class="d" id="today"></span><span class="g">おつかれさまです</span><a class="helplink" href="https://claude.ai/artifact/6gudgaZYGnbo1s2BLatdfm" target="_blank" rel="noopener">使い方を見る</a></div>
     <button type="button" class="mbtn nippo" id="goNippo"><span class="mi">日報</span><span><b>作業日報</b><small>その日の作業時間・出来高・人員を入力</small></span></button>
     <button type="button" class="mbtn jiko" id="goJiko"><span class="mi">事故</span><span><b>事故・トラブル報告</b><small>事故や機械の損傷があったときに報告</small></span></button>
@@ -517,6 +518,7 @@ body{padding-top:0}
     <button type="button" class="mbtn wire" id="goWire"><span class="mi">ﾜｲﾔ</span><span><b>ワイヤ管理</b><small>玉掛ワイヤの在庫一覧・入出荷</small></span></button>
     <button type="button" class="mbtn tehai" id="goTehai"><span class="mi">手配</span><span><b>人員手配帳</b><small>だれがどの現場に行くか（写真から読み取りもできます）</small></span></button>
     <button type="button" class="mbtn kakunin" id="goKakunin"><span class="mi">確認</span><span><b>工場長確認</b><small>その日の日報を見て確認のチェックを付ける</small></span></button>
+    <a class="mbtn keihi" id="goKeihi" href="https://gordonpc.tail182036.ts.net/keihi/new" rel="noopener" hidden><span class="mi">経費</span><span><b>経費・旅費精算（テスト中）</b><small>レシートを撮って申請（丸門ポータルに入ります）</small></span></a>
     <a class="mbtn help" href="https://claude.ai/artifact/6gudgaZYGnbo1s2BLatdfm" target="_blank" rel="noopener"><span class="mi">？</span><span><b>使い方</b><small>このアプリの使い方（画面の写真つき）</small></span></a>
   </div>
 
@@ -886,6 +888,15 @@ const $=id=>document.getElementById(id);
 const LS="nippo_pin";let PIN="";let EDIT=null;
 function lsGet(k){try{return localStorage.getItem(k)||""}catch(e){return ""}}
 function lsSet(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+// ---- 経費・旅費精算（テスト中）：この端末だけに出す。メニューの「丸門建設」を5回続けて押すと出る／消える ----
+(function(){
+  try{const q=new URLSearchParams(location.search).get("keihi");if(q==="on")lsSet("keihi_test","1");if(q==="off")lsSet("keihi_test","")}catch(e){}
+  const show=()=>{const b=document.getElementById("goKeihi");if(b)b.hidden=lsGet("keihi_test")!=="1"};
+  let n=0,t=0;
+  document.addEventListener("click",e=>{if(!e.target||e.target.id!=="menuTitle")return;const now=Date.now();n=(now-t<800)?n+1:1;t=now;
+    if(n>=5){n=0;const on=lsGet("keihi_test")!=="1";lsSet("keihi_test",on?"1":"");show();alert(on?"経費・旅費精算（テスト中）をこの端末に出しました":"経費・旅費精算をこの端末から消しました")}});
+  document.addEventListener("DOMContentLoaded",show);show();
+})();
 function setSel(s,v){v=v==null?"":String(v);if(v&&![...s.options].some(o=>o.value===v))s.add(new Option(v.trim(),v));s.value=v;if(s._btn)paintNB(s)}
 // ---- 名前は検索して選ぶ ----
 let PSEL=null,PLIST=null,PFREE=false;
