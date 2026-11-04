@@ -1,5 +1,5 @@
 // 作業日報アプリ：画面を端末に保存して、電波が弱くても開けるようにする
-const CACHE = 'nippo-v7';
+const CACHE = 'nippo-v8';
 const FILES = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));

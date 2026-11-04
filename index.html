@@ -1031,7 +1031,7 @@ function khView(v){KH.view=v;["kh_login","kh_home","kh_slip","kh_item"].forEach(
 function khShowLogin(m){khView("login");$("kh_loginmsg").textContent=m||""}
 function khLoad(then){return khFetch("/me").then(j=>{if(!j.ok){if(KH.tok){khShowLogin(j.error)}return}KH.meta=j;khSetup();if(then)then();else{khView("home");khPaintHome()}})}
 function khSetup(){const m=KH.meta;$("kh_who").textContent=m.name+" さん";$("kh_payer").textContent=m.name;
-  const ks=$("kh_kind");ks.innerHTML='<option value="">選んでください</option>';let g="",og=null;m.kinds.forEach(([k,gr])=>{if(gr!==g){g=gr;og=document.createElement("optgroup");og.label=gr==="旅費"?"旅費（交通費・宿泊・日当）":"経費（買い物など）";ks.appendChild(og)}og.appendChild(new Option(k,k))});
+  const ks=$("kh_kind");ks.innerHTML='<option value="">選んでください</option>';let g="",og=null;[...m.kinds].sort((a,b)=>(a[1]==="旅費"?0:1)-(b[1]==="旅費"?0:1)).forEach(([k,gr,d])=>{if(gr!==g){g=gr;og=document.createElement("optgroup");og.label=gr==="旅費"?"旅費（交通費・宿泊・出張費）":"経費（買い物・交際費など）";ks.appendChild(og)}og.appendChild(new Option(k+(d?"　…"+d:""),k))});
   const bs=$("kh_bumon");bs.innerHTML="";(m.bumon||[]).forEach(([c,n])=>bs.add(new Option(n+"（"+c+"）",c)));if(!(m.bumon||[]).length)bs.add(new Option("（名簿の部門）",""));
   const ns=$("kh_nitto");ns.innerHTML='<option value="">選ぶと金額が入ります</option>';(m.nitto||[]).forEach(([n,a])=>ns.add(new Option(n+"（"+Number(a).toLocaleString()+"円）",a)));
   const dl=$("kh_purps");dl.innerHTML="";(m.purposes||[]).forEach(p=>dl.appendChild(new Option(p)));
@@ -1055,9 +1055,9 @@ function khPaintSlip(){const d=KH.meta.drafts||[];$("kh_slipno").textContent=d.l
     e.onclick=()=>khOpenItem(x);box.appendChild(e)});
   $("kh_cnt").textContent=d.length+"件";$("kh_total").textContent=khYen(d.reduce((a,x)=>a+(x.amount||0),0))}
 function khOpenSlip(){khView("slip");khPaintSlip()}
-function khKind(){const k=$("kh_kind").value;$("kh_route").hidden=k&&!KH_ROUTE.includes(k);$("kh_kmrow").hidden=k!=="ガソリン（距離）";
-  $("kh_nittobox").hidden=!(k==="日当"||k.startsWith("福利厚生"));if(k==="日当"&&KH.meta.nitto_yen&&!$("kh_amount").value)$("kh_amount").value=KH.meta.nitto_yen;khGas()}
-function khGas(){if($("kh_kind").value!=="ガソリン（距離）")return;const km=parseFloat($("kh_km").value||0);if(km)$("kh_amount").value=Math.round(km*($("kh_rt").value?2:1)*KH.meta.gas_yen_per_km)}
+const KH_NITTO=["出張費","出張費現場職人","祝い金","香典、供花、御仏前","病院代"];
+function khKind(){const k=$("kh_kind").value;$("kh_kmrow").hidden=false;$("kh_nittobox").hidden=!KH_NITTO.includes(k)}
+function khGas(){}
 const KH_F={kh_date:"date",kh_amount:"amount",kh_tax10:"tax10",kh_tax8:"tax8",kh_payee:"payee",kh_regno:"reg_no",kh_from:"route_from",kh_to:"route_to",kh_km:"km",kh_purpose:"purpose",kh_koban:"koban",kh_memo:"note",kh_norcpt:"no_receipt_reason"};
 function khClearForm(){KH.blobs=[];KH.read=null;$("kh_thumbs").innerHTML="";$("kh_read").hidden=true;$("kh_norc").hidden=true;
   Object.keys(KH_F).forEach(i=>{$(i).value="";$(i).classList.remove("filled")});$("kh_rt").value="";$("kh_kind").value="";$("kh_bumon").value=KH.meta.my_bumon||($("kh_bumon").options[0]||{}).value||"";
