@@ -271,7 +271,7 @@ body{padding-top:0}
 
 /* 工場長確認 */
 .mbtn.kakunin .mi{background:linear-gradient(145deg,#2e9a6b,#1d6e4b)}
-.mbtn.keihi{text-decoration:none;color:inherit}.mbtn.keihi .mi{background:linear-gradient(145deg,#e0a03f,#b36b0f)}.mbtn.keihi[hidden]{display:none!important}#menuTitle{touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.mbtn.keihi{text-decoration:none;color:inherit}.mbtn.keihi .mi{background:linear-gradient(145deg,#e0a03f,#b36b0f)}.mbtn.keihi[hidden]{display:none!important}
 .mbtn.help{text-decoration:none}.mbtn.help .mi{background:linear-gradient(180deg,#3fa9e0 0%,#0069a6 60%,#2b8443 100%);font-size:26px}
 .helplink{align-self:flex-start;margin-top:8px;font-size:14px;font-weight:700;color:var(--sky);border:1px solid var(--sky);border-radius:999px;padding:4px 12px;text-decoration:none;background:var(--sheet)}
 #kakunin{display:flex;flex-direction:column;gap:10px}
@@ -462,6 +462,24 @@ body{padding-top:0}
 .appbar .in{padding-bottom:4px}
 .save{background:var(--grass);color:#fff;box-shadow:0 2px 6px rgba(43,132,67,.3)}
 .title h1{color:var(--sky)}
+
+/* ---- 経費・旅費精算 ---- */
+#keihi .kh-pad{padding:12px}
+#keihi .kh-photo{display:block;text-align:center;border:3px dashed var(--sky);border-radius:16px;padding:22px 10px;font-size:19px;font-weight:800;color:var(--sky);cursor:pointer;background:var(--tint)}
+#kh_thumbs img{width:72px;height:72px;object-fit:cover;border-radius:10px;margin:4px}
+#keihi .kh-read{border-radius:12px;padding:10px 12px;margin-top:8px;font-size:14px;line-height:1.6}
+#keihi .kh-read.ing{background:var(--warnbg)}#keihi .kh-read.ok{background:#eaf6ec;border:1.5px solid #8fcb9a}#keihi .kh-read.ng{background:#fdeceb}
+#kh_kinds{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;padding:8px 10px}
+#kh_kinds button{font:inherit;font-size:14px;text-align:left;border:1.5px solid var(--hair);border-radius:10px;padding:9px 10px;background:var(--sheet);color:var(--fg);cursor:pointer}
+#kh_kinds button.on{border-color:var(--sky);background:var(--tint);font-weight:700}
+#kh_kinds .g{grid-column:1/-1;font-size:12px;color:var(--muted);margin-top:4px}
+#keihi .kh-chips{display:flex;flex-wrap:wrap;gap:6px;padding:4px 10px 10px}
+#keihi .kh-chips button{font:inherit;font-size:13px;border:1px solid var(--hair);border-radius:999px;padding:5px 11px;background:var(--sheet);color:var(--fg);cursor:pointer}
+#keihi .filled{background:#eef8ef}
+#kh_list .it{display:flex;justify-content:space-between;gap:8px;padding:9px 12px;border-bottom:1px solid var(--hair);font-size:14px}
+#kh_list .st{font-size:12px;font-weight:700;border-radius:999px;padding:2px 9px;white-space:nowrap;align-self:center}
+#kh_list .st.s1{background:#fff3cd;color:#8a5a00}#kh_list .st.s2{background:#fdeceb;color:#b3261e}#kh_list .st.s3{background:#e3f1ff;color:#155a9c}#kh_list .st.s4{background:#e6f4ea;color:#1e7a3c}
+#keihi .kh-login input{font:inherit;font-size:17px;width:100%;box-sizing:border-box;padding:10px;border:1px solid var(--hair);border-radius:10px;margin-top:6px;background:var(--sheet);color:var(--fg)}
 </style>
 </head><body>
 <header class="appbar"><div class="in"><svg viewBox="0 0 100 100" aria-hidden="true" class=""><defs><mask id="mkA"><rect width="100" height="100" fill="#fff"/><rect x="45" y="7" width="10" height="6.5" fill="#000"/><rect x="46.5" y="75" width="7" height="18" fill="#000"/></mask></defs><g mask="url(#mkA)" fill="currentColor" stroke="currentColor"><circle cx="50" cy="50" r="47" fill="none" stroke-width="3.6"/><circle cx="50" cy="50" r="35" fill="none" stroke-width="14"/><rect x="42.5" y="19" width="15" height="12" rx="5" stroke="none"/></g></svg><span><span class="co">丸門建設</span><span class="ttl" id="apptitle">丸門アプリ</span></span></div></header>
@@ -518,7 +536,7 @@ body{padding-top:0}
     <button type="button" class="mbtn wire" id="goWire"><span class="mi">ﾜｲﾔ</span><span><b>ワイヤ管理</b><small>玉掛ワイヤの在庫一覧・入出荷</small></span></button>
     <button type="button" class="mbtn tehai" id="goTehai"><span class="mi">手配</span><span><b>人員手配帳</b><small>だれがどの現場に行くか（写真から読み取りもできます）</small></span></button>
     <button type="button" class="mbtn kakunin" id="goKakunin"><span class="mi">確認</span><span><b>工場長確認</b><small>その日の日報を見て確認のチェックを付ける</small></span></button>
-    <a class="mbtn keihi" id="goKeihi" href="https://gordonpc.tail182036.ts.net/keihi/new" rel="noopener"><span class="mi">経費</span><span><b>経費・旅費精算（テスト中）</b><small>レシートを撮って申請（丸門ポータルに入ります）</small></span></a>
+    <button type="button" class="mbtn keihi" id="goKeihi"><span class="mi">経費</span><span><b>経費・旅費精算（テスト中）</b><small>レシートを撮って申請する</small></span></button>
     <a class="mbtn help" href="https://claude.ai/artifact/6gudgaZYGnbo1s2BLatdfm" target="_blank" rel="noopener"><span class="mi">？</span><span><b>使い方</b><small>このアプリの使い方（画面の写真つき）</small></span></a>
   </div>
 
@@ -647,6 +665,58 @@ body{padding-top:0}
         <div class="v"><textarea id="hcmt" aria-label="コメント"></textarea></div>
       </div>
     </div>
+  </div>
+
+  <div id="keihi" hidden>
+    <div class="topbar"><button type="button" class="backbtn" id="khback">← メニュー</button></div>
+    <div class="sheet">
+      <div class="title"><h1>経費・旅費精算</h1><span id="kh_who">丸門建設株式会社</span></div>
+      <div id="kh_login" class="kh-pad kh-login" hidden>
+        <p style="margin:0 0 6px;font-size:14px">はじめに1回だけ、<b>丸門ポータルのIDとパスワード</b>を入れてください（次からは入れなくて大丈夫です）。</p>
+        <input id="kh_id" autocomplete="username" autocapitalize="off" placeholder="ポータルのID">
+        <input id="kh_pw" type="password" autocomplete="current-password" placeholder="パスワード">
+        <button type="button" class="save" id="kh_loginb" style="width:100%;margin-top:10px">ログイン</button>
+        <p id="kh_loginmsg" style="color:var(--danger);font-size:14px;margin:8px 0 0"></p>
+      </div>
+      <div id="kh_main" hidden>
+        <div class="secth">① レシート・領収書を撮る</div>
+        <div class="kh-pad">
+          <label class="kh-photo" for="kh_ph">📷 レシートを撮る</label>
+          <input type="file" id="kh_ph" accept="image/*" capture="environment" multiple hidden>
+          <div id="kh_thumbs"></div>
+          <div id="kh_read" class="kh-read" hidden></div>
+          <p style="font-size:12px;color:var(--muted);margin:6px 0 0">撮ると日付・金額・お店・登録番号を自動で読み取ります。写真は会社のLANDISKに保存されます。 <a href="#" id="kh_norc_l">レシートが無いとき</a></p>
+          <div id="kh_norc" hidden><div class="v" style="border:1px solid var(--hair);border-radius:10px;margin-top:6px"><input id="kh_norcpt" placeholder="レシートが無い理由（例 ICカードの電車代）"></div></div>
+        </div>
+        <div class="secth">② 科目（種類）<span class="req">必須</span></div>
+        <div id="kh_kinds"></div>
+        <div id="kh_nittobox" class="kh-pad" hidden style="padding-top:0"><div class="v" style="border:1px solid var(--hair);border-radius:10px"><select id="kh_nitto"></select></div></div>
+        <div class="secth">③ 日付・金額・お店</div>
+        <div class="tr r-2">
+          <div class="td"><div class="th">使った日</div><div class="v"><input type="date" id="kh_date"></div></div>
+          <div class="td"><div class="th">金額</div><div class="v"><input id="kh_amount" inputmode="numeric" placeholder="税込（円）"></div></div>
+        </div>
+        <div class="tr"><div class="td"><div class="th">お店</div><div class="v"><input id="kh_payee" placeholder="お店・会社の名前"></div></div></div>
+        <div id="kh_route" hidden>
+          <div class="tr r-2">
+            <div class="td"><div class="th">出発</div><div class="v"><input id="kh_from" placeholder="例 本社"></div></div>
+            <div class="td"><div class="th">到着</div><div class="v"><input id="kh_to" placeholder="例 ○○現場"></div></div>
+          </div>
+          <div class="tr"><div class="td"><div class="th">往復</div><div class="v"><label style="padding:8px"><input type="checkbox" id="kh_rt" style="width:auto"> 往復</label></div></div></div>
+          <div class="tr" id="kh_kmrow" hidden><div class="td"><div class="th">片道km</div><div class="v"><input id="kh_km" inputmode="decimal" placeholder="片道の距離"></div></div></div>
+        </div>
+        <div class="secth">④ 内容<span class="req">必須</span></div>
+        <div class="tr"><div class="td"><div class="v"><input id="kh_purpose" list="kh_purps" placeholder="何のための経費か"></div></div></div>
+        <datalist id="kh_purps"></datalist>
+        <div class="kh-chips" id="kh_chips"></div>
+        <div class="tr"><div class="td"><div class="th">現場</div><div class="v"><input id="kh_koban" list="kh_sites" placeholder="工番（現場の経費なら）"></div></div></div>
+        <datalist id="kh_sites"></datalist>
+        <div class="secth">自分の申請</div>
+        <div id="kh_list"></div>
+        <div class="kh-pad" style="text-align:right;font-size:12px"><a href="#" id="kh_logout">このスマホのログインをやめる</a></div>
+      </div>
+    </div>
+    <div style="height:90px"></div>
   </div>
 
   <div id="yukyu" hidden>
@@ -823,6 +893,10 @@ body{padding-top:0}
   <div class="sum" id="hsum">kintoneの人員手配帳に登録します</div>
   <button type="button" class="save" id="hsave">登録する</button>
 </div></div>
+<div class="savebar" id="khsavebar" hidden><div class="in">
+  <div class="sum" id="kh_sum">丸門ポータルに申請します</div>
+  <button type="button" class="save" id="kh_send" style="background:#b36b0f">申請する</button>
+</div></div>
 <div class="savebar" id="ysavebar" hidden><div class="in">
   <div class="sum">kintoneの「有給休暇願い」に登録します</div>
   <button type="button" class="save" id="ysave" style="background:#5b3fae">届け出る</button>
@@ -888,19 +962,64 @@ const $=id=>document.getElementById(id);
 const LS="nippo_pin";let PIN="";let EDIT=null;
 function lsGet(k){try{return localStorage.getItem(k)||""}catch(e){return ""}}
 function lsSet(k,v){try{localStorage.setItem(k,v)}catch(e){}}
-// ---- 経費・旅費精算（テスト中）：この端末だけに出す。メニューの「丸門建設」を5回続けて押すと出る／消える ----
-(function(){
-  try{const q=new URLSearchParams(location.search).get("keihi");if(q==="on")lsSet("keihi_test","1");if(q==="off")lsSet("keihi_test","")}catch(e){}
-  const show=()=>{};
-  let n=0,t=0,lp=null;
-  const toggle=()=>{const on=lsGet("keihi_test")!=="1";lsSet("keihi_test",on?"1":"");show();alert(on?"経費・旅費精算（テスト中）をこの端末に出しました":"経費・旅費精算をこの端末から消しました")};
-  const isT=e=>e.target&&e.target.closest&&e.target.closest("#menuTitle");
-  // 「丸門建設」を2秒長押し（または5回続けて押す）で出す／消す。押しても画面が拡大しないようにする
-  document.addEventListener("touchstart",e=>{if(!isT(e))return;clearTimeout(lp);lp=setTimeout(()=>{lp=null;toggle()},2000)},{passive:true});
-  ["touchend","touchmove","touchcancel"].forEach(ev=>document.addEventListener(ev,()=>{clearTimeout(lp)},{passive:true}));
-  document.addEventListener("click",e=>{if(!isT(e))return;e.preventDefault();const now=Date.now();n=(now-t<1500)?n+1:1;t=now;if(n>=5){n=0;toggle()}});
-  document.addEventListener("DOMContentLoaded",show);show();
-})();
+// ---- 経費・旅費精算：アプリの中で申請し、データと写真だけ丸門ポータルへ送る ----
+const KH_API="https://gordonpc.tail182036.ts.net/api/keihi";const KH_LS="keihi_token";
+let KH={tok:"",meta:null,kind:"",blobs:[],read:null,started:false};
+const KH_ROUTE=["電車・バス","タクシー","高速道路","ガソリン（距離）"];
+function khFetch(path,opt){opt=opt||{};opt.headers=Object.assign({},opt.headers||{},KH.tok?{Authorization:"Bearer "+KH.tok}:{});
+  return fetch(KH_API+path,opt).then(r=>r.json().catch(()=>({ok:false,error:"丸門ポータルから返事がありません"})).then(j=>{if(r.status===401&&path!=="/login"){KH.tok="";lsSet(KH_LS,"");khShowLogin("もう一度ログインしてください")}return j}))
+  .catch(()=>({ok:false,error:"丸門ポータルにつながりません（電波を確かめてください）"}))}
+function khShowLogin(m){$("kh_login").hidden=false;$("kh_main").hidden=true;$("khsavebar").hidden=true;$("kh_loginmsg").textContent=m||""}
+function khLoad(){khFetch("/me").then(j=>{if(!j.ok){if(KH.tok)$("kh_loginmsg").textContent=j.error;return}
+  KH.meta=j;$("kh_login").hidden=true;$("kh_main").hidden=false;$("khsavebar").hidden=false;$("kh_who").textContent=j.name+" さん";
+  khKinds();khLists();khItems(j.items);if(!j.member)khMsg("ng","⚠ 社員の名簿（部門・振込口座）に「"+j.name+"」さんが見つかりません。申請はできますが、事務に知らせてください。")})}
+function khKinds(){const box=$("kh_kinds");box.innerHTML="";let g="";KH.meta.kinds.forEach(([k,gr])=>{if(gr!==g){g=gr;const d=document.createElement("div");d.className="g";d.textContent=gr==="旅費"?"旅費（交通費・宿泊・日当）":"経費（買い物など）";box.appendChild(d)}
+  const b=document.createElement("button");b.type="button";b.textContent=k;b.dataset.k=k;b.onclick=()=>khSetKind(k);box.appendChild(b)});
+  const ns=$("kh_nitto");ns.innerHTML='<option value="">決まった額から選ぶ</option>';(KH.meta.nitto||[]).forEach(([n,a])=>ns.add(new Option(n+"（"+Number(a).toLocaleString()+"円）",a)));khSetKind(KH.kind)}
+function khSetKind(k){KH.kind=k;document.querySelectorAll("#kh_kinds button").forEach(b=>b.classList.toggle("on",b.dataset.k===k));
+  $("kh_route").hidden=!KH_ROUTE.includes(k);$("kh_kmrow").hidden=k!=="ガソリン（距離）";$("kh_nittobox").hidden=!(k==="日当"||k.startsWith("福利厚生"));
+  if(k==="日当"&&KH.meta&&KH.meta.nitto_yen&&!$("kh_amount").value)$("kh_amount").value=KH.meta.nitto_yen;khGas()}
+function khGas(){if(KH.kind!=="ガソリン（距離）"||!KH.meta)return;const km=parseFloat($("kh_km").value||0);if(km)$("kh_amount").value=Math.round(km*($("kh_rt").checked?2:1)*KH.meta.gas_yen_per_km)}
+function khLists(){const dl=$("kh_purps");dl.innerHTML="";const ch=$("kh_chips");ch.innerHTML="";(KH.meta.purposes||[]).forEach((p,i)=>{dl.appendChild(new Option(p));if(i<8)ch.appendChild(khChip(p))});
+  const ds=$("kh_sites");ds.innerHTML="";(KH.meta.sites||[]).forEach(([k,n])=>{const o=new Option(k+" "+n,k);ds.appendChild(o)})}
+function khChip(p){const b=document.createElement("button");b.type="button";b.textContent=p;b.onclick=()=>{$("kh_purpose").value=p};return b}
+const KH_ST={"申請中":"s1","差戻":"s2","承認":"s3","精算済":"s4"};
+function khItems(items){const box=$("kh_list");box.innerHTML="";if(!items||!items.length){box.innerHTML='<div class="it" style="color:var(--muted)">まだありません</div>';return}
+  items.slice(0,20).forEach(x=>{const d=document.createElement("div");d.className="it";
+    const l=document.createElement("div");l.innerHTML="<b></b><br><small></small>";l.querySelector("b").textContent=(x.date||"").slice(5).replace("-","/")+" "+x.kind+" "+Number(x.amount||0).toLocaleString()+"円";
+    l.querySelector("small").textContent=(x.status==="差戻"?"差し戻し："+(x.reject_reason||""):(x.purpose||""))+(x.status==="承認"?"（"+x.pay_date+" 振込）":"");
+    const st=document.createElement("span");st.className="st "+(KH_ST[x.status]||"");st.textContent=x.status;d.append(l,st);box.appendChild(d)})}
+function khMsg(c,h){const b=$("kh_read");b.hidden=false;b.className="kh-read "+c;b.innerHTML=h}
+function khShrink(file){return new Promise(res=>{const img=new Image();img.onload=()=>{const m=2400,s=Math.min(1,m/Math.max(img.width,img.height));const c=document.createElement("canvas");
+  c.width=Math.round(img.width*s);c.height=Math.round(img.height*s);c.getContext("2d").drawImage(img,0,0,c.width,c.height);c.toBlob(b=>res(b||file),"image/jpeg",0.88);URL.revokeObjectURL(img.src)};img.onerror=()=>res(file);img.src=URL.createObjectURL(file)})}
+function khFill(id,v){if(v===undefined||v===null||v===""||v===0)return;const e=$(id);e.value=v;e.classList.add("filled")}
+function khRead(b){khMsg("ing","レシートを読み取っています…（10秒ほど）");const fd=new FormData();fd.append("photo",b,"r.jpg");
+  khFetch("/read",{method:"POST",body:fd}).then(j=>{if(!j.ok){khMsg("ng",(j.error||"読み取れませんでした")+"。手で入れても申請できます。");return}
+    const x=j.r||{};KH.read=x;khFill("kh_date",x.date);khFill("kh_amount",x.amount);khFill("kh_payee",x.payee);khFill("kh_from",x.route_from);khFill("kh_to",x.route_to);
+    if(x.kind)khSetKind(x.kind);if(x.summary)$("kh_chips").prepend(khChip(x.summary));
+    const esc=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+    khMsg("ok","<b>読み取りました。</b>緑の欄を確かめて、科目と内容を選んでください。<br>"+esc([x.date||"日付不明",x.amount?Number(x.amount).toLocaleString()+"円":"",x.payee||"",x.reg_no?"登録番号 "+x.reg_no:"登録番号なし"].filter(Boolean).join("　"))+(x.is_receipt===false?"<br>⚠ レシートとして読めませんでした。写真を確かめてください。":""))})}
+function khReset(){KH.blobs=[];KH.read=null;KH.kind="";$("kh_thumbs").innerHTML="";$("kh_read").hidden=true;["kh_amount","kh_payee","kh_from","kh_to","kh_km","kh_purpose","kh_koban","kh_norcpt"].forEach(i=>{$(i).value="";$(i).classList.remove("filled")});
+  $("kh_rt").checked=false;const d=new Date();$("kh_date").value=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");$("kh_date").classList.remove("filled");if(KH.meta)khSetKind("")}
+function khSend(){if(!KH.kind){alert("科目（種類）を選んでください");return}
+  const fd=new FormData();const v=i=>$(i).value.trim();
+  [["kind",KH.kind],["date",v("kh_date")],["amount",v("kh_amount")],["payee",v("kh_payee")],["purpose",v("kh_purpose")],["koban",v("kh_koban")],["route_from",v("kh_from")],["route_to",v("kh_to")],["km",v("kh_km")],["no_receipt_reason",v("kh_norcpt")],["reg_no",(KH.read&&KH.read.reg_no)||""],["read_json",KH.read?JSON.stringify(KH.read):""]].forEach(([k,x])=>fd.append(k,x));
+  if($("kh_rt").checked)fd.append("roundtrip","1");KH.blobs.forEach((b,i)=>fd.append("photos",b,"receipt"+i+".jpg"));
+  const btn=$("kh_send");btn.disabled=true;btn.textContent="送っています…";
+  khFetch("/submit",{method:"POST",body:fd}).then(j=>{btn.disabled=false;btn.textContent="申請する";
+    if(!j.ok){alert(j.error||"申請できませんでした");return}alert(j.msg+(j.warn?"\n\n※"+j.warn:""));khReset();khLoad();window.scrollTo(0,0)})}
+function openKeihi(){scr("keihi");setTitle("経費・旅費精算");$("menu").hidden=true;$("keihi").hidden=false;window.scrollTo(0,0);
+  if(!KH.started){KH.started=true;khReset();
+    $("kh_ph").addEventListener("change",async e=>{let first=null;for(const f of e.target.files){const b=await khShrink(f);KH.blobs.push(b);if(!first)first=b;const i=document.createElement("img");i.src=URL.createObjectURL(b);$("kh_thumbs").appendChild(i)}e.target.value="";if(first&&!KH.read)khRead(first)});
+    $("kh_norc_l").addEventListener("click",e=>{e.preventDefault();$("kh_norc").hidden=false});
+    $("kh_nitto").addEventListener("change",e=>{if(e.target.value)$("kh_amount").value=e.target.value});
+    $("kh_km").addEventListener("input",khGas);$("kh_rt").addEventListener("change",khGas);
+    $("kh_send").addEventListener("click",khSend);$("khback").addEventListener("click",showMenu);
+    $("kh_logout").addEventListener("click",e=>{e.preventDefault();if(!confirm("このスマホのログインをやめますか？"))return;khFetch("/logout",{method:"POST"});KH.tok="";lsSet(KH_LS,"");khShowLogin("")});
+    $("kh_loginb").addEventListener("click",()=>{$("kh_loginmsg").textContent="確かめています…";
+      khFetch("/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({login_id:$("kh_id").value.trim(),password:$("kh_pw").value,device:navigator.userAgent.slice(0,100)})})
+      .then(j=>{if(!j.ok){$("kh_loginmsg").textContent=j.error;return}KH.tok=j.token;lsSet(KH_LS,j.token);$("kh_pw").value="";khLoad()})})}
+  KH.tok=lsGet(KH_LS);if(KH.tok){$("khsavebar").hidden=!KH.meta;khLoad()}else khShowLogin("")}
 function setSel(s,v){v=v==null?"":String(v);if(v&&![...s.options].some(o=>o.value===v))s.add(new Option(v.trim(),v));s.value=v;if(s._btn)paintNB(s)}
 // ---- 名前は検索して選ぶ ----
 let PSEL=null,PLIST=null,PFREE=false;
@@ -1685,18 +1804,18 @@ function wStart(){
   $("wnew").addEventListener("click",()=>wOpen(null,"入荷"));
   wLockPaint();wLoad()}
 function openWire(){scr("wire");setTitle("ワイヤ管理");$("menu").hidden=true;$("wire").hidden=false;if(!wStarted){wStarted=true;wStart()}else wLoad();window.scrollTo(0,0)}
-function showMenu(){scr("");setTitle("丸門アプリ");["app","savebar","jiko","jsavebar","kakunin","ksavebar","tenken","tsavebar","yukyu","ysavebar","denpyo","dsavebar","buppin","tehai","hsavebar","wire","wsheet","listbox","done"].forEach(i=>$(i).hidden=true);$("menu").hidden=false;window.scrollTo(0,0)}
+function showMenu(){scr("");setTitle("丸門アプリ");["app","savebar","jiko","jsavebar","kakunin","ksavebar","tenken","tsavebar","yukyu","ysavebar","denpyo","dsavebar","buppin","tehai","hsavebar","wire","wsheet","listbox","done","keihi","khsavebar"].forEach(i=>$(i).hidden=true);$("menu").hidden=false;window.scrollTo(0,0)}
 function openNippo(){scr("nippo");setTitle("作業日報");$("menu").hidden=true;$("app").hidden=false;$("savebar").hidden=false;if(!nippoStarted){nippoStarted=true;start(MASTER)}window.scrollTo(0,0)}
 function openJiko(){scr("jiko");setTitle("事故・トラブル報告");$("menu").hidden=true;$("jiko").hidden=false;$("jsavebar").hidden=false;if(!jikoStarted){jikoStarted=true;startJiko(MASTER)}window.scrollTo(0,0)}
 (function(){const d=new Date();const w="日月火水木金土"[d.getDay()];$("today").textContent=(d.getMonth()+1)+"月"+d.getDate()+"日（"+w+"）"})();
-$("goWire").addEventListener("click",openWire);$("goNippo").addEventListener("click",openNippo);$("goKakunin").addEventListener("click",openKakunin);$("goTenken").addEventListener("click",openTenken);$("tback").addEventListener("click",showMenu);$("kback").addEventListener("click",showMenu);$("goJiko").addEventListener("click",openJiko);$("goYukyu").addEventListener("click",openYukyu);$("goBuppin").addEventListener("click",openBuppin);$("goTehai").addEventListener("click",openTehai);$("hback").addEventListener("click",showMenu);$("bback").addEventListener("click",showMenu);$("goMochi").addEventListener("click",()=>openDenpyo("mochi"));$("goKounyu").addEventListener("click",()=>openDenpyo("kounyu"));$("yback").addEventListener("click",showMenu);$("dback").addEventListener("click",showMenu);
+$("goWire").addEventListener("click",openWire);$("goKeihi").addEventListener("click",openKeihi);$("goNippo").addEventListener("click",openNippo);$("goKakunin").addEventListener("click",openKakunin);$("goTenken").addEventListener("click",openTenken);$("tback").addEventListener("click",showMenu);$("kback").addEventListener("click",showMenu);$("goJiko").addEventListener("click",openJiko);$("goYukyu").addEventListener("click",openYukyu);$("goBuppin").addEventListener("click",openBuppin);$("goTehai").addEventListener("click",openTehai);$("hback").addEventListener("click",showMenu);$("bback").addEventListener("click",showMenu);$("goMochi").addEventListener("click",()=>openDenpyo("mochi"));$("goKounyu").addEventListener("click",()=>openDenpyo("kounyu"));$("yback").addEventListener("click",showMenu);$("dback").addEventListener("click",showMenu);
 $("nback").addEventListener("click",showMenu);$("jback").addEventListener("click",showMenu);
 function reload(){location.reload()}
 function login(pin){
   $("pinmsg").textContent="読み込み中…";
   google.script.run.withSuccessHandler(M=>{PIN=pin;lsSet(LS,pin);MASTER=M;$("pinbox").hidden=true;
       let s="";try{s=sessionStorage.getItem("screen")||""}catch(e){}
-      if(s==="nippo")openNippo();else if(s==="jiko")openJiko();else if(s==="kakunin")openKakunin();else if(s==="tenken")openTenken();else if(s==="yukyu")openYukyu();else if(s==="buppin")openBuppin();else if(s==="tehai")openTehai();else if(s==="wire")openWire();else if(s==="mochi"||s==="kounyu")openDenpyo(s);else showMenu()})
+      if(s==="nippo")openNippo();else if(s==="jiko")openJiko();else if(s==="kakunin")openKakunin();else if(s==="tenken")openTenken();else if(s==="yukyu")openYukyu();else if(s==="buppin")openBuppin();else if(s==="tehai")openTehai();else if(s==="wire")openWire();else if(s==="mochi"||s==="kounyu")openDenpyo(s);else if(s==="keihi")openKeihi();else showMenu()})
     .withFailureHandler(err=>{$("pinmsg").textContent=err.message||String(err);$("pinbox").hidden=false})
     .getMaster(pin);
 }
