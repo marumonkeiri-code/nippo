@@ -536,7 +536,7 @@ body{padding-top:0}
     <button type="button" class="mbtn wire" id="goWire"><span class="mi">ﾜｲﾔ</span><span><b>ワイヤ管理</b><small>玉掛ワイヤの在庫一覧・入出荷</small></span></button>
     <button type="button" class="mbtn tehai" id="goTehai"><span class="mi">手配</span><span><b>人員手配帳</b><small>だれがどの現場に行くか（写真から読み取りもできます）</small></span></button>
     <button type="button" class="mbtn kakunin" id="goKakunin"><span class="mi">確認</span><span><b>工場長確認</b><small>その日の日報を見て確認のチェックを付ける</small></span></button>
-    <button type="button" class="mbtn keihi" id="goKeihi"><span class="mi">経費</span><span><b>経費・旅費精算（テスト中）</b><small>レシートを撮って申請する</small></span></button>
+    <button type="button" class="mbtn keihi" id="goKeihi"><span class="mi">経費</span><span><b>旅費精算（テスト中）</b><small>レシートを撮って申請する</small></span></button>
     <a class="mbtn help" href="https://claude.ai/artifact/6gudgaZYGnbo1s2BLatdfm" target="_blank" rel="noopener"><span class="mi">？</span><span><b>使い方</b><small>このアプリの使い方（画面の写真つき）</small></span></a>
   </div>
 
@@ -670,11 +670,12 @@ body{padding-top:0}
   <div id="keihi" hidden>
     <div class="topbar"><button type="button" class="backbtn" id="khback">← メニュー</button></div>
     <div class="sheet">
-      <div class="title"><h1>経費・旅費精算</h1><span id="kh_who">丸門建設株式会社</span></div>
+      <div class="title"><h1>旅費精算</h1><span id="kh_who">丸門建設株式会社</span></div>
       <div id="kh_login" class="kh-pad kh-login" hidden>
         <p style="margin:0 0 6px;font-size:14px">はじめに1回だけ、<b>丸門ポータルのIDとパスワード</b>を入れてください（次からは入れなくて大丈夫です）。</p>
         <input id="kh_id" autocomplete="username" autocapitalize="off" placeholder="ポータルのID">
         <input id="kh_pw" type="password" autocomplete="current-password" placeholder="パスワード">
+        <label style="display:flex;align-items:center;gap:8px;margin-top:8px;font-size:15px"><input type="checkbox" id="kh_pwshow" style="width:22px;height:22px;margin:0;padding:0"> パスワードを表示する</label>
         <button type="button" class="save" id="kh_loginb" style="width:100%;margin-top:10px">ログイン</button>
         <p id="kh_loginmsg" style="color:var(--danger);font-size:14px;margin:8px 0 0"></p>
       </div>
@@ -1008,7 +1009,7 @@ function khSend(){if(!KH.kind){alert("科目（種類）を選んでください
   const btn=$("kh_send");btn.disabled=true;btn.textContent="送っています…";
   khFetch("/submit",{method:"POST",body:fd}).then(j=>{btn.disabled=false;btn.textContent="申請する";
     if(!j.ok){alert(j.error||"申請できませんでした");return}alert(j.msg+(j.warn?"\n\n※"+j.warn:""));khReset();khLoad();window.scrollTo(0,0)})}
-function openKeihi(){scr("keihi");setTitle("経費・旅費精算");$("menu").hidden=true;$("keihi").hidden=false;window.scrollTo(0,0);
+function openKeihi(){scr("keihi");setTitle("旅費精算");$("menu").hidden=true;$("keihi").hidden=false;window.scrollTo(0,0);
   if(!KH.started){KH.started=true;khReset();
     $("kh_ph").addEventListener("change",async e=>{let first=null;for(const f of e.target.files){const b=await khShrink(f);KH.blobs.push(b);if(!first)first=b;const i=document.createElement("img");i.src=URL.createObjectURL(b);$("kh_thumbs").appendChild(i)}e.target.value="";if(first&&!KH.read)khRead(first)});
     $("kh_norc_l").addEventListener("click",e=>{e.preventDefault();$("kh_norc").hidden=false});
@@ -1016,6 +1017,7 @@ function openKeihi(){scr("keihi");setTitle("経費・旅費精算");$("menu").hi
     $("kh_km").addEventListener("input",khGas);$("kh_rt").addEventListener("change",khGas);
     $("kh_send").addEventListener("click",khSend);$("khback").addEventListener("click",showMenu);
     $("kh_logout").addEventListener("click",e=>{e.preventDefault();if(!confirm("このスマホのログインをやめますか？"))return;khFetch("/logout",{method:"POST"});KH.tok="";lsSet(KH_LS,"");khShowLogin("")});
+    $("kh_pwshow").addEventListener("change",e=>{$("kh_pw").type=e.target.checked?"text":"password"});
     $("kh_loginb").addEventListener("click",()=>{$("kh_loginmsg").textContent="確かめています…";
       khFetch("/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({login_id:$("kh_id").value.trim(),password:$("kh_pw").value,device:navigator.userAgent.slice(0,100)})})
       .then(j=>{if(!j.ok){$("kh_loginmsg").textContent=j.error;return}KH.tok=j.token;lsSet(KH_LS,j.token);$("kh_pw").value="";khLoad()})})}
