@@ -725,7 +725,8 @@ body{padding-top:0}
       <div class="kh-card kh-sec"><div class="kh-bar">明細</div><div id="kh_items"></div></div>
       <div class="kh-card kh-sec"><div class="kh-bar">内訳</div>
         <div class="kh-f"><b>件数</b><span id="kh_cnt">0件</span></div>
-        <div class="kh-f"><b>合計（支払額）</b><span id="kh_total" style="font-size:20px;font-weight:700">¥0</span></div>
+        <div class="kh-f"><b>合計</b><span id="kh_total" style="font-size:18px;font-weight:700">¥0</span></div>
+        <div class="kh-f"><b>支払額（本人立替＝あなたに振り込む額）</b><span id="kh_pay" style="font-size:20px;font-weight:700">¥0</span></div>
       </div>
       <button type="button" class="kh-fab" id="kh_add" aria-label="明細を追加">＋</button>
     </div>
@@ -756,6 +757,7 @@ body{padding-top:0}
         <label class="kh-l"><i>*</i>金額（税込）</label><input class="kh-in" id="kh_amount" inputmode="numeric" placeholder="ここに入力">
         <div class="kh-2"><div><label class="kh-l">税率10%金額</label><input class="kh-in" id="kh_tax10" inputmode="numeric" placeholder="ここに入力"></div>
           <div><label class="kh-l">税率8%金額</label><input class="kh-in" id="kh_tax8" inputmode="numeric" placeholder="ここに入力"></div></div>
+        <label class="kh-l"><i>*</i>支払方法</label><select class="kh-in" id="kh_paym"></select>
         <label class="kh-l">領収書発行元</label><input class="kh-in" id="kh_payee" placeholder="ここに入力">
         <label class="kh-l">適格請求書発行事業者登録番号</label><input class="kh-in" id="kh_regno" placeholder="T から始まる番号">
         <label class="kh-l">内容（何のため）</label><input class="kh-in" id="kh_purpose" list="kh_purps" placeholder="例 ○○現場への移動">
@@ -1033,6 +1035,7 @@ function khLoad(then){return khFetch("/me").then(j=>{if(!j.ok){if(KH.tok){khShow
 function khSetup(){const m=KH.meta;$("kh_who").textContent=m.name+" さん";$("kh_payer").textContent=m.name;
   const ks=$("kh_kind");ks.innerHTML='<option value="">選んでください</option>';let g="",og=null;[...m.kinds].sort((a,b)=>(a[1]==="旅費"?0:1)-(b[1]==="旅費"?0:1)).forEach(([k,gr,d])=>{if(gr!==g){g=gr;og=document.createElement("optgroup");og.label=gr==="旅費"?"旅費（交通費・宿泊・出張費）":"経費（買い物・交際費など）";ks.appendChild(og)}og.appendChild(new Option(k+(d?"　…"+d:""),k))});
   const bs=$("kh_bumon");bs.innerHTML="";(m.bumon||[]).forEach(([c,n])=>bs.add(new Option(n+"（"+c+"）",c)));if(!(m.bumon||[]).length)bs.add(new Option("（名簿の部門）",""));
+  const pm=$("kh_paym");pm.innerHTML="";(m.pay_methods||["本人立替","クレジット","会社現金"]).forEach(x=>pm.add(new Option(x,x)));
   const ns=$("kh_nitto");ns.innerHTML='<option value="">選ぶと金額が入ります</option>';(m.nitto||[]).forEach(([n,a])=>ns.add(new Option(n+"（"+Number(a).toLocaleString()+"円）",a)));
   const dl=$("kh_purps");dl.innerHTML="";(m.purposes||[]).forEach(p=>dl.appendChild(new Option(p)));
   const ds=$("kh_sites");ds.innerHTML="";(m.sites||[]).forEach(([k,n])=>ds.appendChild(new Option(k+" "+n,k)))}
@@ -1053,20 +1056,21 @@ function khPaintSlip(){const d=KH.meta.drafts||[];$("kh_slipno").textContent=d.l
       "<div style='font-size:13px;margin-top:6px'>No."+(i+1)+"｜"+khEsc((x.date||"").replace(/-/g,"/"))+"</div><div class='amt'>"+khYen(x.amount)+"</div>"+
       "<div class='g'><div>負担部門<b>"+khEsc(bn(x.bumon))+"</b></div><div>用件<b>"+khEsc(x.kind)+"</b></div><div>出発地<b>"+khEsc(x.route_from||"---")+"</b></div><div>目的地<b>"+khEsc(x.route_to||"---")+"</b></div><div style='grid-column:1/-1'>内容<b>"+khEsc(x.purpose||"---")+"</b></div></div>";
     e.onclick=()=>khOpenItem(x);box.appendChild(e)});
-  $("kh_cnt").textContent=d.length+"件";$("kh_total").textContent=khYen(d.reduce((a,x)=>a+(x.amount||0),0))}
+  $("kh_cnt").textContent=d.length+"件";const tot=d.reduce((a,x)=>a+(x.amount||0),0),own=d.filter(x=>(x.pay_method||"本人立替")==="本人立替").reduce((a,x)=>a+(x.amount||0),0);
+  $("kh_total").textContent=khYen(tot);$("kh_pay").textContent=khYen(own)}
 function khOpenSlip(){khView("slip");khPaintSlip()}
 const KH_NITTO=["出張費","出張費現場職人","祝い金","香典、供花、御仏前","病院代"];
 function khKind(){const k=$("kh_kind").value;$("kh_kmrow").hidden=false;$("kh_nittobox").hidden=!KH_NITTO.includes(k)}
 function khGas(){}
 const KH_F={kh_date:"date",kh_amount:"amount",kh_tax10:"tax10",kh_tax8:"tax8",kh_payee:"payee",kh_regno:"reg_no",kh_from:"route_from",kh_to:"route_to",kh_km:"km",kh_purpose:"purpose",kh_koban:"koban",kh_memo:"note",kh_norcpt:"no_receipt_reason"};
 function khClearForm(){KH.blobs=[];KH.read=null;$("kh_thumbs").innerHTML="";$("kh_read").hidden=true;$("kh_norc").hidden=true;
-  Object.keys(KH_F).forEach(i=>{$(i).value="";$(i).classList.remove("filled")});$("kh_rt").value="";$("kh_kind").value="";$("kh_bumon").value=KH.meta.my_bumon||($("kh_bumon").options[0]||{}).value||"";
+  Object.keys(KH_F).forEach(i=>{$(i).value="";$(i).classList.remove("filled")});$("kh_rt").value="";$("kh_kind").value="";$("kh_paym").value="本人立替";$("kh_bumon").value=KH.meta.my_bumon||($("kh_bumon").options[0]||{}).value||"";
   const d=new Date();$("kh_date").value=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
   const ch=$("kh_chips");ch.innerHTML="";(KH.meta.purposes||[]).slice(0,6).forEach(p=>ch.appendChild(khChip(p)));khKind()}
 function khChip(p){const b=document.createElement("button");b.type="button";b.textContent=p;b.onclick=()=>{$("kh_purpose").value=p};return b}
 function khNewItem(){KH.edit=null;khClearForm();$("kh_delitem").hidden=true;khView("item")}
 function khOpenItem(x){KH.edit=x;khClearForm();Object.entries(KH_F).forEach(([i,k])=>{if(x[k]!=null&&x[k]!=="")$(i).value=x[k]});
-  $("kh_kind").value=x.kind||"";$("kh_bumon").value=x.bumon||KH.meta.my_bumon||"";$("kh_rt").value=x.roundtrip?"1":"";if(x.no_receipt_reason)$("kh_norc").hidden=false;
+  $("kh_kind").value=x.kind||"";$("kh_bumon").value=x.bumon||KH.meta.my_bumon||"";$("kh_rt").value=x.roundtrip?"1":"";$("kh_paym").value=x.pay_method||"本人立替";if(x.no_receipt_reason)$("kh_norc").hidden=false;
   if(x.receipt)khMsg("ok","この明細には領収書の写真が付いています（撮り直すと差し替えます）");if(x.status==="差戻")khMsg("ng","差し戻されています："+khEsc(x.reject_reason||"")+"<br>直して「明細登録」を押すと出し直します。");
   $("kh_delitem").hidden=x.status!=="仮登録";khKind();khView("item")}
 function khMsg(c,h){const b=$("kh_read");b.hidden=false;b.className="kh-read "+c;b.innerHTML=h}
@@ -1080,7 +1084,7 @@ function khRead(b){khMsg("ing","領収書を読み取っています…（10秒�
     khMsg("ok","<b>読み取りました。</b>緑の欄を確かめて、用件と負担部門を選んでください。"+(x.is_receipt===false?"<br>⚠ 領収書として読めませんでした。写真を確かめてください。":""))})}
 function khSaveItem(){const v=i=>$(i).value.trim();if(!v("kh_kind")){alert("用件を選んでください");return}if(!v("kh_amount")){alert("金額を入れてください");return}
   const fd=new FormData();Object.entries(KH_F).forEach(([i,k])=>fd.append(k,v(i)));if(!v("kh_purpose"))fd.set("purpose",v("kh_kind")+(v("kh_payee")?"（"+v("kh_payee")+"）":""));
-  fd.append("kind",v("kh_kind"));fd.append("bumon",v("kh_bumon"));if(v("kh_rt"))fd.append("roundtrip","1");fd.append("read_json",KH.read?JSON.stringify(KH.read):"");
+  fd.append("kind",v("kh_kind"));fd.append("pay_method",v("kh_paym"));fd.append("bumon",v("kh_bumon"));if(v("kh_rt"))fd.append("roundtrip","1");fd.append("read_json",KH.read?JSON.stringify(KH.read):"");
   KH.blobs.forEach((b,i)=>fd.append("photos",b,"receipt"+i+".jpg"));const btn=$("kh_savebtn");btn.disabled=true;btn.textContent="登録しています…";
   khFetch("/item"+(KH.edit?"/"+KH.edit.id:""),{method:"POST",body:fd}).then(j=>{btn.disabled=false;btn.textContent="明細登録";
     if(!j.ok){alert(j.error||"登録できませんでした");return}if(j.warn)alert("登録しましたが："+j.warn);
