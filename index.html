@@ -463,23 +463,46 @@ body{padding-top:0}
 .save{background:var(--grass);color:#fff;box-shadow:0 2px 6px rgba(43,132,67,.3)}
 .title h1{color:var(--sky)}
 
-/* ---- 経費・旅費精算 ---- */
+/* ---- 旅費精算（HRMOS経費のような作り） ---- */
 #keihi .kh-pad{padding:12px}
-#keihi .kh-photo{display:block;text-align:center;border:3px dashed var(--sky);border-radius:16px;padding:22px 10px;font-size:19px;font-weight:800;color:var(--sky);cursor:pointer;background:var(--tint)}
+#keihi .kh-who{font-size:13px;color:var(--muted);text-align:right;margin:2px 4px 6px}
+#keihi .kh-h{font-size:19px;font-weight:800;margin:16px 4px 8px}#keihi .kh-h small{display:block;font-size:12px;font-weight:400;color:var(--muted);margin-top:2px}
+#keihi .kh-card{background:var(--sheet);border:1px solid var(--hair);border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}
+#keihi .kh-sec{margin-bottom:12px}
+#keihi .kh-bar{font-weight:800;padding:12px 14px 6px;border-left:5px solid var(--sky);margin:10px 0 4px}
+#keihi .kh-f{display:flex;flex-direction:column;gap:4px;padding:10px 14px;border-top:1px solid var(--hair)}#keihi .kh-f b{font-size:14px}#keihi .kh-f span{color:var(--muted)}
+#keihi .kh-badge{align-self:flex-start;background:#eef1f5;border-radius:999px;padding:3px 12px;font-size:13px}
+#keihi .kh-ttl{text-align:center;font-weight:700;font-size:17px;margin:4px 0 10px}
+#keihi .kh-tile{font:inherit;display:flex;align-items:center;gap:12px;width:60%;min-width:220px;text-align:left;background:var(--sheet);border:1px solid var(--hair);border-radius:16px;padding:18px 16px;box-shadow:var(--shadow);cursor:pointer;font-size:17px;color:var(--fg)}
+#keihi .kh-tile .ic{width:44px;height:44px;border-radius:50%;background:var(--tint);display:flex;align-items:center;justify-content:center;font-size:22px}
+#keihi .kh-tile small{display:block;font-size:12px;color:#b36b0f}
+#keihi .kh-row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 14px;border-top:1px solid var(--hair);font-size:14px}
+#keihi .kh-row:first-child{border-top:0}
+#keihi .kh-n{background:#6b7c93;color:#fff;border-radius:999px;min-width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;font-weight:700}
+#keihi .kh-it{margin:8px 12px;border:1px solid var(--hair);border-radius:14px;padding:12px;cursor:pointer;background:var(--sheet)}
+#keihi .kh-it .top{display:flex;justify-content:space-between;font-size:12px}
+#keihi .kh-it .src{background:#ece9ff;color:#4b3fb5;border-radius:999px;padding:2px 10px;font-weight:700}
+#keihi .kh-it .rc{background:#e6f1ff;color:#155a9c;border-radius:999px;padding:2px 10px;font-weight:700}
+#keihi .kh-it .amt{font-size:26px;font-weight:700;margin:6px 0;border-bottom:1px solid var(--hair);padding-bottom:6px}
+#keihi .kh-it .g{display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:12px;color:var(--muted)}#keihi .kh-it .g b{display:block;color:var(--fg);font-weight:500;font-size:14px}
+#keihi .kh-fab{position:fixed;right:18px;bottom:100px;width:62px;height:62px;border-radius:50%;border:0;background:#2b95ff;color:#fff;font-size:34px;box-shadow:0 4px 12px rgba(0,0,0,.25);z-index:5;cursor:pointer}
+#keihi .kh-photo{display:block;text-align:center;border:3px dashed var(--sky);border-radius:16px;padding:20px 10px;font-size:18px;font-weight:800;color:var(--sky);cursor:pointer;background:var(--tint)}
 #kh_thumbs img{width:72px;height:72px;object-fit:cover;border-radius:10px;margin:4px}
 #keihi .kh-read{border-radius:12px;padding:10px 12px;margin-top:8px;font-size:14px;line-height:1.6}
 #keihi .kh-read.ing{background:var(--warnbg)}#keihi .kh-read.ok{background:#eaf6ec;border:1.5px solid #8fcb9a}#keihi .kh-read.ng{background:#fdeceb}
-#kh_kinds{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;padding:8px 10px}
-#kh_kinds button{font:inherit;font-size:14px;text-align:left;border:1.5px solid var(--hair);border-radius:10px;padding:9px 10px;background:var(--sheet);color:var(--fg);cursor:pointer}
-#kh_kinds button.on{border-color:var(--sky);background:var(--tint);font-weight:700}
-#kh_kinds .g{grid-column:1/-1;font-size:12px;color:var(--muted);margin-top:4px}
-#keihi .kh-chips{display:flex;flex-wrap:wrap;gap:6px;padding:4px 10px 10px}
+#keihi .kh-l{display:block;font-weight:700;font-size:14px;margin:12px 0 5px}#keihi .kh-l i{color:#c2185b;font-style:normal;margin-right:3px}
+#keihi .kh-in{font:inherit;font-size:16px;width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid var(--hair);border-radius:14px;background:var(--sheet);color:var(--fg)}
+#keihi .kh-2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#keihi .kh-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
 #keihi .kh-chips button{font:inherit;font-size:13px;border:1px solid var(--hair);border-radius:999px;padding:5px 11px;background:var(--sheet);color:var(--fg);cursor:pointer}
 #keihi .filled{background:#eef8ef}
-#kh_list .it{display:flex;justify-content:space-between;gap:8px;padding:9px 12px;border-bottom:1px solid var(--hair);font-size:14px}
-#kh_list .st{font-size:12px;font-weight:700;border-radius:999px;padding:2px 9px;white-space:nowrap;align-self:center}
-#kh_list .st.s1{background:#fff3cd;color:#8a5a00}#kh_list .st.s2{background:#fdeceb;color:#b3261e}#kh_list .st.s3{background:#e3f1ff;color:#155a9c}#kh_list .st.s4{background:#e6f4ea;color:#1e7a3c}
-#keihi .kh-login input{font:inherit;font-size:17px;width:100%;box-sizing:border-box;padding:10px;border:1px solid var(--hair);border-radius:10px;margin-top:6px;background:var(--sheet);color:var(--fg)}
+#keihi .kh-del{font:inherit;margin-top:18px;width:100%;padding:11px;border:1px solid var(--danger);color:var(--danger);background:var(--sheet);border-radius:12px}
+#keihi .st{font-size:12px;font-weight:700;border-radius:999px;padding:2px 9px;white-space:nowrap}
+#keihi .st.s1{background:#fff3cd;color:#8a5a00}#keihi .st.s2{background:#fdeceb;color:#b3261e}#keihi .st.s3{background:#e3f1ff;color:#155a9c}#keihi .st.s4{background:#e6f4ea;color:#1e7a3c}
+#keihi .kh-login input:not([type=checkbox]){font:inherit;font-size:17px;width:100%;box-sizing:border-box;padding:10px;border:1px solid var(--hair);border-radius:10px;margin-top:6px;background:var(--sheet);color:var(--fg)}
+#khsavebar .in{display:flex;gap:10px}#khsavebar .in button{flex:1}
+#khsavebar .ghost{font:inherit;font-weight:700;font-size:16px;background:var(--sheet);color:var(--fg);border:1px solid var(--hair);border-radius:12px;padding:12px}
+#khsavebar .blue{background:#2b95ff!important;color:#fff;box-shadow:none}
 </style>
 </head><body>
 <header class="appbar"><div class="in"><svg viewBox="0 0 100 100" aria-hidden="true" class=""><defs><mask id="mkA"><rect width="100" height="100" fill="#fff"/><rect x="45" y="7" width="10" height="6.5" fill="#000"/><rect x="46.5" y="75" width="7" height="18" fill="#000"/></mask></defs><g mask="url(#mkA)" fill="currentColor" stroke="currentColor"><circle cx="50" cy="50" r="47" fill="none" stroke-width="3.6"/><circle cx="50" cy="50" r="35" fill="none" stroke-width="14"/><rect x="42.5" y="19" width="15" height="12" rx="5" stroke="none"/></g></svg><span><span class="co">丸門建設</span><span class="ttl" id="apptitle">丸門アプリ</span></span></div></header>
@@ -669,55 +692,82 @@ body{padding-top:0}
 
   <div id="keihi" hidden>
     <div class="topbar"><button type="button" class="backbtn" id="khback">← メニュー</button></div>
-    <div class="sheet">
-      <div class="title"><h1>旅費精算</h1><span id="kh_who">丸門建設株式会社</span></div>
-      <div id="kh_login" class="kh-pad kh-login" hidden>
-        <p style="margin:0 0 6px;font-size:14px">はじめに1回だけ、<b>丸門ポータルのIDとパスワード</b>を入れてください（次からは入れなくて大丈夫です）。</p>
-        <input id="kh_id" autocomplete="username" autocapitalize="off" placeholder="ポータルのID">
-        <input id="kh_pw" type="password" autocomplete="current-password" placeholder="パスワード">
-        <label style="display:flex;align-items:center;gap:8px;margin-top:8px;font-size:15px"><input type="checkbox" id="kh_pwshow" style="width:22px;height:22px;margin:0;padding:0"> パスワードを表示する</label>
-        <button type="button" class="save" id="kh_loginb" style="width:100%;margin-top:10px">ログイン</button>
-        <p id="kh_loginmsg" style="color:var(--danger);font-size:14px;margin:8px 0 0"></p>
+    <!-- ログイン -->
+    <div id="kh_login" class="sheet kh-pad kh-login" hidden>
+      <div class="title"><h1>旅費精算</h1><span>丸門建設株式会社</span></div>
+      <p style="margin:10px 0 6px;font-size:14px">はじめに1回だけ、<b>丸門ポータルのIDとパスワード</b>を入れてください（次からは入れなくて大丈夫です）。</p>
+      <input id="kh_id" autocomplete="username" autocapitalize="off" placeholder="ポータルのID">
+      <input id="kh_pw" type="password" autocomplete="current-password" placeholder="パスワード">
+      <label style="display:flex;align-items:center;gap:8px;margin-top:8px;font-size:15px"><input type="checkbox" id="kh_pwshow" style="width:22px;height:22px;margin:0;padding:0"> パスワードを表示する</label>
+      <button type="button" class="save" id="kh_loginb" style="width:100%;margin-top:10px">ログイン</button>
+      <p id="kh_loginmsg" style="color:var(--danger);font-size:14px;margin:8px 0 0"></p>
+    </div>
+    <!-- ホーム -->
+    <div id="kh_home" hidden>
+      <div class="kh-who" id="kh_who"></div>
+      <div class="kh-h">進行中</div>
+      <div id="kh_prog" class="kh-card"></div>
+      <div class="kh-h">精算する<small>実際に支払った費用を提出しましょう</small></div>
+      <button type="button" class="kh-tile" id="kh_goslip"><span class="ic">🚆</span><span>旅費精算<small id="kh_draftn"></small></span></button>
+      <div class="kh-h">これまでの申請</div>
+      <div id="kh_list" class="kh-card"></div>
+      <div class="kh-pad" style="text-align:right;font-size:12px"><a href="#" id="kh_logout">このスマホのログインをやめる</a></div>
+    </div>
+    <!-- 伝票（入力） -->
+    <div id="kh_slip" hidden>
+      <div class="kh-ttl">旅費精算（入力）</div>
+      <div class="kh-card kh-sec"><div class="kh-bar">ヘッダー</div>
+        <div class="kh-f"><b>ステータス</b><span class="kh-badge">仮登録</span></div>
+        <div class="kh-f"><b>伝票No</b><span id="kh_slipno">新規</span></div>
+        <div class="kh-f"><b>支払者</b><span id="kh_payer"></span></div>
+        <div class="kh-f"><b>精算方法</b><span>振込</span></div>
       </div>
-      <div id="kh_main" hidden>
-        <div class="secth">① レシート・領収書を撮る</div>
+      <div class="kh-card kh-sec"><div class="kh-bar">明細</div><div id="kh_items"></div></div>
+      <div class="kh-card kh-sec"><div class="kh-bar">内訳</div>
+        <div class="kh-f"><b>件数</b><span id="kh_cnt">0件</span></div>
+        <div class="kh-f"><b>合計（支払額）</b><span id="kh_total" style="font-size:20px;font-weight:700">¥0</span></div>
+      </div>
+      <button type="button" class="kh-fab" id="kh_add" aria-label="明細を追加">＋</button>
+    </div>
+    <!-- 明細 -->
+    <div id="kh_item" hidden>
+      <div class="kh-ttl">旅費精算（明細）</div>
+      <div class="kh-card kh-sec"><div class="kh-bar">証票（領収書）</div>
         <div class="kh-pad">
-          <label class="kh-photo" for="kh_ph">📷 レシートを撮る</label>
+          <label class="kh-photo" for="kh_ph">📷 領収書を撮影する</label>
           <input type="file" id="kh_ph" accept="image/*" capture="environment" multiple hidden>
           <div id="kh_thumbs"></div>
           <div id="kh_read" class="kh-read" hidden></div>
-          <p style="font-size:12px;color:var(--muted);margin:6px 0 0">撮ると日付・金額・お店・登録番号を自動で読み取ります。写真は会社のLANDISKに保存されます。 <a href="#" id="kh_norc_l">レシートが無いとき</a></p>
-          <div id="kh_norc" hidden><div class="v" style="border:1px solid var(--hair);border-radius:10px;margin-top:6px"><input id="kh_norcpt" placeholder="レシートが無い理由（例 ICカードの電車代）"></div></div>
+          <p style="font-size:12px;color:var(--muted);margin:6px 0 0">撮ると、日付・金額・発行元・登録番号・税率ごとの金額を読み取ります。写真は会社のLANDISKに保存されます。 <a href="#" id="kh_norc_l">領収書が無いとき</a></p>
+          <div id="kh_norc" hidden><label class="kh-l">領収書が無い理由</label><input class="kh-in" id="kh_norcpt" placeholder="例 ICカードの電車代"></div>
         </div>
-        <div class="secth">② 科目（種類）<span class="req">必須</span></div>
-        <div id="kh_kinds"></div>
-        <div id="kh_nittobox" class="kh-pad" hidden style="padding-top:0"><div class="v" style="border:1px solid var(--hair);border-radius:10px"><select id="kh_nitto"></select></div></div>
-        <div class="secth">③ 日付・金額・お店</div>
-        <div class="tr r-2">
-          <div class="td"><div class="th">使った日</div><div class="v"><input type="date" id="kh_date"></div></div>
-          <div class="td"><div class="th">金額</div><div class="v"><input id="kh_amount" inputmode="numeric" placeholder="税込（円）"></div></div>
+      </div>
+      <div class="kh-card kh-sec"><div class="kh-bar">明細</div><div class="kh-pad">
+        <label class="kh-l"><i>*</i>日付</label><input class="kh-in" type="date" id="kh_date">
+        <label class="kh-l"><i>*</i>用件</label><select class="kh-in" id="kh_kind"></select>
+        <label class="kh-l"><i>*</i>負担部門</label><select class="kh-in" id="kh_bumon"></select>
+        <div id="kh_route">
+          <label class="kh-l">出発地</label><input class="kh-in" id="kh_from" placeholder="ここに入力">
+          <label class="kh-l">目的地</label><input class="kh-in" id="kh_to" placeholder="ここに入力">
+          <label class="kh-l">片・往</label><select class="kh-in" id="kh_rt"><option value="">片道</option><option value="1">往復</option></select>
+          <div id="kh_kmrow" hidden><label class="kh-l">距離（片道km）</label><input class="kh-in" id="kh_km" inputmode="decimal" placeholder="ここに入力"></div>
         </div>
-        <div class="tr"><div class="td"><div class="th">お店</div><div class="v"><input id="kh_payee" placeholder="お店・会社の名前"></div></div></div>
-        <div id="kh_route" hidden>
-          <div class="tr r-2">
-            <div class="td"><div class="th">出発</div><div class="v"><input id="kh_from" placeholder="例 本社"></div></div>
-            <div class="td"><div class="th">到着</div><div class="v"><input id="kh_to" placeholder="例 ○○現場"></div></div>
-          </div>
-          <div class="tr"><div class="td"><div class="th">往復</div><div class="v"><label style="padding:8px"><input type="checkbox" id="kh_rt" style="width:auto"> 往復</label></div></div></div>
-          <div class="tr" id="kh_kmrow" hidden><div class="td"><div class="th">片道km</div><div class="v"><input id="kh_km" inputmode="decimal" placeholder="片道の距離"></div></div></div>
-        </div>
-        <div class="secth">④ 内容<span class="req">必須</span></div>
-        <div class="tr"><div class="td"><div class="v"><input id="kh_purpose" list="kh_purps" placeholder="何のための経費か"></div></div></div>
+        <div id="kh_nittobox" hidden><label class="kh-l">決まった額から選ぶ</label><select class="kh-in" id="kh_nitto"></select></div>
+        <label class="kh-l"><i>*</i>金額（税込）</label><input class="kh-in" id="kh_amount" inputmode="numeric" placeholder="ここに入力">
+        <div class="kh-2"><div><label class="kh-l">税率10%金額</label><input class="kh-in" id="kh_tax10" inputmode="numeric" placeholder="ここに入力"></div>
+          <div><label class="kh-l">税率8%金額</label><input class="kh-in" id="kh_tax8" inputmode="numeric" placeholder="ここに入力"></div></div>
+        <label class="kh-l">領収書発行元</label><input class="kh-in" id="kh_payee" placeholder="ここに入力">
+        <label class="kh-l">適格請求書発行事業者登録番号</label><input class="kh-in" id="kh_regno" placeholder="T から始まる番号">
+        <label class="kh-l">内容（何のため）</label><input class="kh-in" id="kh_purpose" list="kh_purps" placeholder="例 ○○現場への移動">
         <datalist id="kh_purps"></datalist>
         <div class="kh-chips" id="kh_chips"></div>
-        <div class="tr"><div class="td"><div class="th">現場</div><div class="v"><input id="kh_koban" list="kh_sites" placeholder="工番（現場の経費なら）"></div></div></div>
+        <label class="kh-l">現場（工番）</label><input class="kh-in" id="kh_koban" list="kh_sites" placeholder="現場の経費なら">
         <datalist id="kh_sites"></datalist>
-        <div class="secth">自分の申請</div>
-        <div id="kh_list"></div>
-        <div class="kh-pad" style="text-align:right;font-size:12px"><a href="#" id="kh_logout">このスマホのログインをやめる</a></div>
-      </div>
+        <label class="kh-l">メモ</label><input class="kh-in" id="kh_memo" placeholder="ここに入力">
+        <button type="button" class="kh-del" id="kh_delitem" hidden>この明細を消す</button>
+      </div></div>
     </div>
-    <div style="height:90px"></div>
+    <div style="height:110px"></div>
   </div>
 
   <div id="yukyu" hidden>
@@ -894,10 +944,7 @@ body{padding-top:0}
   <div class="sum" id="hsum">kintoneの人員手配帳に登録します</div>
   <button type="button" class="save" id="hsave">登録する</button>
 </div></div>
-<div class="savebar" id="khsavebar" hidden><div class="in">
-  <div class="sum" id="kh_sum">丸門ポータルに申請します</div>
-  <button type="button" class="save" id="kh_send" style="background:#b36b0f">申請する</button>
-</div></div>
+<div class="savebar" id="khsavebar" hidden><div class="in" id="kh_barin"></div></div>
 <div class="savebar" id="ysavebar" hidden><div class="in">
   <div class="sum">kintoneの「有給休暇願い」に登録します</div>
   <button type="button" class="save" id="ysave" style="background:#5b3fae">届け出る</button>
@@ -963,65 +1010,99 @@ const $=id=>document.getElementById(id);
 const LS="nippo_pin";let PIN="";let EDIT=null;
 function lsGet(k){try{return localStorage.getItem(k)||""}catch(e){return ""}}
 function lsSet(k,v){try{localStorage.setItem(k,v)}catch(e){}}
-// ---- 経費・旅費精算：アプリの中で申請し、データと写真だけ丸門ポータルへ送る ----
+// ---- 旅費精算（HRMOS経費のような作り）：明細を仮登録して、まとめて承認依頼。データと写真は丸門ポータルへ ----
 const KH_API="https://gordonpc.tail182036.ts.net/api/keihi";const KH_LS="keihi_token";
-let KH={tok:"",meta:null,kind:"",blobs:[],read:null,started:false};
+let KH={tok:"",meta:null,view:"",edit:null,blobs:[],read:null,started:false};
 const KH_ROUTE=["電車・バス","タクシー","高速道路","ガソリン（距離）"];
-function khFetch(path,opt){opt=opt||{};opt.headers=Object.assign({},opt.headers||{},KH.tok?{Authorization:"Bearer "+KH.tok}:{});
-  return fetch(KH_API+path,opt).then(r=>r.json().catch(()=>({ok:false,error:"丸門ポータルから返事がありません"})).then(j=>{if(r.status===401&&path!=="/login"){KH.tok="";lsSet(KH_LS,"");khShowLogin("もう一度ログインしてください")}return j}))
-  .catch(()=>({ok:false,error:"丸門ポータルにつながりません（電波を確かめてください）"}))}
-function khShowLogin(m){$("kh_login").hidden=false;$("kh_main").hidden=true;$("khsavebar").hidden=true;$("kh_loginmsg").textContent=m||""}
-function khLoad(){khFetch("/me").then(j=>{if(!j.ok){if(KH.tok)$("kh_loginmsg").textContent=j.error;return}
-  KH.meta=j;$("kh_login").hidden=true;$("kh_main").hidden=false;$("khsavebar").hidden=false;$("kh_who").textContent=j.name+" さん";
-  khKinds();khLists();khItems(j.items);if(!j.member)khMsg("ng","⚠ 社員の名簿（部門・振込口座）に「"+j.name+"」さんが見つかりません。申請はできますが、事務に知らせてください。")})}
-function khKinds(){const box=$("kh_kinds");box.innerHTML="";let g="";KH.meta.kinds.forEach(([k,gr])=>{if(gr!==g){g=gr;const d=document.createElement("div");d.className="g";d.textContent=gr==="旅費"?"旅費（交通費・宿泊・日当）":"経費（買い物など）";box.appendChild(d)}
-  const b=document.createElement("button");b.type="button";b.textContent=k;b.dataset.k=k;b.onclick=()=>khSetKind(k);box.appendChild(b)});
-  const ns=$("kh_nitto");ns.innerHTML='<option value="">決まった額から選ぶ</option>';(KH.meta.nitto||[]).forEach(([n,a])=>ns.add(new Option(n+"（"+Number(a).toLocaleString()+"円）",a)));khSetKind(KH.kind)}
-function khSetKind(k){KH.kind=k;document.querySelectorAll("#kh_kinds button").forEach(b=>b.classList.toggle("on",b.dataset.k===k));
-  $("kh_route").hidden=!KH_ROUTE.includes(k);$("kh_kmrow").hidden=k!=="ガソリン（距離）";$("kh_nittobox").hidden=!(k==="日当"||k.startsWith("福利厚生"));
-  if(k==="日当"&&KH.meta&&KH.meta.nitto_yen&&!$("kh_amount").value)$("kh_amount").value=KH.meta.nitto_yen;khGas()}
-function khGas(){if(KH.kind!=="ガソリン（距離）"||!KH.meta)return;const km=parseFloat($("kh_km").value||0);if(km)$("kh_amount").value=Math.round(km*($("kh_rt").checked?2:1)*KH.meta.gas_yen_per_km)}
-function khLists(){const dl=$("kh_purps");dl.innerHTML="";const ch=$("kh_chips");ch.innerHTML="";(KH.meta.purposes||[]).forEach((p,i)=>{dl.appendChild(new Option(p));if(i<8)ch.appendChild(khChip(p))});
-  const ds=$("kh_sites");ds.innerHTML="";(KH.meta.sites||[]).forEach(([k,n])=>{const o=new Option(k+" "+n,k);ds.appendChild(o)})}
-function khChip(p){const b=document.createElement("button");b.type="button";b.textContent=p;b.onclick=()=>{$("kh_purpose").value=p};return b}
 const KH_ST={"申請中":"s1","差戻":"s2","承認":"s3","精算済":"s4"};
-function khItems(items){const box=$("kh_list");box.innerHTML="";if(!items||!items.length){box.innerHTML='<div class="it" style="color:var(--muted)">まだありません</div>';return}
-  items.slice(0,20).forEach(x=>{const d=document.createElement("div");d.className="it";
-    const l=document.createElement("div");l.innerHTML="<b></b><br><small></small>";l.querySelector("b").textContent=(x.date||"").slice(5).replace("-","/")+" "+x.kind+" "+Number(x.amount||0).toLocaleString()+"円";
-    l.querySelector("small").textContent=(x.status==="差戻"?"差し戻し："+(x.reject_reason||""):(x.purpose||""))+(x.status==="承認"?"（"+x.pay_date+" 振込）":"");
-    const st=document.createElement("span");st.className="st "+(KH_ST[x.status]||"");st.textContent=x.status;d.append(l,st);box.appendChild(d)})}
+const khEsc=t=>String(t==null?"":t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const khYen=n=>"¥"+Number(n||0).toLocaleString();
+function khFetch(path,opt){opt=opt||{};opt.headers=Object.assign({},opt.headers||{},KH.tok?{Authorization:"Bearer "+KH.tok}:{});
+  return fetch(KH_API+path,opt).then(r=>r.json().catch(()=>({ok:false,error:"丸門ポータルから返事がありません（ポータルを起動し直してください）"})).then(j=>{if(r.status===401&&path!=="/login"){KH.tok="";lsSet(KH_LS,"");khShowLogin("もう一度ログインしてください")}return j}))
+  .catch(()=>({ok:false,error:"丸門ポータルにつながりません（電波を確かめてください）"}))}
+function khView(v){KH.view=v;["kh_login","kh_home","kh_slip","kh_item"].forEach(i=>$(i).hidden=i!=="kh_"+v);
+  $("khback").textContent=v==="home"||v==="login"?"← メニュー":"← 戻る";
+  const bar=$("kh_barin");bar.innerHTML="";$("khsavebar").hidden=v==="login";
+  const btn=(t,cls,fn)=>{const b=document.createElement("button");b.type="button";b.className="save "+(cls||"");b.textContent=t;b.onclick=fn;bar.appendChild(b);return b};
+  if(v==="home"){const b=btn("📷 領収書撮影","blue",()=>{khNewItem();$("kh_ph").click()});b.style.fontSize="19px"}
+  if(v==="slip"){btn("仮登録","ghost",()=>{khView("home");khPaintHome()});btn("承認依頼","blue",khSubmitSlip).id="kh_subbtn"}
+  if(v==="item"){btn("明細登録","blue",khSaveItem).id="kh_savebtn"}
+  window.scrollTo(0,0)}
+function khShowLogin(m){khView("login");$("kh_loginmsg").textContent=m||""}
+function khLoad(then){return khFetch("/me").then(j=>{if(!j.ok){if(KH.tok){khShowLogin(j.error)}return}KH.meta=j;khSetup();if(then)then();else{khView("home");khPaintHome()}})}
+function khSetup(){const m=KH.meta;$("kh_who").textContent=m.name+" さん";$("kh_payer").textContent=m.name;
+  const ks=$("kh_kind");ks.innerHTML='<option value="">選んでください</option>';let g="",og=null;m.kinds.forEach(([k,gr])=>{if(gr!==g){g=gr;og=document.createElement("optgroup");og.label=gr==="旅費"?"旅費（交通費・宿泊・日当）":"経費（買い物など）";ks.appendChild(og)}og.appendChild(new Option(k,k))});
+  const bs=$("kh_bumon");bs.innerHTML="";(m.bumon||[]).forEach(([c,n])=>bs.add(new Option(n+"（"+c+"）",c)));if(!(m.bumon||[]).length)bs.add(new Option("（名簿の部門）",""));
+  const ns=$("kh_nitto");ns.innerHTML='<option value="">選ぶと金額が入ります</option>';(m.nitto||[]).forEach(([n,a])=>ns.add(new Option(n+"（"+Number(a).toLocaleString()+"円）",a)));
+  const dl=$("kh_purps");dl.innerHTML="";(m.purposes||[]).forEach(p=>dl.appendChild(new Option(p)));
+  const ds=$("kh_sites");ds.innerHTML="";(m.sites||[]).forEach(([k,n])=>ds.appendChild(new Option(k+" "+n,k)))}
+function khPaintHome(){const m=KH.meta;const c={};(m.items||[]).forEach(x=>c[x.status]=(c[x.status]||0)+1);
+  const pr=$("kh_prog");pr.innerHTML="";[["承認待ち","申請中"],["差し戻し","差戻"],["承認済み（振込待ち）","承認"]].forEach(([l,s])=>{if(!c[s]&&s!=="申請中")return;
+    const r=document.createElement("div");r.className="kh-row";r.innerHTML="<span>"+l+"</span><span class='kh-n'>"+(c[s]||0)+"</span>";pr.appendChild(r)});
+  if(!c["申請中"]&&!c["差戻"]&&!c["承認"])pr.innerHTML='<div class="kh-row" style="justify-content:center;color:var(--muted)">進行中の申請はありません</div>';
+  $("kh_draftn").textContent=(m.drafts||[]).length?"仮登録 "+m.drafts.length+"件（"+khYen(m.drafts.reduce((a,x)=>a+(x.amount||0),0))+"）":"";
+  const li=$("kh_list");li.innerHTML="";const items=(m.items||[]).slice(0,30);if(!items.length)li.innerHTML='<div class="kh-row" style="color:var(--muted)">まだありません</div>';
+  items.forEach(x=>{const r=document.createElement("div");r.className="kh-row";
+    r.innerHTML="<div><b>"+khEsc((x.date||"").slice(5).replace("-","/")+" "+x.kind)+"</b> "+khYen(x.amount)+"<br><small style='color:var(--muted)'>"+khEsc(x.status==="差戻"?"差し戻し："+(x.reject_reason||""):(x.purpose||""))+(x.status==="承認"?"（"+khEsc(x.pay_date)+" 振込）":"")+"</small></div><span class='st "+(KH_ST[x.status]||"")+"'>"+khEsc(x.status)+"</span>";
+    if(x.status==="差戻")r.onclick=()=>khOpenItem(x);li.appendChild(r)})}
+function khPaintSlip(){const d=KH.meta.drafts||[];$("kh_slipno").textContent=d.length?String(d[0].slip_id||"新規"):"新規";
+  const box=$("kh_items");box.innerHTML="";const bn=c=>{const b=(KH.meta.bumon||[]).find(x=>x[0]===c);return b?b[1]:(c||"")};
+  if(!d.length)box.innerHTML='<div class="kh-pad" style="color:var(--muted)">右下の「＋」か、ホームの「領収書撮影」で明細を追加してください</div>';
+  d.forEach((x,i)=>{const e=document.createElement("div");e.className="kh-it";
+    e.innerHTML="<div class='top'><span class='src'>"+(x.receipt?"撮影":"手入力")+"</span>"+(x.receipt?"<span class='rc'>証票あり</span>":"")+"</div>"+
+      "<div style='font-size:13px;margin-top:6px'>No."+(i+1)+"｜"+khEsc((x.date||"").replace(/-/g,"/"))+"</div><div class='amt'>"+khYen(x.amount)+"</div>"+
+      "<div class='g'><div>負担部門<b>"+khEsc(bn(x.bumon))+"</b></div><div>用件<b>"+khEsc(x.kind)+"</b></div><div>出発地<b>"+khEsc(x.route_from||"---")+"</b></div><div>目的地<b>"+khEsc(x.route_to||"---")+"</b></div><div style='grid-column:1/-1'>内容<b>"+khEsc(x.purpose||"---")+"</b></div></div>";
+    e.onclick=()=>khOpenItem(x);box.appendChild(e)});
+  $("kh_cnt").textContent=d.length+"件";$("kh_total").textContent=khYen(d.reduce((a,x)=>a+(x.amount||0),0))}
+function khOpenSlip(){khView("slip");khPaintSlip()}
+function khKind(){const k=$("kh_kind").value;$("kh_route").hidden=k&&!KH_ROUTE.includes(k);$("kh_kmrow").hidden=k!=="ガソリン（距離）";
+  $("kh_nittobox").hidden=!(k==="日当"||k.startsWith("福利厚生"));if(k==="日当"&&KH.meta.nitto_yen&&!$("kh_amount").value)$("kh_amount").value=KH.meta.nitto_yen;khGas()}
+function khGas(){if($("kh_kind").value!=="ガソリン（距離）")return;const km=parseFloat($("kh_km").value||0);if(km)$("kh_amount").value=Math.round(km*($("kh_rt").value?2:1)*KH.meta.gas_yen_per_km)}
+const KH_F={kh_date:"date",kh_amount:"amount",kh_tax10:"tax10",kh_tax8:"tax8",kh_payee:"payee",kh_regno:"reg_no",kh_from:"route_from",kh_to:"route_to",kh_km:"km",kh_purpose:"purpose",kh_koban:"koban",kh_memo:"note",kh_norcpt:"no_receipt_reason"};
+function khClearForm(){KH.blobs=[];KH.read=null;$("kh_thumbs").innerHTML="";$("kh_read").hidden=true;$("kh_norc").hidden=true;
+  Object.keys(KH_F).forEach(i=>{$(i).value="";$(i).classList.remove("filled")});$("kh_rt").value="";$("kh_kind").value="";$("kh_bumon").value=KH.meta.my_bumon||($("kh_bumon").options[0]||{}).value||"";
+  const d=new Date();$("kh_date").value=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+  const ch=$("kh_chips");ch.innerHTML="";(KH.meta.purposes||[]).slice(0,6).forEach(p=>ch.appendChild(khChip(p)));khKind()}
+function khChip(p){const b=document.createElement("button");b.type="button";b.textContent=p;b.onclick=()=>{$("kh_purpose").value=p};return b}
+function khNewItem(){KH.edit=null;khClearForm();$("kh_delitem").hidden=true;khView("item")}
+function khOpenItem(x){KH.edit=x;khClearForm();Object.entries(KH_F).forEach(([i,k])=>{if(x[k]!=null&&x[k]!=="")$(i).value=x[k]});
+  $("kh_kind").value=x.kind||"";$("kh_bumon").value=x.bumon||KH.meta.my_bumon||"";$("kh_rt").value=x.roundtrip?"1":"";if(x.no_receipt_reason)$("kh_norc").hidden=false;
+  if(x.receipt)khMsg("ok","この明細には領収書の写真が付いています（撮り直すと差し替えます）");if(x.status==="差戻")khMsg("ng","差し戻されています："+khEsc(x.reject_reason||"")+"<br>直して「明細登録」を押すと出し直します。");
+  $("kh_delitem").hidden=x.status!=="仮登録";khKind();khView("item")}
 function khMsg(c,h){const b=$("kh_read");b.hidden=false;b.className="kh-read "+c;b.innerHTML=h}
 function khShrink(file){return new Promise(res=>{const img=new Image();img.onload=()=>{const m=2400,s=Math.min(1,m/Math.max(img.width,img.height));const c=document.createElement("canvas");
   c.width=Math.round(img.width*s);c.height=Math.round(img.height*s);c.getContext("2d").drawImage(img,0,0,c.width,c.height);c.toBlob(b=>res(b||file),"image/jpeg",0.88);URL.revokeObjectURL(img.src)};img.onerror=()=>res(file);img.src=URL.createObjectURL(file)})}
 function khFill(id,v){if(v===undefined||v===null||v===""||v===0)return;const e=$(id);e.value=v;e.classList.add("filled")}
-function khRead(b){khMsg("ing","レシートを読み取っています…（10秒ほど）");const fd=new FormData();fd.append("photo",b,"r.jpg");
-  khFetch("/read",{method:"POST",body:fd}).then(j=>{if(!j.ok){khMsg("ng",(j.error||"読み取れませんでした")+"。手で入れても申請できます。");return}
-    const x=j.r||{};KH.read=x;khFill("kh_date",x.date);khFill("kh_amount",x.amount);khFill("kh_payee",x.payee);khFill("kh_from",x.route_from);khFill("kh_to",x.route_to);
-    if(x.kind)khSetKind(x.kind);if(x.summary)$("kh_chips").prepend(khChip(x.summary));
-    const esc=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-    khMsg("ok","<b>読み取りました。</b>緑の欄を確かめて、科目と内容を選んでください。<br>"+esc([x.date||"日付不明",x.amount?Number(x.amount).toLocaleString()+"円":"",x.payee||"",x.reg_no?"登録番号 "+x.reg_no:"登録番号なし"].filter(Boolean).join("　"))+(x.is_receipt===false?"<br>⚠ レシートとして読めませんでした。写真を確かめてください。":""))})}
-function khReset(){KH.blobs=[];KH.read=null;KH.kind="";$("kh_thumbs").innerHTML="";$("kh_read").hidden=true;["kh_amount","kh_payee","kh_from","kh_to","kh_km","kh_purpose","kh_koban","kh_norcpt"].forEach(i=>{$(i).value="";$(i).classList.remove("filled")});
-  $("kh_rt").checked=false;const d=new Date();$("kh_date").value=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");$("kh_date").classList.remove("filled");if(KH.meta)khSetKind("")}
-function khSend(){if(!KH.kind){alert("科目（種類）を選んでください");return}
-  const fd=new FormData();const v=i=>$(i).value.trim();
-  [["kind",KH.kind],["date",v("kh_date")],["amount",v("kh_amount")],["payee",v("kh_payee")],["purpose",v("kh_purpose")],["koban",v("kh_koban")],["route_from",v("kh_from")],["route_to",v("kh_to")],["km",v("kh_km")],["no_receipt_reason",v("kh_norcpt")],["reg_no",(KH.read&&KH.read.reg_no)||""],["read_json",KH.read?JSON.stringify(KH.read):""]].forEach(([k,x])=>fd.append(k,x));
-  if($("kh_rt").checked)fd.append("roundtrip","1");KH.blobs.forEach((b,i)=>fd.append("photos",b,"receipt"+i+".jpg"));
-  const btn=$("kh_send");btn.disabled=true;btn.textContent="送っています…";
-  khFetch("/submit",{method:"POST",body:fd}).then(j=>{btn.disabled=false;btn.textContent="申請する";
-    if(!j.ok){alert(j.error||"申請できませんでした");return}alert(j.msg+(j.warn?"\n\n※"+j.warn:""));khReset();khLoad();window.scrollTo(0,0)})}
+function khRead(b){khMsg("ing","領収書を読み取っています…（10秒ほど）");const fd=new FormData();fd.append("photo",b,"r.jpg");
+  khFetch("/read",{method:"POST",body:fd}).then(j=>{if(!j.ok){khMsg("ng",khEsc(j.error||"読み取れませんでした")+"。手で入れても登録できます。");return}
+    const x=j.r||{};KH.read=x;khFill("kh_date",x.date);khFill("kh_amount",x.amount);khFill("kh_tax10",x.tax10);khFill("kh_tax8",x.tax8);khFill("kh_payee",x.payee);khFill("kh_regno",x.reg_no);khFill("kh_from",x.route_from);khFill("kh_to",x.route_to);
+    if(x.kind&&!$("kh_kind").value){$("kh_kind").value=x.kind;$("kh_kind").classList.add("filled");khKind()}if(x.summary)$("kh_chips").prepend(khChip(x.summary));
+    khMsg("ok","<b>読み取りました。</b>緑の欄を確かめて、用件と負担部門を選んでください。"+(x.is_receipt===false?"<br>⚠ 領収書として読めませんでした。写真を確かめてください。":""))})}
+function khSaveItem(){const v=i=>$(i).value.trim();if(!v("kh_kind")){alert("用件を選んでください");return}if(!v("kh_amount")){alert("金額を入れてください");return}
+  const fd=new FormData();Object.entries(KH_F).forEach(([i,k])=>fd.append(k,v(i)));if(!v("kh_purpose"))fd.set("purpose",v("kh_kind")+(v("kh_payee")?"（"+v("kh_payee")+"）":""));
+  fd.append("kind",v("kh_kind"));fd.append("bumon",v("kh_bumon"));if(v("kh_rt"))fd.append("roundtrip","1");fd.append("read_json",KH.read?JSON.stringify(KH.read):"");
+  KH.blobs.forEach((b,i)=>fd.append("photos",b,"receipt"+i+".jpg"));const btn=$("kh_savebtn");btn.disabled=true;btn.textContent="登録しています…";
+  khFetch("/item"+(KH.edit?"/"+KH.edit.id:""),{method:"POST",body:fd}).then(j=>{btn.disabled=false;btn.textContent="明細登録";
+    if(!j.ok){alert(j.error||"登録できませんでした");return}if(j.warn)alert("登録しましたが："+j.warn);
+    const was=KH.edit&&KH.edit.status==="差戻";khLoad(()=>{if(was){alert("直して出し直しました");khView("home");khPaintHome()}else khOpenSlip()})})}
+function khSubmitSlip(){const d=KH.meta.drafts||[];if(!d.length){alert("明細がありません。「＋」で明細を追加してください");return}
+  if(!confirm(d.length+"件 "+khYen(d.reduce((a,x)=>a+(x.amount||0),0))+" を承認依頼してもよろしいですか？"))return;
+  khFetch("/slip/submit",{method:"POST"}).then(j=>{if(!j.ok){alert(j.error);return}alert(j.msg);khLoad()})}
 function openKeihi(){scr("keihi");setTitle("旅費精算");$("menu").hidden=true;$("keihi").hidden=false;window.scrollTo(0,0);
-  if(!KH.started){KH.started=true;khReset();
+  if(!KH.started){KH.started=true;
     $("kh_ph").addEventListener("change",async e=>{let first=null;for(const f of e.target.files){const b=await khShrink(f);KH.blobs.push(b);if(!first)first=b;const i=document.createElement("img");i.src=URL.createObjectURL(b);$("kh_thumbs").appendChild(i)}e.target.value="";if(first&&!KH.read)khRead(first)});
     $("kh_norc_l").addEventListener("click",e=>{e.preventDefault();$("kh_norc").hidden=false});
     $("kh_nitto").addEventListener("change",e=>{if(e.target.value)$("kh_amount").value=e.target.value});
-    $("kh_km").addEventListener("input",khGas);$("kh_rt").addEventListener("change",khGas);
-    $("kh_send").addEventListener("click",khSend);$("khback").addEventListener("click",showMenu);
+    $("kh_kind").addEventListener("change",khKind);$("kh_km").addEventListener("input",khGas);$("kh_rt").addEventListener("change",khGas);
+    $("kh_goslip").addEventListener("click",khOpenSlip);$("kh_add").addEventListener("click",khNewItem);
+    $("kh_delitem").addEventListener("click",()=>{if(!KH.edit||!confirm("この明細を消しますか？"))return;khFetch("/item/"+KH.edit.id+"/delete",{method:"POST"}).then(j=>{if(!j.ok){alert(j.error);return}khLoad(khOpenSlip)})});
+    $("khback").addEventListener("click",()=>{if(KH.view==="item"){if(KH.edit&&KH.edit.status==="差戻"){khView("home");khPaintHome()}else khOpenSlip()}else if(KH.view==="slip"){khView("home");khPaintHome()}else showMenu()});
     $("kh_logout").addEventListener("click",e=>{e.preventDefault();if(!confirm("このスマホのログインをやめますか？"))return;khFetch("/logout",{method:"POST"});KH.tok="";lsSet(KH_LS,"");khShowLogin("")});
     $("kh_pwshow").addEventListener("change",e=>{$("kh_pw").type=e.target.checked?"text":"password"});
     $("kh_loginb").addEventListener("click",()=>{$("kh_loginmsg").textContent="確かめています…";
       khFetch("/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({login_id:$("kh_id").value.trim(),password:$("kh_pw").value,device:navigator.userAgent.slice(0,100)})})
       .then(j=>{if(!j.ok){$("kh_loginmsg").textContent=j.error;return}KH.tok=j.token;lsSet(KH_LS,j.token);$("kh_pw").value="";khLoad()})})}
-  KH.tok=lsGet(KH_LS);if(KH.tok){$("khsavebar").hidden=!KH.meta;khLoad()}else khShowLogin("")}
+  KH.tok=lsGet(KH_LS);if(KH.tok){if(KH.meta){khView("home");khPaintHome()}khLoad()}else khShowLogin("")}
 function setSel(s,v){v=v==null?"":String(v);if(v&&![...s.options].some(o=>o.value===v))s.add(new Option(v.trim(),v));s.value=v;if(s._btn)paintNB(s)}
 // ---- 名前は検索して選ぶ ----
 let PSEL=null,PLIST=null,PFREE=false;
