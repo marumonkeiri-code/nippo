@@ -1740,7 +1740,7 @@ function bBtn(label,x,ids,card){const b=document.createElement("button");b.type=
 function bSum(){const nm=BLIST.filter(x=>x.kind==="mochi").length;$("bsum").textContent="未処理　持出 "+nm+"件・購入 "+(BLIST.length-nm)+"件"}
 function openBuppin(){scr("buppin");setTitle("物品管理");$("menu").hidden=true;$("buppin").hidden=false;if(!bStarted){bStarted=true;bStart()}else if(BPIN)bLoad();window.scrollTo(0,0)}
 // ---- 人員手配帳（前日コピー＋写真読み取り） ----
-const HLS="tehai_pin",HKIKAI=["No.1","No.３","No.7","No.8","No.11","No.13","No.16","No.21","No.23","SCX900","RT-200","650TLX","センター","下見"],HKUBUN=["現","土場","前入","帰省","講習","休"];
+const HLS="tehai_pin",HKIKAI=["No.1","No.３","No.7","No.8","No.11","No.13","No.16","No.21","No.23","SCX900","RT-200","650TLX","センター","下見"],HKUBUN=["現","出","土場","前入","帰省","講習","休"];
 let HPIN="",hStarted=false,hDirty=false;
 function hSel(opts,v,label){const s=document.createElement("select");s.setAttribute("aria-label",label);s.add(new Option("（なし）",""));opts.forEach(o=>s.add(new Option(o,o)));if(v&&!opts.includes(v))s.add(new Option(v,v));s.value=v||"";return s}
 function hMark(){document.querySelectorAll("#tehai select.hname").forEach(s=>{if(s._btn)s._btn.classList.toggle("hbad",!!s.value&&!NAMES.includes(s.value))})}
