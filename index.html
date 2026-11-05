@@ -1797,10 +1797,16 @@ function hShrink(file){return new Promise((ok,ng)=>{const u=URL.createObjectURL(
   im.onload=()=>{const M=2000,k=Math.min(1,M/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);
     c.getContext("2d").drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);ok(c.toDataURL("image/jpeg",0.85).split(",")[1])};
   im.onerror=()=>{URL.revokeObjectURL(u);ng(new Error("この写真は読み込めませんでした。"))};im.src=u})}
+function hPhotoDate(pd,cur){const m=/(\d{1,2})-(\d{1,2})$/.exec(String(pd||""));if(!m)return "";
+  const c=new Date(cur+"T00:00:00Z"),y=c.getUTCFullYear();let best="",bd=1e9;
+  [y-1,y,y+1].forEach(yy=>{const t=new Date(Date.UTC(yy,Number(m[1])-1,Number(m[2])));if(t.getUTCMonth()!==Number(m[1])-1)return;const g=Math.abs(t-c)/864e5;if(g<bd){bd=g;best=t.toISOString().slice(0,10)}});
+  return bd<=60?best:""}
 async function hPhoto(file){let b64;try{b64=await hShrink(file)}catch(e){return boxMsg("hconfirm",esc(e.message))}
   hPic(b64);hDirty=true;
   google.script.run.withSuccessHandler(d=>{hFill(d);hDirty=true;
-      const note=d.date&&d.date!==$("hday").value?"（写真の日付は"+hMD(d.date)+"でした。日付が合っているか確かめてください）":"";
+      const nd=hPhotoDate(d.date,$("hday").value);let note="";
+      if(nd&&nd!==$("hday").value){$("hday").value=nd;$("hday").dataset.v=nd;note="（写真の日付に合わせて、日付を"+hMD(nd)+"に変えました。この日の手配帳がもう登録してあれば、登録すると上書きされます）"}
+      else if(d.date&&!nd)note="（写真の日付「"+esc(d.date)+"」が選んでいる日から離れているので、日付は変えていません。合っているか確かめてください）";
       hStatus("写真から読み取りました"+note+"。読み間違いがないか、紙と見比べて直してから「登録する」を押してください。赤い枠の名前は、従業員リストにない名前です。","copy");window.scrollTo(0,0)})
     .withFailureHandler(err=>boxMsg("hconfirm","<b>読み取れませんでした</b><br>"+esc(err.message||String(err))))
     .readTehaiPhoto(PIN,HPIN,$("hday").value,b64,"image/jpeg")}
