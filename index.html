@@ -356,6 +356,7 @@ body{padding-top:0}
 .mvbar{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 12px;background:var(--sheet);font-size:13px;color:var(--muted);box-shadow:var(--shadow)}
 .mvscroll{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;padding:10px}.mvwrap{position:relative;margin:0 auto;overflow:hidden;background:#fff;box-shadow:0 2px 12px rgba(0,0,0,.4)}.mvscroll iframe{width:820px;height:1180px;background:#fff;border:0;display:block}
 .mvbar button{white-space:nowrap;flex:none}
+#msavebar .in{display:flex;gap:8px;align-items:stretch}#msavebar .in button{flex:1 1 0;padding:7px 4px;font-size:14px;line-height:1.2;white-space:nowrap;min-width:0}#msavebar .in .sub{flex:0 0 auto;padding:7px 10px}
 .instchrome{display:inline-block;text-decoration:none;text-align:center}
 /* 有給・伝票 */
 .mbtn.yukyu .mi{background:linear-gradient(145deg,#8a6fd6,#5b3fae)}
@@ -900,7 +901,7 @@ body{padding-top:0}
       <div class="titems" id="mitems"></div>
       <div class="secth">補修内容（あれば）</div>
       <div class="v"><textarea id="m_repair" aria-label="補修内容" placeholder="例：No.12 電装品のヒューズ交換"></textarea></div>
-      <div class="secth">送信先メールアドレス（先方に送るとき。複数はカンマ区切り）</div>
+      <div class="secth">送信先メールアドレス（「保存してメール送信」のときだけ使います。複数はカンマ区切り）</div>
       <div class="v"><input type="text" id="m_to" inputmode="email" autocomplete="off" list="m_tolist" placeholder="例：genba@example.co.jp" aria-label="送信先メールアドレス"><datalist id="m_tolist"></datalist></div>
       <div class="secth">メールに添えるひとこと（任意）</div>
       <div class="v"><textarea id="m_note" aria-label="ひとこと" placeholder="例：今月分をお送りします。よろしくお願いいたします。"></textarea></div>
@@ -1031,9 +1032,10 @@ body{padding-top:0}
   <button type="button" class="save" id="tsave" style="background:#b06a10">点検を記録する</button>
 </div></div>
 <div class="savebar" id="msavebar" hidden><div class="in">
-  <div class="sum" id="msum">PDFを作って送ります</div>
-  <button type="button" class="sub" id="mprev">内容を確認</button>
-  <button type="button" class="save" id="msend" style="background:#b06a10">PDFを作って送る</button>
+  <span id="msum" hidden></span>
+  <button type="button" class="sub" id="mprev">確認</button>
+  <button type="button" class="save" id="msaveonly" style="background:#2e7d4f">保存のみ</button>
+  <button type="button" class="save" id="msend" style="background:#b06a10">保存して<br>メール送信</button>
 </div></div>
 <div class="savebar" id="ksavebar" hidden><div class="in kallbar">
   <div class="sum" id="kallsum"></div>
@@ -1716,7 +1718,7 @@ function mStart(){
   $("m_date").value=todayJ();
   $("m_no").addEventListener("change",()=>{const o=$("m_no").options[$("m_no").selectedIndex];$("m_kata").value=o&&o.dataset.kata?o.dataset.kata:""});
   $("mall").addEventListener("click",()=>{if(MITEMS.some(x=>x.r!=="V"||x.memo)&&!confirm("すべての項目を V（良）に戻しますか？"))return;MITEMS.forEach(x=>{x.r="V";x.done=false;if(!x.inp)x.memo=""});mPaint()});
-  $("mprev").addEventListener("click",mPreview);$("msend").addEventListener("click",()=>mSave(false));
+  $("mprev").addEventListener("click",mPreview);$("msend").addEventListener("click",()=>mSave(false,true));$("msaveonly").addEventListener("click",()=>mSave(false,false));
   $("mpclose").addEventListener("click",()=>{$("mpick").hidden=true});$("mpok").addEventListener("click",mPickOk);
   $("mvclose").addEventListener("click",()=>{$("mview").hidden=true});
   $("getsurei").addEventListener("input",()=>{$("mconfirm").hidden=true});
@@ -1762,18 +1764,18 @@ function mPreview(){const d=mData();const e=mErrs(d);if(e.length)return boxMsg("
     .withFailureHandler(err=>boxMsg("mconfirm",esc(err.message||String(err)))).getsureiPreview(PIN,d)}
 function mFit(){const box=$("mvscroll"),f=$("mviewf");const w=Math.max(300,box.clientWidth-20);const k=Math.min(1,w/820);f.style.transform="scale("+k+")";f.style.transformOrigin="0 0";f.parentElement.style.height=Math.round(1180*k)+"px";f.parentElement.style.width=Math.round(820*k)+"px"}
 window.addEventListener("resize",()=>{if(!$("mview").hidden)mFit()});
-function mSave(force){const d=mData();const e=mErrs(d);if(e.length)return boxMsg("mconfirm","<b>送れません。次を直してください</b><br>"+e.map(esc).join("<br>"));
+function mSave(force,send){const d=mData();if(!send)d.to="";const e=mErrs(d);if(send&&!d.to.trim())e.push("送信先メールアドレスを入れてください。（送らないときは「保存のみ」を押してください）");if(e.length)return boxMsg("mconfirm","<b>次を直してください</b><br>"+e.map(esc).join("<br>"));
   const abn=d.items.filter(x=>x.r!=="V");const tos=d.to.split(/[,、;\s]+/).filter(String);
-  if(!force){const y=document.createElement("button");y.type="button";y.className="save";y.style.background="#b06a10";y.textContent=tos.length?"PDFを作って送る":"PDFを作って記録する";y.addEventListener("click",()=>mSave(true));
+  if(!force){const y=document.createElement("button");y.type="button";y.className="save";y.style.background="#b06a10";y.textContent=send?"PDFを作って送る":"PDFを作って保存する";y.addEventListener("click",()=>mSave(true,send));
     const n=document.createElement("button");n.type="button";n.className="sub";n.textContent="戻る";n.addEventListener("click",()=>{$("mconfirm").hidden=true});
-    const b=$("mconfirm");b.innerHTML="<b>この内容でよいですか？</b><br>"+esc(d.kindName)+"　No."+esc(d.gouki)+"　"+esc(d.kata)+"<br>点検日 "+esc(d.date)+"　検査実施者 "+esc(d.inspector)+"<br>"+(abn.length?"異常・処置あり "+abn.length+"項目（No."+abn.map(x=>x.no).join("、")+"）":"異常なし（すべてV）")+"<br>"+(tos.length?"送信先："+esc(tos.join("、"))+"<br><small>marumonkeiri@gmail.com から PDF を添付して送ります</small>":"<b>送信先が空です。</b>メールは送らず、kintoneに記録だけします。");
+    const b=$("mconfirm");b.innerHTML="<b>この内容でよいですか？</b><br>"+esc(d.kindName)+"　No."+esc(d.gouki)+"　"+esc(d.kata)+"<br>点検日 "+esc(d.date)+"　検査実施者 "+esc(d.inspector)+"<br>"+(abn.length?"異常・処置あり "+abn.length+"項目（No."+abn.map(x=>x.no).join("、")+"）":"異常なし（すべてV）")+"<br>"+(send?"送信先："+esc(tos.join("、"))+"<br><small>marumonkeiri@gmail.com から PDF を添付して送ります</small>":"メールは送らず、PDFを作ってkintoneに保存だけします。");
     const bb=document.createElement("div");bb.className="draftbtns";bb.appendChild(y);bb.appendChild(n);b.appendChild(bb);b.hidden=false;b.scrollIntoView({behavior:"smooth",block:"center"});return}
-  $("msend").disabled=true;$("mprev").disabled=true;
-  google.script.run.withSuccessHandler(res=>{$("msend").disabled=false;$("mprev").disabled=false;if(tos.length)mToSave(tos);
-      let msg=(res.sent?"PDFを "+tos.join("、")+" へ送りました。":"PDFを作りました（メールは送っていません）。")+(res.saved?" kintoneの「月例定期点検記録表」にも保存しました":"");
+  $("msend").disabled=true;$("msaveonly").disabled=true;$("mprev").disabled=true;
+  google.script.run.withSuccessHandler(res=>{$("msend").disabled=false;$("msaveonly").disabled=false;$("mprev").disabled=false;if(tos.length)mToSave(tos);
+      let msg=(res.sent?"PDFを "+tos.join("、")+" へ送りました。":"PDFを作りました（メールは送っていません）。")+(res.saved?" kintoneの「月例定期点検記録表」に保存しました":"");
       if(res.warn&&res.warn.length)msg+="　※"+res.warn.join(" ");
       doneShow(res.sent?"送りました":"記録しました",msg,res.id||"－",["getsurei","msavebar"])})
-    .withFailureHandler(err=>{$("msend").disabled=false;$("mprev").disabled=false;boxMsg("mconfirm","<b>送れませんでした</b><br>"+esc(err.message||String(err)))})
+    .withFailureHandler(err=>{$("msend").disabled=false;$("msaveonly").disabled=false;$("mprev").disabled=false;boxMsg("mconfirm","<b>"+(send?"送れませんでした":"保存できませんでした")+"</b><br>"+esc(err.message||String(err)))})
     .saveGetsurei(PIN,d)}
 function openGetsurei(){scr("getsurei");setTitle("月例定期点検");$("menu").hidden=true;$("getsurei").hidden=false;$("msavebar").hidden=false;if(!mStarted){mStarted=true;mStart()}window.scrollTo(0,0)}
 // ---- 有給休暇願い・持出伝票・物品購入伝票 ----
