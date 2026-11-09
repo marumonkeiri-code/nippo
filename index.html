@@ -1702,7 +1702,7 @@ const MFORMS={
         ["燃料装置",[["燃料タンク、配管","漏れ、水抜き、変形緩み、目詰り"],["燃料フィルター、エレメント","漏れ、汚れ、目詰り"],["調速機構リンク","摩耗、損傷"],["調速機（無負荷回転数）","製造者の指定範囲内か"]]],
         ["非常停止装置",[["冷却水温、水量レベル、油圧、油量、レベル、リレー、ソレノイド","作動、断線、緩み（モニター装置確認の際合わせて行う）"]]],
         ["機器類",[["回転計、計測機器類","作動、指定、漏れ、損傷"]]]]],
-      ["発電機",[["本体",[["電圧設定機、各調整器","損傷、作動、各端子の緩み"],["設定電圧、周波数","V／Hz（措置内容の欄に数値を記入）",1],["電圧計、電流計、周波数計","損傷、摩耗、緩み"],["表示灯、計器盤灯、他","損傷、点灯、緩み"],["MCB、出力端子","動作、端子の緩み"],["サーモラベル（軸受、固定子）","製造者の指定値のものを使用する（交換）"],["絶縁抵抗の測定（MCBはON）","MΩ（措置内容の欄に数値を記入）",1],["アース線","線の変形、断線、取り付け状態"]]]]],
+      ["発電機",[["本体",[["電圧設定機、各調整器","損傷、作動、各端子の緩み"],["設定電圧、周波数","V／Hz",1],["電圧計、電流計、周波数計","損傷、摩耗、緩み"],["表示灯、計器盤灯、他","損傷、点灯、緩み"],["MCB、出力端子","動作、端子の緩み"],["サーモラベル（軸受、固定子）","製造者の指定値のものを使用する（交換）"],["絶縁抵抗の測定（MCBはON）","MΩ",1],["アース線","線の変形、断線、取り付け状態"]]]]],
       ["外装",[["バッテリ充電装置",[["バッテリー、オールタネータ、リレー、電流計","液量、比重、漏れ、作動、損傷、取付状態"]]],["外被等",[["外かく（排気消音機を含む）","損傷、塗装、変形、緩み"],["吊り上げ機構","摩耗、亀裂、変形、緩み"],["共通台板","変形、亀裂"]]]]]]}
 };
 function mFlat(f){const out=[];let no=0;const skip=f.skip||[];const next=()=>{no++;while(skip.includes(no))no++;return no};
@@ -1739,7 +1739,7 @@ function mRender(reset){
   MITEMS.forEach(it=>{if(it.sec!==lastSec){const h=document.createElement("div");h.className="secth msec";h.textContent=it.sec;box.appendChild(h);lastSec=it.sec;lastSub=""}
     if(f.twoLevel&&it.sub!==lastSub){const h=document.createElement("div");h.className="msub";h.textContent=it.sub;box.appendChild(h);lastSub=it.sub}
     const b=document.createElement("button");b.type="button";b.className="titem mitem";b.dataset.no=it.no;
-    b.innerHTML='<span class="n">'+it.no+'</span><span class="t">'+esc(it.a)+(it.b?'<small>'+esc(it.b)+'</small>':'')+'<small class="mm"></small></span><span class="b"></span>';
+    b.innerHTML='<span class="n">'+it.no+'</span><span class="t">'+esc(it.a)+(it.b?'<small>'+esc(it.b)+(it.inp?'　←押して数値を入れてください':'')+'</small>':'')+'<small class="mm"></small></span><span class="b"></span>';
     b.addEventListener("click",()=>mPick(it));box.appendChild(b)});
   mPaint();
 }
