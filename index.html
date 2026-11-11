@@ -374,6 +374,16 @@ body{padding-top:0}
 .kjform input,.kjform select{font:inherit;font-size:16px;padding:8px;border:1px solid var(--hair);border-radius:8px;background:var(--sheet);color:var(--fg);width:100%;box-sizing:border-box}.kj2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 #kjpick .pfoot{display:flex;gap:8px;justify-content:flex-end}#kjpick .phead{flex-direction:column;align-items:flex-start;gap:2px}#kjpick .phead small{color:var(--muted)}
 #kjsavebar .in{display:flex;gap:8px;align-items:stretch}#kjsavebar .in button{padding:7px 10px;font-size:14px;line-height:1.2;white-space:nowrap}#kjsavebar .in .save{flex:1 1 0}
+/* メニューをアイコンのタイルで並べる */
+#menu.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:8px}
+#menu.grid>h1,#menu.grid>.hello,#menu.grid>#inst,#menu.grid>.instbox{grid-column:1/-1}
+#menu.grid .mbtn{flex-direction:column;align-items:center;justify-content:flex-start;gap:8px;padding:14px 6px 12px;min-height:0;text-align:center;border-radius:18px}
+#menu.grid .mbtn .mi{width:58px;height:58px;border-radius:18px;font-size:17px}
+#menu.grid .mbtn b{font-size:14px;line-height:1.25}
+#menu.grid .mbtn small{display:none}
+#menu.grid .mbtn>span:last-child{display:block}
+#menu.grid .mbtn::after{display:none}
+.viewtgl{margin-left:auto;font:inherit;font-size:12px;border:1px solid var(--hair);background:var(--sheet);color:var(--muted);border-radius:12px;padding:4px 10px;cursor:pointer}
 /* 有給・伝票 */
 .mbtn.yukyu .mi{background:linear-gradient(145deg,#8a6fd6,#5b3fae)}
 .mbtn.mochi .mi{background:linear-gradient(145deg,#3aa0b0,#1f6f7c)}
@@ -591,7 +601,7 @@ body{padding-top:0}
 
   <div id="menu" hidden>
     <h1 id="menuTitle">丸門建設</h1>
-    <div class="hello"><span class="d" id="today"></span><span class="g">おつかれさまです</span><a class="helplink" href="https://claude.ai/artifact/6gudgaZYGnbo1s2BLatdfm" target="_blank" rel="noopener">使い方を見る</a></div>
+    <div class="hello"><span class="d" id="today"></span><span class="g">おつかれさまです</span><a class="helplink" href="https://claude.ai/artifact/6gudgaZYGnbo1s2BLatdfm" target="_blank" rel="noopener">使い方を見る</a><button type="button" class="viewtgl" id="viewtgl">説明つきで見る</button></div>
     <button type="button" class="mbtn nippo" id="goNippo"><span class="mi">日報</span><span><b>作業日報</b><small>その日の作業時間・出来高・人員を入力</small></span></button>
     <button type="button" class="mbtn jiko" id="goJiko"><span class="mi">事故</span><span><b>事故・トラブル報告</b><small>事故や機械の損傷があったときに報告</small></span></button>
     <button type="button" class="mbtn getsurei" id="goGetsurei"><span class="mi">点検</span><span><b>月例定期点検</b><small>月例自主検査記録表を作って先方へPDFで送る</small></span></button>
@@ -2218,6 +2228,7 @@ function wStart(){
   $("wnew").addEventListener("click",()=>wOpen(null,"入荷"));
   wLockPaint();wLoad()}
 function openWire(){scr("wire");setTitle("ワイヤ管理");$("menu").hidden=true;$("wire").hidden=false;if(!wStarted){wStarted=true;wStart()}else wLoad();window.scrollTo(0,0)}
+(function(){const m=document.getElementById("menu"),b=document.getElementById("viewtgl");function ap(){const g=lsGet("menu_view")!=="list";m.classList.toggle("grid",g);b.textContent=g?"説明つきで見る":"アイコンで見る"}b.addEventListener("click",()=>{lsSet("menu_view",lsGet("menu_view")==="list"?"grid":"list");ap()});ap()})();
 function showMenu(){scr("");setTitle("丸門アプリ");["app","savebar","jiko","jsavebar","kakunin","ksavebar","tenken","tsavebar","yukyu","ysavebar","denpyo","dsavebar","buppin","tehai","hsavebar","wire","wsheet","listbox","done","keihi","khsavebar","getsurei","msavebar","kiju","kjsavebar"].forEach(i=>$(i).hidden=true);$("menu").hidden=false;window.scrollTo(0,0)}
 function openNippo(){scr("nippo");setTitle("作業日報");$("menu").hidden=true;$("app").hidden=false;$("savebar").hidden=false;if(!nippoStarted){nippoStarted=true;start(MASTER)}window.scrollTo(0,0)}
 function openJiko(){scr("jiko");setTitle("事故・トラブル報告");$("menu").hidden=true;$("jiko").hidden=false;$("jsavebar").hidden=false;if(!jikoStarted){jikoStarted=true;startJiko(MASTER)}window.scrollTo(0,0)}
