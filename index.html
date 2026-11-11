@@ -358,6 +358,22 @@ body{padding-top:0}
 .mvbar button{white-space:nowrap;flex:none}
 #msavebar .in{display:flex;gap:8px;align-items:stretch}#msavebar .in button{flex:1 1 0;padding:7px 4px;font-size:14px;line-height:1.2;white-space:nowrap;min-width:0}#msavebar .in .sub{flex:0 0 auto;padding:7px 10px}
 .instchrome{display:inline-block;text-decoration:none;text-align:center}
+/* 重機ワイヤ管理 */
+.mbtn.kiju .mi{background:linear-gradient(145deg,#8e6bc4,#6d4c9f)}
+#kiju{display:flex;flex-direction:column;gap:10px}#kiju[hidden]{display:none!important}
+#kiju .title h1{color:#6d4c9f;letter-spacing:.06em;font-size:17px}#kiju textarea{min-height:50px}
+#kjkinds button.on{background:#6d4c9f;border-color:#6d4c9f}
+.kjrow{border-bottom:1px solid var(--hair)}.kjrow:last-child{border-bottom:0}
+.kjmain{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer}
+.kjt{flex:0 0 64px;font-weight:700;font-size:16px}.kjt small{display:block;font-weight:400;font-size:11px;color:var(--muted)}
+.kjd{flex:1;min-width:0}.kjd b{font-size:17px}.kjd small{display:block;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.kjnone{color:var(--muted)}
+.kjadd{flex:none;border-color:#6d4c9f;color:#6d4c9f;padding:8px 10px;white-space:nowrap}
+.kjhist{display:none;background:var(--head);padding:4px 0 8px}.kjrow.open .kjhist{display:block}.kjrow.open .kjmain{background:var(--head)}
+.kjtbl{width:100%;border-collapse:collapse;font-size:12px}.kjtbl th,.kjtbl td{padding:4px 8px;border-bottom:1px solid var(--hair);text-align:left}.kjtbl th{color:var(--muted);font-weight:400}
+.kjform{padding:6px 14px 10px;display:flex;flex-direction:column;gap:8px}.kjform label{display:flex;flex-direction:column;gap:3px;font-size:12px;color:var(--muted)}
+.kjform input,.kjform select{font:inherit;font-size:16px;padding:8px;border:1px solid var(--hair);border-radius:8px;background:var(--sheet);color:var(--fg);width:100%;box-sizing:border-box}.kj2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#kjpick .pfoot{display:flex;gap:8px;justify-content:flex-end}#kjpick .phead{flex-direction:column;align-items:flex-start;gap:2px}#kjpick .phead small{color:var(--muted)}
+#kjsavebar .in{display:flex;gap:8px;align-items:stretch}#kjsavebar .in button{padding:7px 10px;font-size:14px;line-height:1.2;white-space:nowrap}#kjsavebar .in .save{flex:1 1 0}
 /* 有給・伝票 */
 .mbtn.yukyu .mi{background:linear-gradient(145deg,#8a6fd6,#5b3fae)}
 .mbtn.mochi .mi{background:linear-gradient(145deg,#3aa0b0,#1f6f7c)}
@@ -583,6 +599,7 @@ body{padding-top:0}
     <button type="button" class="mbtn mochi" id="goMochi"><span class="mi">持出</span><span><b>持出伝票</b><small>現場に持ち出す物品を記録</small></span></button>
     <button type="button" class="mbtn kounyu" id="goKounyu"><span class="mi">購入</span><span><b>物品購入伝票</b><small>買った物品・単価・発注先を記録</small></span></button>
     <button type="button" class="mbtn buppin" id="goBuppin"><span class="mi">物品</span><span><b>物品管理</b><small>出ている持出・購入伝票を見て処理する</small></span></button>
+    <button type="button" class="mbtn kiju" id="goKiju"><span class="mi">重機</span><span><b>重機ワイヤ管理</b><small>杭打機・クレーンのワイヤーロープ交換日を記録、管理表を送る</small></span></button>
     <button type="button" class="mbtn wire" id="goWire"><span class="mi">ﾜｲﾔ</span><span><b>ワイヤ管理</b><small>玉掛ワイヤの在庫一覧・入出荷</small></span></button>
     <button type="button" class="mbtn tehai" id="goTehai"><span class="mi">手配</span><span><b>人員手配帳</b><small>だれがどの現場に行くか（写真から読み取りもできます）</small></span></button>
     <button type="button" class="mbtn kakunin" id="goKakunin"><span class="mi">確認</span><span><b>工場長確認</b><small>その日の日報を見て確認のチェックを付ける</small></span></button>
@@ -916,6 +933,33 @@ body{padding-top:0}
     <div class="pfoot"><button type="button" class="sub" id="mpclose">閉じる</button><button type="button" class="save" id="mpok" style="background:#b06a10">決定</button></div>
   </div></div>
   <div id="mview" class="mview" hidden><div class="mvbar"><span>送られるPDFの内容です</span><button type="button" class="sub" id="mvclose">閉じる</button></div><div class="mvscroll" id="mvscroll"><div class="mvwrap"><iframe id="mviewf" title="点検表のプレビュー"></iframe></div></div></div>
+  <div id="kiju" hidden>
+    <div class="topbar"><button type="button" class="backbtn" id="kjback">← メニュー</button></div>
+    <div class="tkinds" id="kjkinds"></div>
+    <div class="sheet">
+      <div class="title"><h1>重機ワイヤ交換記録</h1><span>丸門建設株式会社</span></div>
+      <div class="tr"><div class="td"><div class="th">号機</div><div class="v"><select id="kj_no" aria-label="号機"></select></div></div></div>
+      <div class="tallbar"><span id="kjhead"></span><span style="font-size:12px">行を押すと履歴が出ます</span></div>
+      <div id="kjlist"></div>
+      <div class="secth">管理表をメールで送るとき：送信先メールアドレス（複数はカンマ区切り）</div>
+      <div class="v"><input type="text" id="kj_to" inputmode="email" autocomplete="off" list="kj_tolist" placeholder="例：genba@example.co.jp" aria-label="送信先メールアドレス"><datalist id="kj_tolist"></datalist></div>
+      <div class="secth">メールに添えるひとこと（任意）</div>
+      <div class="v"><textarea id="kj_note" aria-label="ひとこと" placeholder="例：ご依頼の交換記録をお送りします。"></textarea></div>
+    </div>
+    <div id="kjconfirm" class="kconfirm" hidden></div>
+  </div>
+  <div class="picker" id="kjpick" hidden><div class="pbox" role="dialog" aria-label="ワイヤの交換を記録">
+    <div class="phead"><b id="kjptitle">交換を記録</b><small id="kjpmsg"></small></div>
+    <div class="kjform">
+      <label>交換日<input type="date" id="kj_date"></label>
+      <label>構成<input type="text" id="kj_kosei" placeholder="例：IWRC6×Fi(29)"></label>
+      <div class="kj2"><label>径（mm）<input type="text" id="kj_dia" inputmode="decimal" placeholder="例：20"></label><label>長さ（m）<input type="text" id="kj_len" inputmode="decimal" placeholder="例：390"></label></div>
+      <label>登録者<select id="kj_by" class="tname" aria-label="登録者"></select></label>
+      <label>備考<input type="text" id="kj_memo" placeholder="あれば"></label>
+    </div>
+    <div class="pfoot"><button type="button" class="sub" id="kjpclose">閉じる</button><button type="button" class="save" id="kjpok" style="background:#6d4c9f">記録する</button></div>
+  </div></div>
+  <div id="kjview" class="mview" hidden><div class="mvbar"><span>送られるPDFの内容です</span><button type="button" class="sub" id="kjvclose">閉じる</button></div><div class="mvscroll" id="kjvscroll"><div class="mvwrap"><iframe id="kjviewf" title="交換管理表のプレビュー"></iframe></div></div></div>
   <div id="kakunin" hidden>
     <div class="topbar"><button type="button" class="backbtn" id="kback">← メニュー</button></div>
     <form id="kpinform"><div id="kpinbox" hidden>
@@ -1031,6 +1075,11 @@ body{padding-top:0}
   <div class="sum" id="tsum">チェックした項目を記録します</div>
   <button type="button" class="save" id="tsave" style="background:#b06a10">点検を記録する</button>
 </div></div>
+<div class="savebar" id="kjsavebar" hidden><div class="in">
+  <span class="sum" id="kjsum"></span>
+  <button type="button" class="sub" id="kjprev">確認</button>
+  <button type="button" class="save" id="kjsend" style="background:#6d4c9f">管理表をメールで送る</button>
+</div></div>
 <div class="savebar" id="msavebar" hidden><div class="in">
   <span id="msum" hidden></span>
   <button type="button" class="sub" id="mprev">確認</button>
@@ -1049,7 +1098,7 @@ body{padding-top:0}
 // ---- Apps Script（kintoneとのやり取り）を呼ぶ ----
 const API="https://script.google.com/macros/s/AKfycbz3XtpAENLFsbaxg5d2NkTzvQRbgPChqxP7kFwWoaKdVQHPw2h0E89fyx4bvzGOTRgV-w/exec";
 let LOADN=0,LOADT=null;
-const LOADMSG={getMaster:"データを読み込んでいます…",saveNippo:"日報を保存しています…",updateNippo:"日報を保存しています…",saveJiko:"報告を送っています…",listKakunin:"日報を読み込んでいます…",kakuninNippo:"確認のチェックを付けています…",saveTenken:"点検を記録しています…",getsureiPreview:"点検表を作っています…",saveGetsurei:"PDFを作って送っています…（30秒ほどかかります）",saveYukyu:"有給休暇願いを送っています…",saveDenpyo:"伝票を登録しています…",listBuppin:"伝票を読み込んでいます…",doneBuppin:"処理済みにしています…",getTehai:"手配帳を読み込んでいます…",saveTehai:"手配帳を登録しています…",readTehaiPhoto:"写真を読み取っています…（30秒ほどかかります）",listNippo:"日報の一覧を読み込んでいます…",getNippo:"日報を読み込んでいます…"};
+const LOADMSG={getMaster:"データを読み込んでいます…",saveNippo:"日報を保存しています…",updateNippo:"日報を保存しています…",saveJiko:"報告を送っています…",listKakunin:"日報を読み込んでいます…",kakuninNippo:"確認のチェックを付けています…",saveTenken:"点検を記録しています…",getsureiPreview:"点検表を作っています…",saveGetsurei:"PDFを作って送っています…（30秒ほどかかります）",getKijuWire:"交換記録を読み込んでいます…",saveKijuWire:"交換を記録しています…",kijuPreview:"管理表を作っています…",sendKijuWire:"PDFを作って送っています…（30秒ほどかかります）",saveYukyu:"有給休暇願いを送っています…",saveDenpyo:"伝票を登録しています…",listBuppin:"伝票を読み込んでいます…",doneBuppin:"処理済みにしています…",getTehai:"手配帳を読み込んでいます…",saveTehai:"手配帳を登録しています…",readTehaiPhoto:"写真を読み取っています…（30秒ほどかかります）",listNippo:"日報の一覧を読み込んでいます…",getNippo:"日報を読み込んでいます…"};
 function loadOn(fn){LOADN++;document.getElementById("loadmsg").textContent=LOADMSG[fn]||"読み込み中…";clearTimeout(LOADT);LOADT=setTimeout(()=>{if(LOADN>0)document.getElementById("loader").hidden=false},fn==="getMaster"?0:250)}
 function loadOff(){LOADN=Math.max(0,LOADN-1);if(!LOADN){clearTimeout(LOADT);document.getElementById("loader").hidden=true}}
 function callApi(fn,args){loadOn(fn);return callApi0(fn,args).then(r=>{loadOff();return r},e=>{loadOff();throw e})}
@@ -1778,6 +1827,67 @@ function mSave(force,send){const d=mData();if(!send)d.to="";const e=mErrs(d);if(
     .withFailureHandler(err=>{$("msend").disabled=false;$("msaveonly").disabled=false;$("mprev").disabled=false;boxMsg("mconfirm","<b>"+(send?"送れませんでした":"保存できませんでした")+"</b><br>"+esc(err.message||String(err)))})
     .saveGetsurei(PIN,d)}
 function openGetsurei(){scr("getsurei");setTitle("月例定期点検");$("menu").hidden=true;$("getsurei").hidden=false;$("msavebar").hidden=false;if(!mStarted){mStarted=true;mStart()}window.scrollTo(0,0)}
+// ---- 重機ワイヤ管理（機械ごとのワイヤーロープ交換日） ----
+const KJ_TYPES={"杭打機":["主巻","補巻","第3","第4","起伏"],"クローラクレーン":["主巻","補巻","第3","起伏"]};
+const KJ_MASTER={"杭打機":"kuiK","クローラクレーン":"craneK"};
+let KJKIND="杭打機",KJDATA=null,kjStarted=false,KJCUR=null,KJOPEN=new Set();
+function kjWareki(d){const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(d||"");if(!m)return"";const y=+m[1];return(y>=2019?"令和"+(y-2018===1?"元":y-2018):"平成"+(y-1988))+"年"+(+m[2])+"月"+(+m[3])+"日"}
+function kjLoad(then){google.script.run.withSuccessHandler(rows=>{KJDATA=rows.map(r=>({id:r[0],kind:r[1],gouki:r[2],kata:r[3],type:r[4],date:r[5],kosei:r[6],dia:r[7],len:r[8],memo:r[9],by:r[10]}));kjRender();if(then)then()})
+  .withFailureHandler(err=>{boxMsg("kjconfirm","<b>記録を読み込めませんでした</b><br>"+esc(err.message||String(err)))}).getKijuWire(PIN)}
+function kjStart(){
+  const kb=$("kjkinds");Object.keys(KJ_TYPES).forEach(k=>{const b=document.createElement("button");b.type="button";b.textContent=k;b.dataset.k=k;b.addEventListener("click",()=>{KJKIND=k;KJOPEN=new Set();kjFillNo();kjRender()});kb.appendChild(b)});
+  const s=$("kj_by");s.add(new Option("",""));(MASTER.names||[]).forEach(n=>s.add(new Option(n,n)));nameBtn(s,"登録者");
+  $("kj_no").addEventListener("change",()=>{KJOPEN=new Set();kjRender()});
+  $("kjpclose").addEventListener("click",()=>{$("kjpick").hidden=true});$("kjpok").addEventListener("click",kjSave);
+  $("kjprev").addEventListener("click",kjPreview);$("kjsend").addEventListener("click",()=>kjSend(false));
+  $("kjvclose").addEventListener("click",()=>{$("kjview").hidden=true});
+  const dl=$("kj_tolist");mToHist().forEach(a=>dl.appendChild(new Option(a)));
+  kjFillNo();kjLoad();
+}
+function kjFillNo(){const sel=$("kj_no"),cur=sel.value;sel.innerHTML="";sel.add(new Option("（"+KJKIND+"の号機を選択）",""));
+  (MASTER[KJ_MASTER[KJKIND]]||[]).forEach(n=>{const kata=n[1].replace(/^.*?号車\s*/,"");const o=new Option("No."+n[0]+"　"+kata,n[0]);o.dataset.kata=kata;sel.add(o)});sel.value=cur;if(sel.value!==cur)sel.value=""}
+function kjKata(){const o=$("kj_no").options[$("kj_no").selectedIndex];return o&&o.dataset.kata||""}
+function kjRecs(){const g=$("kj_no").value;return (KJDATA||[]).filter(r=>r.kind===KJKIND&&r.gouki===g)}
+function kjRender(){
+  document.querySelectorAll("#kjkinds button[data-k]").forEach(b=>b.classList.toggle("on",b.dataset.k===KJKIND));
+  const g=$("kj_no").value,box=$("kjlist");box.innerHTML="";$("kjconfirm").hidden=true;
+  $("kjhead").textContent=g?KJKIND+"　No."+g+"　"+kjKata():"";
+  if(!g){box.innerHTML='<p class="hint" style="padding:14px">号機を選ぶと、ワイヤごとの交換日が出ます。</p>';$("kjsum").textContent="号機を選んでください";return}
+  if(!KJDATA){box.innerHTML='<p class="hint" style="padding:14px">記録を読み込んでいます…</p>';return}
+  const recs=kjRecs();
+  KJ_TYPES[KJKIND].forEach(t=>{const rs=recs.filter(r=>r.type===t).sort((a,b)=>a.date<b.date?1:-1);const l=rs[0];
+    const d=document.createElement("div");d.className="kjrow"+(KJOPEN.has(t)?" open":"");
+    d.innerHTML='<div class="kjmain"><div class="kjt">'+esc(t)+'<small>ワイヤー</small></div><div class="kjd">'+(l?'<b>'+esc(l.date.replace(/-/g,"/"))+'</b><small>'+esc(kjWareki(l.date))+'　'+esc([l.kosei,l.dia?"径"+l.dia:"",l.len?l.len+"m":""].filter(String).join("　"))+'</small>':'<span class="kjnone">記録なし</span>')+'</div><button type="button" class="sub kjadd">交換した</button></div><div class="kjhist"></div>';
+    d.querySelector(".kjadd").addEventListener("click",e=>{e.stopPropagation();kjPick(t,l)});
+    d.querySelector(".kjmain").addEventListener("click",()=>{if(KJOPEN.has(t))KJOPEN.delete(t);else KJOPEN.add(t);kjRender()});
+    const h=d.querySelector(".kjhist");if(KJOPEN.has(t)){h.innerHTML=rs.length?'<table class="kjtbl"><tr><th>交換日</th><th>構成</th><th>径</th><th>長さ</th><th>備考</th></tr>'+rs.map(r=>'<tr><td>'+esc(r.date.replace(/-/g,"/"))+'</td><td>'+esc(r.kosei)+'</td><td>'+esc(r.dia)+'</td><td>'+esc(r.len)+'</td><td>'+esc((r.memo||"").replace(/\s*Excelより取込（[^）]*）/,""))+(r.by&&r.by!=="取込"?"（"+esc(r.by)+"）":"")+'</td></tr>').join("")+'</table>':'<p class="hint" style="padding:6px 14px">まだ記録がありません</p>'}
+    box.appendChild(d)});
+  $("kjsum").textContent=KJKIND+" No."+g+"　記録 "+recs.length+"件";
+}
+function kjPick(t,l){KJCUR={type:t};$("kjptitle").textContent=KJKIND+" No."+$("kj_no").value+"　"+t+"ワイヤー";$("kj_date").value=todayJ();
+  $("kj_kosei").value=l?l.kosei:"";$("kj_dia").value=l?l.dia:"";$("kj_len").value=l?l.len:"";$("kj_memo").value="";$("kjpmsg").textContent=l?"前回：".concat(l.date.replace(/-/g,"/"),"（",[l.kosei,l.dia,l.len?l.len+"m":""].filter(String).join(" "),"）"):"この種別の記録はまだありません";
+  $("kjpick").hidden=false}
+function kjSave(){const d={kind:KJKIND,gouki:$("kj_no").value,kata:kjKata(),type:KJCUR.type,date:$("kj_date").value,kosei:$("kj_kosei").value.trim(),dia:$("kj_dia").value.trim(),len:$("kj_len").value.trim(),memo:$("kj_memo").value.trim(),by:$("kj_by").value};
+  if(!d.date){$("kjpmsg").textContent="交換日を入れてください。";return}
+  $("kjpok").disabled=true;
+  google.script.run.withSuccessHandler(id=>{$("kjpok").disabled=false;$("kjpick").hidden=true;KJOPEN.add(d.type);kjLoad(()=>boxMsg("kjconfirm","<b>記録しました</b>　"+esc(d.type)+"ワイヤー　"+esc(d.date.replace(/-/g,"/"))+"（kintone レコード番号 "+id+"）"))})
+    .withFailureHandler(err=>{$("kjpok").disabled=false;$("kjpmsg").textContent=err.message||String(err)}).saveKijuWire(PIN,d)}
+function kjPreview(){const g=$("kj_no").value;if(!g)return boxMsg("kjconfirm","号機を選んでください。");
+  google.script.run.withSuccessHandler(html=>{$("kjviewf").srcdoc=html;$("kjview").hidden=false;kjFit();window.scrollTo(0,0)})
+    .withFailureHandler(err=>boxMsg("kjconfirm",esc(err.message||String(err)))).kijuPreview(PIN,{kind:KJKIND,gouki:g,kata:kjKata()})}
+function kjFit(){const box=$("kjvscroll"),f=$("kjviewf");const w=Math.max(300,box.clientWidth-20);const k=Math.min(1,w/820);f.style.transform="scale("+k+")";f.style.transformOrigin="0 0";f.parentElement.style.height=Math.round(1180*k)+"px";f.parentElement.style.width=Math.round(820*k)+"px"}
+window.addEventListener("resize",()=>{if(!$("kjview").hidden)kjFit()});
+function kjSend(force){const g=$("kj_no").value;const to=$("kj_to").value.trim();const tos=to.split(/[,、;\s]+/).filter(String);const e=[];
+  if(!g)e.push("号機を選んでください。");if(!tos.length)e.push("送信先メールアドレスを入れてください。");tos.forEach(a=>{if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(a))e.push("メールアドレスの形が違います："+a)});
+  if(e.length)return boxMsg("kjconfirm","<b>送れません。次を直してください</b><br>"+e.map(esc).join("<br>"));
+  if(!force){const y=document.createElement("button");y.type="button";y.className="save";y.style.background="#6d4c9f";y.textContent="PDFを作って送る";y.addEventListener("click",()=>kjSend(true));
+    const n=document.createElement("button");n.type="button";n.className="sub";n.textContent="戻る";n.addEventListener("click",()=>{$("kjconfirm").hidden=true});
+    const b=$("kjconfirm");b.innerHTML="<b>この内容で送りますか？</b><br>"+esc(KJKIND)+"　No."+esc(g)+"　"+esc(kjKata())+" のワイヤーロープ交換管理表（交換履歴つき）<br>送信先："+esc(tos.join("、"))+"<br><small>marumonkeiri@gmail.com から PDF を添付して送ります</small>";
+    const bb=document.createElement("div");bb.className="draftbtns";bb.appendChild(y);bb.appendChild(n);b.appendChild(bb);b.hidden=false;b.scrollIntoView({behavior:"smooth",block:"center"});return}
+  $("kjsend").disabled=true;
+  google.script.run.withSuccessHandler(res=>{$("kjsend").disabled=false;mToSave(tos);boxMsg("kjconfirm","<b>送りました</b>　"+esc(tos.join("、"))+" へ交換管理表のPDFを送りました。")})
+    .withFailureHandler(err=>{$("kjsend").disabled=false;boxMsg("kjconfirm","<b>送れませんでした</b><br>"+esc(err.message||String(err)))}).sendKijuWire(PIN,{kind:KJKIND,gouki:g,kata:kjKata(),to:to,note:$("kj_note").value.trim()})}
+function openKiju(){scr("kiju");setTitle("重機ワイヤ管理");$("menu").hidden=true;$("kiju").hidden=false;$("kjsavebar").hidden=false;if(!kjStarted){kjStarted=true;kjStart()}window.scrollTo(0,0)}
 // ---- 有給休暇願い・持出伝票・物品購入伝票 ----
 const todayJ=()=>new Date(Date.now()+9*3600e3).toISOString().slice(0,10);
 function boxMsg(id,html){const b=$(id);b.innerHTML=html;b.hidden=false;b.scrollIntoView({behavior:"smooth",block:"center"})}
@@ -2108,18 +2218,18 @@ function wStart(){
   $("wnew").addEventListener("click",()=>wOpen(null,"入荷"));
   wLockPaint();wLoad()}
 function openWire(){scr("wire");setTitle("ワイヤ管理");$("menu").hidden=true;$("wire").hidden=false;if(!wStarted){wStarted=true;wStart()}else wLoad();window.scrollTo(0,0)}
-function showMenu(){scr("");setTitle("丸門アプリ");["app","savebar","jiko","jsavebar","kakunin","ksavebar","tenken","tsavebar","yukyu","ysavebar","denpyo","dsavebar","buppin","tehai","hsavebar","wire","wsheet","listbox","done","keihi","khsavebar","getsurei","msavebar"].forEach(i=>$(i).hidden=true);$("menu").hidden=false;window.scrollTo(0,0)}
+function showMenu(){scr("");setTitle("丸門アプリ");["app","savebar","jiko","jsavebar","kakunin","ksavebar","tenken","tsavebar","yukyu","ysavebar","denpyo","dsavebar","buppin","tehai","hsavebar","wire","wsheet","listbox","done","keihi","khsavebar","getsurei","msavebar","kiju","kjsavebar"].forEach(i=>$(i).hidden=true);$("menu").hidden=false;window.scrollTo(0,0)}
 function openNippo(){scr("nippo");setTitle("作業日報");$("menu").hidden=true;$("app").hidden=false;$("savebar").hidden=false;if(!nippoStarted){nippoStarted=true;start(MASTER)}window.scrollTo(0,0)}
 function openJiko(){scr("jiko");setTitle("事故・トラブル報告");$("menu").hidden=true;$("jiko").hidden=false;$("jsavebar").hidden=false;if(!jikoStarted){jikoStarted=true;startJiko(MASTER)}window.scrollTo(0,0)}
 (function(){const d=new Date();const w="日月火水木金土"[d.getDay()];$("today").textContent=(d.getMonth()+1)+"月"+d.getDate()+"日（"+w+"）"})();
-$("goWire").addEventListener("click",openWire);$("goKeihi").addEventListener("click",openKeihi);$("goNippo").addEventListener("click",openNippo);$("goKakunin").addEventListener("click",openKakunin);$("goGetsurei").addEventListener("click",openGetsurei);$("mToTenken").addEventListener("click",openTenken);$("mback").addEventListener("click",showMenu);$("tback").addEventListener("click",showMenu);$("kback").addEventListener("click",showMenu);$("goJiko").addEventListener("click",openJiko);$("goYukyu").addEventListener("click",openYukyu);$("goBuppin").addEventListener("click",openBuppin);$("goTehai").addEventListener("click",openTehai);$("hback").addEventListener("click",showMenu);$("bback").addEventListener("click",showMenu);$("goMochi").addEventListener("click",()=>openDenpyo("mochi"));$("goKounyu").addEventListener("click",()=>openDenpyo("kounyu"));$("yback").addEventListener("click",showMenu);$("dback").addEventListener("click",showMenu);
+$("goWire").addEventListener("click",openWire);$("goKeihi").addEventListener("click",openKeihi);$("goNippo").addEventListener("click",openNippo);$("goKakunin").addEventListener("click",openKakunin);$("goGetsurei").addEventListener("click",openGetsurei);$("goKiju").addEventListener("click",openKiju);$("kjback").addEventListener("click",showMenu);$("mToTenken").addEventListener("click",openTenken);$("mback").addEventListener("click",showMenu);$("tback").addEventListener("click",showMenu);$("kback").addEventListener("click",showMenu);$("goJiko").addEventListener("click",openJiko);$("goYukyu").addEventListener("click",openYukyu);$("goBuppin").addEventListener("click",openBuppin);$("goTehai").addEventListener("click",openTehai);$("hback").addEventListener("click",showMenu);$("bback").addEventListener("click",showMenu);$("goMochi").addEventListener("click",()=>openDenpyo("mochi"));$("goKounyu").addEventListener("click",()=>openDenpyo("kounyu"));$("yback").addEventListener("click",showMenu);$("dback").addEventListener("click",showMenu);
 $("nback").addEventListener("click",showMenu);$("jback").addEventListener("click",showMenu);
 function reload(){location.reload()}
 function login(pin){
   $("pinmsg").textContent="読み込み中…";
   google.script.run.withSuccessHandler(M=>{PIN=pin;lsSet(LS,pin);MASTER=M;$("pinbox").hidden=true;
       let s="";try{s=sessionStorage.getItem("screen")||""}catch(e){}
-      if(s==="nippo")openNippo();else if(s==="jiko")openJiko();else if(s==="kakunin")openKakunin();else if(s==="tenken")openTenken();else if(s==="getsurei")openGetsurei();else if(s==="yukyu")openYukyu();else if(s==="buppin")openBuppin();else if(s==="tehai")openTehai();else if(s==="wire")openWire();else if(s==="mochi"||s==="kounyu")openDenpyo(s);else if(s==="keihi")openKeihi();else showMenu()})
+      if(s==="nippo")openNippo();else if(s==="jiko")openJiko();else if(s==="kakunin")openKakunin();else if(s==="tenken")openTenken();else if(s==="getsurei")openGetsurei();else if(s==="kiju")openKiju();else if(s==="yukyu")openYukyu();else if(s==="buppin")openBuppin();else if(s==="tehai")openTehai();else if(s==="wire")openWire();else if(s==="mochi"||s==="kounyu")openDenpyo(s);else if(s==="keihi")openKeihi();else showMenu()})
     .withFailureHandler(err=>{$("pinmsg").textContent=err.message||String(err);$("pinbox").hidden=false})
     .getMaster(pin);
 }
