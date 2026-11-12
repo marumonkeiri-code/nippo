@@ -384,6 +384,37 @@ body{padding-top:0}
 #menu.grid .mbtn>span:last-child{display:block}
 #menu.grid .mbtn::after{display:none}
 .viewtgl{margin-left:auto;font:inherit;font-size:12px;border:1px solid var(--hair);background:var(--sheet);color:var(--muted);border-radius:12px;padding:4px 10px;cursor:pointer}
+/* チャット広場 */
+.mbtn.chat .mi{background:linear-gradient(145deg,#19a593,#0f7a6c)}
+.mbtn.unread .mi{position:relative}.mbtn.unread .mi::after{content:"";position:absolute;top:-4px;right:-4px;width:16px;height:16px;border-radius:50%;background:#e23b3b;border:2px solid var(--sheet)}
+#chat{display:flex;flex-direction:column;gap:10px;padding-bottom:150px}#chat[hidden]{display:none!important}
+.chwho{margin-left:auto;font-size:13px;color:var(--muted)}
+.chmore{display:block;margin:0 auto 6px}
+#ch_list{display:flex;flex-direction:column;gap:8px}
+.chday{align-self:center;font-size:12px;color:var(--muted);background:var(--head);border-radius:12px;padding:3px 12px;margin:8px 0 2px}
+.chmsg{display:flex;flex-direction:column;max-width:82%;align-items:flex-start}.chmsg.me{align-self:flex-end;align-items:flex-end}
+.chname{font-size:12px;color:var(--muted);margin:0 6px 2px}
+.chbub{background:var(--sheet);border:1px solid var(--hair);border-radius:16px 16px 16px 4px;padding:8px 12px;font-size:16px;line-height:1.5;word-break:break-word;overflow-wrap:anywhere;box-shadow:var(--shadow)}
+.chmsg.me .chbub{background:#d9f3ee;border-color:#a9dfd6;border-radius:16px 16px 4px 16px;color:#123}
+.chbub a{color:#0f7a6c}
+.chfiles{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;justify-content:inherit}.chmsg.me .chfiles{justify-content:flex-end}
+.chimg{padding:0;border:1px solid var(--hair);border-radius:12px;overflow:hidden;background:none;cursor:pointer;line-height:0}.chimg img{display:block;max-width:180px;max-height:180px;min-width:90px}
+.chfile{display:flex;align-items:center;gap:8px;font:inherit;text-align:left;background:var(--sheet);border:1px solid var(--hair);border-radius:12px;padding:8px 10px;cursor:pointer;color:var(--fg);max-width:100%}
+.chfile b{flex:none;width:38px;height:38px;border-radius:8px;background:#0f7a6c;color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center}
+.chfile span{font-size:14px;word-break:break-all}.chfile small{display:block;color:var(--muted);font-size:11px}
+.chimg.loading,.chfile.loading{opacity:.5}
+.chtime{font-size:11px;color:var(--muted);margin:2px 6px 0}
+#chbar .chin{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.chrow{display:flex;gap:8px;align-items:flex-end}
+.chrow textarea{flex:1;min-width:0;font:inherit;font-size:16px;line-height:1.4;padding:9px 12px;border:1px solid var(--hair);border-radius:18px;background:var(--sheet);color:var(--fg);resize:none;max-height:120px;box-sizing:border-box}
+.chclip{flex:none;width:42px;height:42px;border-radius:50%;padding:0;font-size:24px;line-height:1}
+#ch_send{flex:none;background:#0f7a6c;padding:10px 16px;white-space:nowrap}
+.chatt{display:flex;flex-wrap:wrap;gap:6px}.chatt[hidden]{display:none}
+.chchip{display:inline-flex;align-items:center;gap:6px;background:var(--head);border:1px solid var(--hair);border-radius:10px;padding:3px 4px 3px 6px;font-size:12px;max-width:100%}
+.chchip img{width:28px;height:28px;object-fit:cover;border-radius:6px}.chchip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:150px}
+.chchip button{border:0;background:none;font-size:18px;line-height:1;color:var(--muted);padding:2px 6px;cursor:pointer}
+.chvs{display:flex;align-items:flex-start;justify-content:center}.chvs img{max-width:100%;height:auto;background:#fff}
+.chvsave{text-decoration:none;display:inline-flex;align-items:center}
 /* 有給・伝票 */
 .mbtn.yukyu .mi{background:linear-gradient(145deg,#8a6fd6,#5b3fae)}
 .mbtn.mochi .mi{background:linear-gradient(145deg,#3aa0b0,#1f6f7c)}
@@ -609,6 +640,7 @@ body{padding-top:0}
     <button type="button" class="mbtn mochi" id="goMochi"><span class="mi">持出</span><span><b>持出伝票</b><small>現場に持ち出す物品を記録</small></span></button>
     <button type="button" class="mbtn kounyu" id="goKounyu"><span class="mi">購入</span><span><b>物品購入伝票</b><small>買った物品・単価・発注先を記録</small></span></button>
     <button type="button" class="mbtn buppin" id="goBuppin"><span class="mi">物品</span><span><b>物品管理</b><small>出ている持出・購入伝票を見て処理する</small></span></button>
+    <button type="button" class="mbtn chat" id="goChat"><span class="mi">広場</span><span><b>チャット広場</b><small>みんなで見る連絡の場（写真やファイルも送れます）</small></span></button>
     <button type="button" class="mbtn kiju" id="goKiju"><span class="mi">重機</span><span><b>重機ワイヤ管理</b><small>杭打機・クレーンのワイヤーロープ交換日を記録、管理表を送る</small></span></button>
     <button type="button" class="mbtn wire" id="goWire"><span class="mi">ﾜｲﾔ</span><span><b>ワイヤ管理</b><small>玉掛ワイヤの在庫一覧・入出荷</small></span></button>
     <button type="button" class="mbtn tehai" id="goTehai"><span class="mi">手配</span><span><b>人員手配帳</b><small>だれがどの現場に行くか（写真から読み取りもできます）</small></span></button>
@@ -970,6 +1002,23 @@ body{padding-top:0}
     <div class="pfoot"><button type="button" class="sub" id="kjpclose">閉じる</button><button type="button" class="save" id="kjpok" style="background:#6d4c9f">記録する</button></div>
   </div></div>
   <div id="kjview" class="mview" hidden><div class="mvbar"><span>送られるPDFの内容です</span><button type="button" class="sub" id="kjvclose">閉じる</button></div><div class="mvscroll" id="kjvscroll"><div class="mvwrap"><iframe id="kjviewf" title="交換管理表のプレビュー"></iframe></div></div></div>
+  <div id="chat" hidden>
+    <div class="topbar"><button type="button" class="backbtn" id="chback">← メニュー</button><span class="chwho" id="ch_who"></span></div>
+    <div id="ch_login" class="sheet kh-pad kh-login" hidden>
+      <div class="title"><h1>チャット広場</h1><span>丸門建設株式会社</span></div>
+      <p style="margin:10px 0 6px;font-size:14px">はじめに1回だけ、<b>丸門ポータルのIDとパスワード</b>を入れてください（旅費精算と同じです。次からは入れなくて大丈夫です）。</p>
+      <input id="ch_id" autocomplete="username" autocapitalize="off" placeholder="ポータルのID">
+      <input id="ch_pw" type="password" autocomplete="current-password" placeholder="パスワード">
+      <label style="display:flex;align-items:center;gap:8px;margin-top:8px;font-size:15px"><input type="checkbox" id="ch_pwshow" style="width:22px;height:22px;margin:0;padding:0"> パスワードを表示する</label>
+      <button type="button" class="save" id="ch_loginb" style="width:100%;margin-top:10px">ログイン</button>
+      <p id="ch_loginmsg" style="color:var(--danger);font-size:14px;margin:8px 0 0"></p>
+    </div>
+    <div id="ch_room" hidden>
+      <button type="button" class="sub chmore" id="ch_more" hidden>前の書き込みを見る</button>
+      <div id="ch_list"></div>
+    </div>
+    <div id="ch_msg" class="kconfirm" hidden></div>
+  </div>
   <div id="kakunin" hidden>
     <div class="topbar"><button type="button" class="backbtn" id="kback">← メニュー</button></div>
     <form id="kpinform"><div id="kpinbox" hidden>
@@ -1090,6 +1139,12 @@ body{padding-top:0}
   <button type="button" class="sub" id="kjprev">確認</button>
   <button type="button" class="save" id="kjsend" style="background:#6d4c9f">管理表をメールで送る</button>
 </div></div>
+<div class="savebar" id="chbar" hidden><div class="in chin">
+  <div class="chatt" id="ch_att" hidden></div>
+  <div class="chrow"><button type="button" class="sub chclip" id="ch_clip" aria-label="写真やファイルを添付">＋</button><textarea id="ch_text" rows="1" placeholder="メッセージを書く" aria-label="メッセージ"></textarea><button type="button" class="save" id="ch_send">送信</button></div>
+  <input type="file" id="ch_file" multiple hidden>
+</div></div>
+<div id="chview" class="mview" hidden><div class="mvbar"><span id="chvname"></span><span style="display:flex;gap:8px"><a class="sub chvsave" id="chvsave">保存</a><button type="button" class="sub" id="chvclose">閉じる</button></span></div><div class="mvscroll chvs"><img id="chvimg" alt=""></div></div>
 <div class="savebar" id="msavebar" hidden><div class="in">
   <span id="msum" hidden></span>
   <button type="button" class="sub" id="mprev">確認</button>
@@ -1898,6 +1953,80 @@ function kjSend(force){const g=$("kj_no").value;const to=$("kj_to").value.trim()
   google.script.run.withSuccessHandler(res=>{$("kjsend").disabled=false;mToSave(tos);boxMsg("kjconfirm","<b>送りました</b>　"+esc(tos.join("、"))+" へ交換管理表のPDFを送りました。")})
     .withFailureHandler(err=>{$("kjsend").disabled=false;boxMsg("kjconfirm","<b>送れませんでした</b><br>"+esc(err.message||String(err)))}).sendKijuWire(PIN,{kind:KJKIND,gouki:g,kata:kjKata(),to:to,note:$("kj_note").value.trim()})}
 function openKiju(){scr("kiju");setTitle("重機ワイヤ管理");$("menu").hidden=true;$("kiju").hidden=false;$("kjsavebar").hidden=false;if(!kjStarted){kjStarted=true;kjStart()}window.scrollTo(0,0)}
+// ---- チャット広場（丸門ポータルにログインした人みんなの部屋。書き込みと添付は kintone に保存） ----
+const CH_SEEN="chat_seen",CH_MAXF=4,CH_MAXB=8*1024*1024;
+let CH={me:null,msgs:[],last:0,timer:null,started:false,files:[],busy:false,sending:false,peekAt:0,open:false};
+function chTok(){return lsGet(KH_LS)}
+function chApi(fn,args){return callApi0(fn,[chTok()].concat(args||[]))}
+function chFail(e,quiet){const m=(e&&e.message)||String(e);if(m==="CHAT_LOGIN"){lsSet(KH_LS,"");try{KH.tok=""}catch(x){}chShowLogin("もう一度ログインしてください");return}if(!quiet)chNote(esc(m))}
+function chNote(html){const b=$("ch_msg");if(!html){b.hidden=true;return}b.innerHTML=html;b.hidden=false}
+function chShowLogin(msg){chStop();$("ch_login").hidden=false;$("ch_room").hidden=true;$("chbar").hidden=true;$("ch_who").textContent="";$("ch_loginmsg").textContent=msg||""}
+function chShowRoom(){$("ch_login").hidden=true;$("ch_room").hidden=false;$("chbar").hidden=false}
+function chTime(t){const d=new Date(t);if(isNaN(d))return"";return("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2)}
+function chDay(t){const d=new Date(t);if(isNaN(d))return"";return d.getFullYear()+"年"+(d.getMonth()+1)+"月"+d.getDate()+"日（"+"日月火水木金土"[d.getDay()]+"）"}
+function chSize(n){return n>=1048576?(n/1048576).toFixed(1)+"MB":Math.max(1,Math.round(n/1024))+"KB"}
+function chText(t){return esc(t).replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank" rel="noopener">$1</a>').replace(/\n/g,"<br>")}
+function chMine(m){return CH.me&&(CH.me.id&&m.uid?CH.me.id===m.uid:CH.me.name===m.name)}
+function chMsgEl(m){const d=document.createElement("div");d.className="chmsg "+(chMine(m)?"me":"other");d.dataset.id=m.id;
+  let h=chMine(m)?"":'<div class="chname">'+esc(m.name)+'</div>';
+  if(m.text)h+='<div class="chbub">'+chText(m.text)+'</div>';
+  if(m.files&&m.files.length)h+='<div class="chfiles">'+m.files.map((f,i)=>/^image\//.test(f.type)&&f.thumb?'<button type="button" class="chimg" data-i="'+i+'"><img alt="'+esc(f.name)+'" src="data:image/jpeg;base64,'+f.thumb+'"></button>':'<button type="button" class="chfile" data-i="'+i+'"><b>'+esc((f.name.match(/\.([A-Za-z0-9]+)$/)||["","FILE"])[1].toUpperCase().slice(0,4))+'</b><span>'+esc(f.name)+'<small>'+chSize(f.size)+'</small></span></button>').join("")+'</div>';
+  h+='<div class="chtime">'+chTime(m.time)+'</div>';d.innerHTML=h;
+  d.querySelectorAll("[data-i]").forEach(b=>b.addEventListener("click",()=>chOpenFile(m.files[+b.dataset.i],b)));return d}
+function chRender(){const box=$("ch_list");box.innerHTML="";let day="";
+  if(!CH.msgs.length)box.innerHTML='<p class="hint" style="text-align:center;padding:30px 10px">まだ書き込みがありません。最初のひとことをどうぞ。</p>';
+  CH.msgs.forEach(m=>{const dy=chDay(m.time);if(dy!==day){day=dy;const s=document.createElement("div");s.className="chday";s.textContent=dy;box.appendChild(s)}box.appendChild(chMsgEl(m))})}
+function chBottom(){window.scrollTo(0,document.documentElement.scrollHeight)}
+function chNear(){return window.innerHeight+window.scrollY>=document.documentElement.scrollHeight-160}
+function chSeen(){if(CH.last){lsSet(CH_SEEN,String(CH.last));$("goChat").classList.remove("unread")}}
+function chFirst(){chNote("");$("ch_list").innerHTML='<p class="hint" style="text-align:center;padding:30px 10px">読み込んでいます…</p>';
+  chApi("chatList",[0,0]).then(r=>{CH.me=r.me;CH.msgs=r.msgs;CH.last=r.last;$("ch_who").textContent=r.me.name+" さん";$("ch_more").hidden=!r.more;chShowRoom();chRender();chBottom();chSeen();chPoll()},e=>{$("ch_list").innerHTML="";const m=(e&&e.message)||String(e);if(m==="CHAT_LOGIN")return chFail(e);$("ch_login").hidden=true;chNote(esc(m)+'<div class="draftbtns"><button type="button" class="sub" id="chretry">もう一度読み込む</button></div>');$("chretry").addEventListener("click",chFirst)})}
+function chPoll(){chStop();if(!CH.open)return;CH.timer=setTimeout(chTick,8000)}
+function chStop(){clearTimeout(CH.timer);CH.timer=null}
+function chTick(){if(!CH.open||$("chat").hidden)return;if(document.hidden||CH.busy){chPoll();return}CH.busy=true;
+  chApi("chatList",[CH.last,0]).then(r=>{CH.busy=false;chAdd(r);chPoll()},e=>{CH.busy=false;chFail(e,true);chPoll()})}
+function chAdd(r){if(r.msgs&&r.msgs.length){const near=chNear(),have=new Set(CH.msgs.map(m=>m.id));const add=r.msgs.filter(m=>!have.has(m.id));if(add.length){CH.msgs=CH.msgs.concat(add);chRender();if(near||add.some(chMine))chBottom()}}if(r.last>CH.last)CH.last=r.last;if(CH.msgs.length)CH.last=Math.max(CH.last,CH.msgs[CH.msgs.length-1].id);chSeen()}
+function chMore(){if(!CH.msgs.length)return;const b=$("ch_more");b.disabled=true;const h0=document.documentElement.scrollHeight;
+  chApi("chatList",[0,CH.msgs[0].id]).then(r=>{b.disabled=false;CH.msgs=r.msgs.concat(CH.msgs);b.hidden=r.msgs.length<50;chRender();window.scrollTo(0,window.scrollY+document.documentElement.scrollHeight-h0)},e=>{b.disabled=false;chFail(e)})}
+function chB64(file){return new Promise((ok,ng)=>{const r=new FileReader();r.onload=()=>ok(String(r.result).split(",")[1]||"");r.onerror=()=>ng(new Error("このファイルは読み込めませんでした。"));r.readAsDataURL(file)})}
+function chShrink(file,M,q){return new Promise((ok,ng)=>{const u=URL.createObjectURL(file),im=new Image();
+  im.onload=()=>{const k=Math.min(1,M/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.max(1,Math.round(im.width*k));c.height=Math.max(1,Math.round(im.height*k));const g=c.getContext("2d");g.fillStyle="#fff";g.fillRect(0,0,c.width,c.height);g.drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);ok(c.toDataURL("image/jpeg",q).split(",")[1])};
+  im.onerror=()=>{URL.revokeObjectURL(u);ng(new Error("この写真は読み込めませんでした。"))};im.src=u})}
+async function chPick(files){chNote("");for(const f of files){if(CH.files.length>=CH_MAXF){chNote("添付は1回に"+CH_MAXF+"つまでです。");break}
+    try{if(/^image\//.test(f.type)&&!/svg|gif/.test(f.type)){const data=await chShrink(f,1600,0.8),thumb=await chShrink(f,220,0.6);CH.files.push({name:(f.name||"写真").replace(/\.[A-Za-z0-9]+$/,"")+".jpg",type:"image/jpeg",data,thumb,size:Math.round(data.length*0.75)})}
+      else{if(f.size>CH_MAXB){chNote("ファイルが大きすぎます（1つ8MBまで）："+esc(f.name));continue}const data=await chB64(f);CH.files.push({name:f.name||"ファイル",type:f.type||"application/octet-stream",data,thumb:"",size:f.size})}}
+    catch(e){chNote(esc(e.message||String(e)))}}chAtt()}
+function chAtt(){const box=$("ch_att");box.innerHTML="";CH.files.forEach((f,i)=>{const d=document.createElement("span");d.className="chchip";d.innerHTML=(f.thumb?'<img alt="" src="data:image/jpeg;base64,'+f.thumb+'">':"")+'<span>'+esc(f.name)+'</span>';const x=document.createElement("button");x.type="button";x.textContent="×";x.setAttribute("aria-label",f.name+"を外す");x.addEventListener("click",()=>{CH.files.splice(i,1);chAtt()});d.appendChild(x);box.appendChild(d)});box.hidden=!CH.files.length}
+function chSend(){if(CH.sending)return;const text=$("ch_text").value.trim();if(!text&&!CH.files.length)return;CH.sending=true;const b=$("ch_send");b.disabled=true;b.textContent="送信中…";chNote("");
+  const files=CH.files.map(f=>({name:f.name,type:f.type,data:f.data,thumb:f.thumb}));
+  chApi("chatPost",[text,files]).then(()=>{CH.sending=false;b.disabled=false;b.textContent="送信";$("ch_text").value="";chGrow();CH.files=[];chAtt();chStop();CH.busy=true;
+      return chApi("chatList",[CH.last,0]).then(r=>{CH.busy=false;chAdd(r);chBottom();chPoll()},e=>{CH.busy=false;chPoll()})},
+    e=>{CH.sending=false;b.disabled=false;b.textContent="送信";chFail(e)})}
+function chGrow(){const t=$("ch_text");t.style.height="auto";t.style.height=Math.min(120,t.scrollHeight)+"px"}
+function chOpenFile(f,btn){if(btn.disabled)return;btn.disabled=true;btn.classList.add("loading");
+  chApi("chatFile",[f.key]).then(r=>{btn.disabled=false;btn.classList.remove("loading");const bin=atob(r.data),u8=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u8[i]=bin.charCodeAt(i);
+      const type=/^image\//.test(f.type)?f.type:(r.type||f.type||"application/octet-stream");const url=URL.createObjectURL(new Blob([u8],{type}));
+      if(/^image\//.test(type)){$("chvimg").src=url;$("chvname").textContent=f.name;const a=$("chvsave");a.href=url;a.download=f.name;$("chview").hidden=false}
+      else{const a=document.createElement("a");a.href=url;a.download=f.name;a.target="_blank";a.rel="noopener";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000)}},
+    e=>{btn.disabled=false;btn.classList.remove("loading");chFail(e)})}
+function chLogin(){$("ch_loginmsg").textContent="確かめています…";
+  fetch(KH_API+"/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({login_id:$("ch_id").value.trim(),password:$("ch_pw").value,device:navigator.userAgent.slice(0,100)})})
+    .then(r=>r.json()).then(j=>{if(!j.ok){$("ch_loginmsg").textContent=j.error||"ログインできませんでした";return}lsSet(KH_LS,j.token);try{KH.tok=j.token}catch(x){}$("ch_pw").value="";$("ch_loginmsg").textContent="";chFirst()})
+    .catch(()=>{$("ch_loginmsg").textContent="丸門ポータルにつながりません（電波を確かめてください）"})}
+function chStart(){
+  $("ch_loginb").addEventListener("click",chLogin);$("ch_pwshow").addEventListener("change",e=>{$("ch_pw").type=e.target.checked?"text":"password"});
+  $("ch_send").addEventListener("click",chSend);$("ch_clip").addEventListener("click",()=>$("ch_file").click());
+  $("ch_file").addEventListener("change",e=>{const fs=[...e.target.files];e.target.value="";chPick(fs)});
+  $("ch_text").addEventListener("input",chGrow);$("ch_more").addEventListener("click",chMore);
+  $("chvclose").addEventListener("click",()=>{$("chview").hidden=true;const u=$("chvimg").src;$("chvimg").removeAttribute("src");try{URL.revokeObjectURL(u)}catch(e){}});
+  document.addEventListener("visibilitychange",()=>{if(!document.hidden&&CH.open&&!$("ch_room").hidden){chStop();chTick()}});
+}
+function openChat(){scr("chat");setTitle("チャット広場");$("menu").hidden=true;$("chat").hidden=false;CH.open=true;if(!CH.started){CH.started=true;chStart()}
+  if(!chTok()){chShowLogin("");window.scrollTo(0,0);return}
+  if(CH.me){chShowRoom();chRender();chBottom();chStop();chTick()}else chFirst()}
+function chLeave(){CH.open=false;chStop()}
+function chPeek(){const g=$("goChat");if(!g||!chTok()||Date.now()-CH.peekAt<60000)return;CH.peekAt=Date.now();
+  callApi0("chatPeek",[chTok()]).then(last=>{g.classList.toggle("unread",Number(last)>Number(lsGet(CH_SEEN)||0))},()=>{})}
 // ---- 有給休暇願い・持出伝票・物品購入伝票 ----
 const todayJ=()=>new Date(Date.now()+9*3600e3).toISOString().slice(0,10);
 function boxMsg(id,html){const b=$(id);b.innerHTML=html;b.hidden=false;b.scrollIntoView({behavior:"smooth",block:"center"})}
@@ -2229,18 +2358,18 @@ function wStart(){
   wLockPaint();wLoad()}
 function openWire(){scr("wire");setTitle("ワイヤ管理");$("menu").hidden=true;$("wire").hidden=false;if(!wStarted){wStarted=true;wStart()}else wLoad();window.scrollTo(0,0)}
 (function(){const m=document.getElementById("menu"),b=document.getElementById("viewtgl");function ap(){const g=lsGet("menu_view")!=="list";m.classList.toggle("grid",g);b.textContent=g?"説明つきで見る":"アイコンで見る"}b.addEventListener("click",()=>{lsSet("menu_view",lsGet("menu_view")==="list"?"grid":"list");ap()});ap()})();
-function showMenu(){scr("");setTitle("丸門アプリ");["app","savebar","jiko","jsavebar","kakunin","ksavebar","tenken","tsavebar","yukyu","ysavebar","denpyo","dsavebar","buppin","tehai","hsavebar","wire","wsheet","listbox","done","keihi","khsavebar","getsurei","msavebar","kiju","kjsavebar"].forEach(i=>$(i).hidden=true);$("menu").hidden=false;window.scrollTo(0,0)}
+function showMenu(){scr("");setTitle("丸門アプリ");["app","savebar","jiko","jsavebar","kakunin","ksavebar","tenken","tsavebar","yukyu","ysavebar","denpyo","dsavebar","buppin","tehai","hsavebar","wire","wsheet","listbox","done","keihi","khsavebar","getsurei","msavebar","kiju","kjsavebar","chat","chbar"].forEach(i=>$(i).hidden=true);chLeave();chPeek();$("menu").hidden=false;window.scrollTo(0,0)}
 function openNippo(){scr("nippo");setTitle("作業日報");$("menu").hidden=true;$("app").hidden=false;$("savebar").hidden=false;if(!nippoStarted){nippoStarted=true;start(MASTER)}window.scrollTo(0,0)}
 function openJiko(){scr("jiko");setTitle("事故・トラブル報告");$("menu").hidden=true;$("jiko").hidden=false;$("jsavebar").hidden=false;if(!jikoStarted){jikoStarted=true;startJiko(MASTER)}window.scrollTo(0,0)}
 (function(){const d=new Date();const w="日月火水木金土"[d.getDay()];$("today").textContent=(d.getMonth()+1)+"月"+d.getDate()+"日（"+w+"）"})();
-$("goWire").addEventListener("click",openWire);$("goKeihi").addEventListener("click",openKeihi);$("goNippo").addEventListener("click",openNippo);$("goKakunin").addEventListener("click",openKakunin);$("goGetsurei").addEventListener("click",openGetsurei);$("goKiju").addEventListener("click",openKiju);$("kjback").addEventListener("click",showMenu);$("mToTenken").addEventListener("click",openTenken);$("mback").addEventListener("click",showMenu);$("tback").addEventListener("click",showMenu);$("kback").addEventListener("click",showMenu);$("goJiko").addEventListener("click",openJiko);$("goYukyu").addEventListener("click",openYukyu);$("goBuppin").addEventListener("click",openBuppin);$("goTehai").addEventListener("click",openTehai);$("hback").addEventListener("click",showMenu);$("bback").addEventListener("click",showMenu);$("goMochi").addEventListener("click",()=>openDenpyo("mochi"));$("goKounyu").addEventListener("click",()=>openDenpyo("kounyu"));$("yback").addEventListener("click",showMenu);$("dback").addEventListener("click",showMenu);
+$("goWire").addEventListener("click",openWire);$("goKeihi").addEventListener("click",openKeihi);$("goNippo").addEventListener("click",openNippo);$("goKakunin").addEventListener("click",openKakunin);$("goGetsurei").addEventListener("click",openGetsurei);$("goKiju").addEventListener("click",openKiju);$("goChat").addEventListener("click",openChat);$("chback").addEventListener("click",showMenu);$("kjback").addEventListener("click",showMenu);$("mToTenken").addEventListener("click",openTenken);$("mback").addEventListener("click",showMenu);$("tback").addEventListener("click",showMenu);$("kback").addEventListener("click",showMenu);$("goJiko").addEventListener("click",openJiko);$("goYukyu").addEventListener("click",openYukyu);$("goBuppin").addEventListener("click",openBuppin);$("goTehai").addEventListener("click",openTehai);$("hback").addEventListener("click",showMenu);$("bback").addEventListener("click",showMenu);$("goMochi").addEventListener("click",()=>openDenpyo("mochi"));$("goKounyu").addEventListener("click",()=>openDenpyo("kounyu"));$("yback").addEventListener("click",showMenu);$("dback").addEventListener("click",showMenu);
 $("nback").addEventListener("click",showMenu);$("jback").addEventListener("click",showMenu);
 function reload(){location.reload()}
 function login(pin){
   $("pinmsg").textContent="読み込み中…";
   google.script.run.withSuccessHandler(M=>{PIN=pin;lsSet(LS,pin);MASTER=M;$("pinbox").hidden=true;
       let s="";try{s=sessionStorage.getItem("screen")||""}catch(e){}
-      if(s==="nippo")openNippo();else if(s==="jiko")openJiko();else if(s==="kakunin")openKakunin();else if(s==="tenken")openTenken();else if(s==="getsurei")openGetsurei();else if(s==="kiju")openKiju();else if(s==="yukyu")openYukyu();else if(s==="buppin")openBuppin();else if(s==="tehai")openTehai();else if(s==="wire")openWire();else if(s==="mochi"||s==="kounyu")openDenpyo(s);else if(s==="keihi")openKeihi();else showMenu()})
+      if(s==="nippo")openNippo();else if(s==="jiko")openJiko();else if(s==="kakunin")openKakunin();else if(s==="tenken")openTenken();else if(s==="getsurei")openGetsurei();else if(s==="kiju")openKiju();else if(s==="chat")openChat();else if(s==="yukyu")openYukyu();else if(s==="buppin")openBuppin();else if(s==="tehai")openTehai();else if(s==="wire")openWire();else if(s==="mochi"||s==="kounyu")openDenpyo(s);else if(s==="keihi")openKeihi();else showMenu()})
     .withFailureHandler(err=>{$("pinmsg").textContent=err.message||String(err);$("pinbox").hidden=false})
     .getMaster(pin);
 }
