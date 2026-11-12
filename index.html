@@ -390,6 +390,7 @@ body{padding-top:0}
 #chat{display:flex;flex-direction:column;gap:10px;padding-bottom:150px}#chat[hidden]{display:none!important}
 .chwho{margin-left:auto;font-size:13px;color:var(--muted)}
 .chmore{display:block;margin:0 auto 6px}
+.chpush{display:flex;align-items:center;gap:8px;justify-content:space-between;background:var(--head);border:1px solid var(--hair);border-radius:12px;padding:8px 10px;font-size:13px;color:var(--muted);margin-bottom:8px}.chpush[hidden]{display:none}.chpush button{flex:none;white-space:nowrap;padding:6px 10px;font-size:13px}
 #ch_list{display:flex;flex-direction:column;gap:8px}
 .chday{align-self:center;font-size:12px;color:var(--muted);background:var(--head);border-radius:12px;padding:3px 12px;margin:8px 0 2px}
 .chmsg{display:flex;flex-direction:column;max-width:82%;align-items:flex-start}.chmsg.me{align-self:flex-end;align-items:flex-end}
@@ -1014,6 +1015,7 @@ body{padding-top:0}
       <p id="ch_loginmsg" style="color:var(--danger);font-size:14px;margin:8px 0 0"></p>
     </div>
     <div id="ch_room" hidden>
+      <div class="chpush" id="ch_push" hidden><span id="ch_pushmsg"></span><button type="button" class="sub" id="ch_pushb" hidden></button></div>
       <button type="button" class="sub chmore" id="ch_more" hidden>前の書き込みを見る</button>
       <div id="ch_list"></div>
     </div>
@@ -1980,7 +1982,7 @@ function chBottom(){window.scrollTo(0,document.documentElement.scrollHeight)}
 function chNear(){return window.innerHeight+window.scrollY>=document.documentElement.scrollHeight-160}
 function chSeen(){if(CH.last){lsSet(CH_SEEN,String(CH.last));$("goChat").classList.remove("unread")}}
 function chFirst(){chNote("");$("ch_list").innerHTML='<p class="hint" style="text-align:center;padding:30px 10px">読み込んでいます…</p>';
-  chApi("chatList",[0,0]).then(r=>{CH.me=r.me;CH.msgs=r.msgs;CH.last=r.last;$("ch_who").textContent=r.me.name+" さん";$("ch_more").hidden=!r.more;chShowRoom();chRender();chBottom();chSeen();chPoll()},e=>{$("ch_list").innerHTML="";const m=(e&&e.message)||String(e);if(m==="CHAT_LOGIN")return chFail(e);$("ch_login").hidden=true;chNote(esc(m)+'<div class="draftbtns"><button type="button" class="sub" id="chretry">もう一度読み込む</button></div>');$("chretry").addEventListener("click",chFirst)})}
+  chApi("chatList",[0,0]).then(r=>{CH.me=r.me;CH.msgs=r.msgs;CH.last=r.last;$("ch_who").textContent=r.me.name+" さん";$("ch_more").hidden=!r.more;chShowRoom();chRender();chBottom();chSeen();chPoll();chPushState()},e=>{$("ch_list").innerHTML="";const m=(e&&e.message)||String(e);if(m==="CHAT_LOGIN")return chFail(e);$("ch_login").hidden=true;chNote(esc(m)+'<div class="draftbtns"><button type="button" class="sub" id="chretry">もう一度読み込む</button></div>');$("chretry").addEventListener("click",chFirst)})}
 function chPoll(){chStop();if(!CH.open)return;CH.timer=setTimeout(chTick,8000)}
 function chStop(){clearTimeout(CH.timer);CH.timer=null}
 function chTick(){if(!CH.open||$("chat").hidden)return;if(document.hidden||CH.busy){chPoll();return}CH.busy=true;
@@ -2027,6 +2029,29 @@ function openChat(){scr("chat");setTitle("チャット広場");$("menu").hidden=
 function chLeave(){CH.open=false;chStop()}
 function chPeek(){const g=$("goChat");if(!g||!chTok()||Date.now()-CH.peekAt<60000)return;CH.peekAt=Date.now();
   callApi0("chatPeek",[chTok()]).then(last=>{g.classList.toggle("unread",Number(last)>Number(lsGet(CH_SEEN)||0))},()=>{})}
+// チャット広場の通知（ホーム画面に入れたアプリで「通知を受け取る」を押した人へ、新しい書き込みを知らせる）
+try{if(new URLSearchParams(location.search).get("open")==="chat"){sessionStorage.setItem("screen","chat");history.replaceState(null,"",location.pathname)}}catch(e){}
+if("serviceWorker" in navigator)navigator.serviceWorker.addEventListener("message",e=>{if(e.data&&e.data.open==="chat"&&PIN&&$("pinbox").hidden){showMenu();openChat()}});
+function chB64U(s){const p="=".repeat((4-s.length%4)%4);const b=atob((s+p).replace(/-/g,"+").replace(/_/g,"/"));const u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return u}
+function chSwReady(){return Promise.race([navigator.serviceWorker.ready,new Promise(r=>setTimeout(()=>r(null),4000))])}
+async function chPushState(){const box=$("ch_push"),msg=$("ch_pushmsg"),b=$("ch_pushb");box.hidden=false;b.hidden=true;
+  const standalone=matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
+  if(!("serviceWorker" in navigator)||!("PushManager" in window)||!("Notification" in window)){msg.textContent=standalone?"このスマホでは通知が使えません（iPhoneはiOS 16.4以降が必要です）":"通知を受け取るには、このアプリをホーム画面に追加して、ホーム画面のアイコンから開いてください";return}
+  if(Notification.permission==="denied"){msg.textContent="通知がスマホの設定で止められています（スマホの設定 → 通知 → 丸門アプリ で許可できます）";return}
+  const reg=await chSwReady();if(!reg){msg.textContent="通知の準備ができていません。アプリを一度閉じて開き直してください";return}
+  let sub=null;try{sub=await reg.pushManager.getSubscription()}catch(e){}
+  if(sub&&Notification.permission==="granted"){msg.textContent="通知：オン（新しい書き込みがあるとスマホに知らせます）";b.textContent="オフにする";b.hidden=false;b.onclick=chPushOff;
+    if(Date.now()-Number(lsGet("chat_push_at")||0)>86400000)chApi("chatPushSub",[sub.endpoint]).then(()=>lsSet("chat_push_at",String(Date.now())),()=>{})}
+  else{msg.textContent="新しい書き込みをスマホの通知で受け取れます";b.textContent="通知を受け取る";b.hidden=false;b.onclick=chPushOn}}
+async function chPushOn(){const b=$("ch_pushb");b.disabled=true;chNote("");
+  try{const perm=await Notification.requestPermission();if(perm==="granted"){const reg=await chSwReady();if(!reg)throw new Error("アプリを一度閉じて開き直してから、もう一度押してください。");
+      const key=await chApi("chatPushKey");let sub=await reg.pushManager.getSubscription();if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:chB64U(key)});
+      await chApi("chatPushSub",[sub.endpoint]);lsSet("chat_push_at",String(Date.now()))}}
+  catch(e){chNote("通知を登録できませんでした："+esc((e&&e.message)||String(e)))}
+  b.disabled=false;chPushState()}
+async function chPushOff(){const b=$("ch_pushb");b.disabled=true;
+  try{const reg=await chSwReady();const sub=reg&&await reg.pushManager.getSubscription();if(sub){const ep=sub.endpoint;await sub.unsubscribe();await chApi("chatPushUnsub",[ep]).catch(()=>{})}lsSet("chat_push_at","")}catch(e){}
+  b.disabled=false;chPushState()}
 // ---- 有給休暇願い・持出伝票・物品購入伝票 ----
 const todayJ=()=>new Date(Date.now()+9*3600e3).toISOString().slice(0,10);
 function boxMsg(id,html){const b=$(id);b.innerHTML=html;b.hidden=false;b.scrollIntoView({behavior:"smooth",block:"center"})}
