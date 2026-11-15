@@ -376,6 +376,7 @@ body{padding-top:0}
 #kjsavebar .in{display:flex;gap:8px;align-items:stretch}#kjsavebar .in button{padding:7px 10px;font-size:14px;line-height:1.2;white-space:nowrap}#kjsavebar .in .save{flex:1 1 0}
 /* メニューをアイコンのタイルで並べる */
 #menu.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:8px}
+#menu.grid>#np{grid-column:1/-1;margin-bottom:0}
 #menu.grid>h1,#menu.grid>.hello,#menu.grid>#inst,#menu.grid>.instbox{grid-column:1/-1}
 #menu.grid .mbtn{flex-direction:column;align-items:center;justify-content:flex-start;gap:8px;padding:14px 6px 12px;min-height:0;text-align:center;border-radius:18px}
 #menu.grid .mbtn .mi{width:58px;height:58px;border-radius:18px;font-size:17px}
@@ -634,6 +635,7 @@ body{padding-top:0}
   <div id="menu" hidden>
     <h1 id="menuTitle">丸門建設</h1>
     <div class="hello"><span class="d" id="today"></span><span class="g">おつかれさまです</span><a class="helplink" href="https://claude.ai/artifact/6gudgaZYGnbo1s2BLatdfm" target="_blank" rel="noopener">使い方を見る</a><button type="button" class="viewtgl" id="viewtgl">説明つきで見る</button></div>
+    <div class="chpush" id="np" hidden><span id="np_msg"></span><button type="button" class="sub" id="np_b" hidden></button></div>
     <button type="button" class="mbtn nippo" id="goNippo"><span class="mi">日報</span><span><b>作業日報</b><small>その日の作業時間・出来高・人員を入力</small></span></button>
     <button type="button" class="mbtn jiko" id="goJiko"><span class="mi">事故</span><span><b>事故・トラブル報告</b><small>事故や機械の損傷があったときに報告</small></span></button>
     <button type="button" class="mbtn getsurei" id="goGetsurei"><span class="mi">点検</span><span><b>月例定期点検</b><small>月例自主検査記録表を作って先方へPDFで送る</small></span></button>
@@ -1226,7 +1228,7 @@ function khView(v){KH.view=v;["kh_login","kh_home","kh_slip","kh_item","kh_appr"
   if(v==="appr"){btn("差し戻し","red",()=>khAct("差戻"));btn("承認","blue",()=>khAct("承認"))}
   window.scrollTo(0,0)}
 function khShowLogin(m){khView("login");$("kh_loginmsg").textContent=m||""}
-function khLoad(then){return khFetch("/me").then(j=>{if(!j.ok){if(KH.tok){khShowLogin(j.error)}return}KH.meta=j;khSetup();if(then)then();else{khView("home");khPaintHome()}})}
+function khLoad(then){return khFetch("/me").then(j=>{if(!j.ok){if(KH.tok){khShowLogin(j.error)}return}KH.meta=j;khSetup();if(then)then();else if(window.KH_GOAPPR){window.KH_GOAPPR=false;khOpenAppr()}else{khView("home");khPaintHome()}})}
 function khSetup(){const m=KH.meta;$("kh_who").textContent=m.name+" さん";$("kh_payer").textContent=m.name;
   const ks=$("kh_kind");ks.innerHTML='<option value="">選んでください</option>';let g="",og=null;[...m.kinds].sort((a,b)=>(a[1]==="旅費"?0:1)-(b[1]==="旅費"?0:1)).forEach(([k,gr,d])=>{if(gr!==g){g=gr;og=document.createElement("optgroup");og.label=gr==="旅費"?"旅費（交通費・宿泊・出張費）":"経費（買い物・交際費など）";ks.appendChild(og)}og.appendChild(new Option(k+(d?"　…"+d:""),k))});
   const bs=$("kh_bumon");bs.innerHTML="";(m.bumon||[]).forEach(([c,n])=>bs.add(new Option(n+"（"+c+"）",c)));if(!(m.bumon||[]).length)bs.add(new Option("（名簿の部門）",""));
@@ -2030,28 +2032,34 @@ function chLeave(){CH.open=false;chStop()}
 function chPeek(){const g=$("goChat");if(!g||!chTok()||Date.now()-CH.peekAt<60000)return;CH.peekAt=Date.now();
   callApi0("chatPeek",[chTok()]).then(last=>{g.classList.toggle("unread",Number(last)>Number(lsGet(CH_SEEN)||0))},()=>{})}
 // チャット広場の通知（ホーム画面に入れたアプリで「通知を受け取る」を押した人へ、新しい書き込みを知らせる）
-try{if(new URLSearchParams(location.search).get("open")==="chat"){sessionStorage.setItem("screen","chat");history.replaceState(null,"",location.pathname)}}catch(e){}
-if("serviceWorker" in navigator)navigator.serviceWorker.addEventListener("message",e=>{if(e.data&&e.data.open==="chat"&&PIN&&$("pinbox").hidden){showMenu();openChat()}});
+try{const o=new URLSearchParams(location.search).get("open");if(o){if(o==="keihi_approve"){window.KH_GOAPPR=true;sessionStorage.setItem("screen","keihi")}else if(o==="chat")sessionStorage.setItem("screen","chat");history.replaceState(null,"",location.pathname)}}catch(e){}
+// 通知を押して開いたとき：chat＝チャット広場、keihi_approve＝旅費精算の承認の画面
+function pushOpen(o){if(!PIN||!$("pinbox").hidden)return;if(o==="chat"){showMenu();openChat()}else if(o==="keihi_approve"){showMenu();window.KH_GOAPPR=true;openKeihi()}}
+if("serviceWorker" in navigator)navigator.serviceWorker.addEventListener("message",e=>{if(e.data&&e.data.open)pushOpen(e.data.open)});
 function chB64U(s){const p="=".repeat((4-s.length%4)%4);const b=atob((s+p).replace(/-/g,"+").replace(/_/g,"/"));const u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return u}
 function chSwReady(){return Promise.race([navigator.serviceWorker.ready,new Promise(r=>setTimeout(()=>r(null),4000))])}
-async function chPushState(){const box=$("ch_push"),msg=$("ch_pushmsg"),b=$("ch_pushb");box.hidden=false;b.hidden=true;
+let PUSH_ERR="";
+function pushPaint(text,label,fn){[["ch_push","ch_pushmsg","ch_pushb"],["np","np_msg","np_b"]].forEach(([x,y,z])=>{const box=$(x);if(!box)return;box.hidden=false;$(y).textContent=text+(PUSH_ERR?"　※"+PUSH_ERR:"");const b=$(z);b.hidden=!label;b.disabled=false;if(label){b.textContent=label;b.onclick=fn}})}
+function pushBusy(){["ch_pushb","np_b"].forEach(i=>{if($(i))$(i).disabled=true})}
+async function chPushState(){
   const standalone=matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
-  if(!("serviceWorker" in navigator)||!("PushManager" in window)||!("Notification" in window)){msg.textContent=standalone?"このスマホでは通知が使えません（iPhoneはiOS 16.4以降が必要です）":"通知を受け取るには、このアプリをホーム画面に追加して、ホーム画面のアイコンから開いてください";return}
-  if(Notification.permission==="denied"){msg.textContent="通知がスマホの設定で止められています（スマホの設定 → 通知 → 丸門アプリ で許可できます）";return}
-  const reg=await chSwReady();if(!reg){msg.textContent="通知の準備ができていません。アプリを一度閉じて開き直してください";return}
+  if(!("serviceWorker" in navigator)||!("PushManager" in window)||!("Notification" in window)){pushPaint(standalone?"このスマホでは通知が使えません（iPhoneはiOS 16.4以降が必要です）":"スマホの通知：このアプリをホーム画面に追加して、ホーム画面のアイコンから開くと受け取れます");return}
+  if(Notification.permission==="denied"){pushPaint("通知がスマホの設定で止められています（スマホの設定 → 通知 → 丸門アプリ で許可できます）");return}
+  const reg=await chSwReady();if(!reg){pushPaint("通知の準備ができていません。アプリを一度閉じて開き直してください");return}
   let sub=null;try{sub=await reg.pushManager.getSubscription()}catch(e){}
-  if(sub&&Notification.permission==="granted"){msg.textContent="通知：オン（新しい書き込みがあるとスマホに知らせます）";b.textContent="オフにする";b.hidden=false;b.onclick=chPushOff;
-    if(Date.now()-Number(lsGet("chat_push_at")||0)>86400000)chApi("chatPushSub",[sub.endpoint]).then(()=>lsSet("chat_push_at",String(Date.now())),()=>{})}
-  else{msg.textContent="新しい書き込みをスマホの通知で受け取れます";b.textContent="通知を受け取る";b.hidden=false;b.onclick=chPushOn}}
-async function chPushOn(){const b=$("ch_pushb");b.disabled=true;chNote("");
+  if(!chTok()){pushPaint("スマホの通知：丸門ポータルにログインすると受け取れます（チャット広場・旅費精算のお知らせ）","ログインする",()=>openChat());return}
+  if(sub&&Notification.permission==="granted"){pushPaint("スマホの通知：オン（チャット広場・旅費精算のお知らせが届きます）","オフにする",chPushOff);
+    if(Date.now()-Number(lsGet("push_at2")||0)>86400000)chApi("chatPushSub",[sub.endpoint]).then(()=>lsSet("push_at2",String(Date.now())),()=>{})}
+  else pushPaint("チャット広場・旅費精算のお知らせを、スマホの通知で受け取れます","通知を受け取る",chPushOn)}
+async function chPushOn(){pushBusy();PUSH_ERR="";
   try{const perm=await Notification.requestPermission();if(perm==="granted"){const reg=await chSwReady();if(!reg)throw new Error("アプリを一度閉じて開き直してから、もう一度押してください。");
       const key=await chApi("chatPushKey");let sub=await reg.pushManager.getSubscription();if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:chB64U(key)});
-      await chApi("chatPushSub",[sub.endpoint]);lsSet("chat_push_at",String(Date.now()))}}
-  catch(e){chNote("通知を登録できませんでした："+esc((e&&e.message)||String(e)))}
-  b.disabled=false;chPushState()}
-async function chPushOff(){const b=$("ch_pushb");b.disabled=true;
-  try{const reg=await chSwReady();const sub=reg&&await reg.pushManager.getSubscription();if(sub){const ep=sub.endpoint;await sub.unsubscribe();await chApi("chatPushUnsub",[ep]).catch(()=>{})}lsSet("chat_push_at","")}catch(e){}
-  b.disabled=false;chPushState()}
+      await chApi("chatPushSub",[sub.endpoint]);lsSet("push_at2",String(Date.now()))}}
+  catch(e){const m=(e&&e.message)||String(e);PUSH_ERR=m==="CHAT_LOGIN"?"丸門ポータルにログインし直してください":"通知を登録できませんでした："+m}
+  await chPushState();PUSH_ERR=""}
+async function chPushOff(){pushBusy();PUSH_ERR="";
+  try{const reg=await chSwReady();const sub=reg&&await reg.pushManager.getSubscription();if(sub){const ep=sub.endpoint;await sub.unsubscribe();await chApi("chatPushUnsub",[ep]).catch(()=>{})}lsSet("push_at2","")}catch(e){}
+  chPushState()}
 // ---- 有給休暇願い・持出伝票・物品購入伝票 ----
 const todayJ=()=>new Date(Date.now()+9*3600e3).toISOString().slice(0,10);
 function boxMsg(id,html){const b=$(id);b.innerHTML=html;b.hidden=false;b.scrollIntoView({behavior:"smooth",block:"center"})}
@@ -2383,7 +2391,7 @@ function wStart(){
   wLockPaint();wLoad()}
 function openWire(){scr("wire");setTitle("ワイヤ管理");$("menu").hidden=true;$("wire").hidden=false;if(!wStarted){wStarted=true;wStart()}else wLoad();window.scrollTo(0,0)}
 (function(){const m=document.getElementById("menu"),b=document.getElementById("viewtgl");function ap(){const g=lsGet("menu_view")!=="list";m.classList.toggle("grid",g);b.textContent=g?"説明つきで見る":"アイコンで見る"}b.addEventListener("click",()=>{lsSet("menu_view",lsGet("menu_view")==="list"?"grid":"list");ap()});ap()})();
-function showMenu(){scr("");setTitle("丸門アプリ");["app","savebar","jiko","jsavebar","kakunin","ksavebar","tenken","tsavebar","yukyu","ysavebar","denpyo","dsavebar","buppin","tehai","hsavebar","wire","wsheet","listbox","done","keihi","khsavebar","getsurei","msavebar","kiju","kjsavebar","chat","chbar"].forEach(i=>$(i).hidden=true);chLeave();chPeek();$("menu").hidden=false;window.scrollTo(0,0)}
+function showMenu(){scr("");setTitle("丸門アプリ");["app","savebar","jiko","jsavebar","kakunin","ksavebar","tenken","tsavebar","yukyu","ysavebar","denpyo","dsavebar","buppin","tehai","hsavebar","wire","wsheet","listbox","done","keihi","khsavebar","getsurei","msavebar","kiju","kjsavebar","chat","chbar"].forEach(i=>$(i).hidden=true);window.KH_GOAPPR=false;chLeave();chPeek();chPushState();$("menu").hidden=false;window.scrollTo(0,0)}
 function openNippo(){scr("nippo");setTitle("作業日報");$("menu").hidden=true;$("app").hidden=false;$("savebar").hidden=false;if(!nippoStarted){nippoStarted=true;start(MASTER)}window.scrollTo(0,0)}
 function openJiko(){scr("jiko");setTitle("事故・トラブル報告");$("menu").hidden=true;$("jiko").hidden=false;$("jsavebar").hidden=false;if(!jikoStarted){jikoStarted=true;startJiko(MASTER)}window.scrollTo(0,0)}
 (function(){const d=new Date();const w="日月火水木金土"[d.getDay()];$("today").textContent=(d.getMonth()+1)+"月"+d.getDate()+"日（"+w+"）"})();
