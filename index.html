@@ -2038,7 +2038,7 @@ function pushOpen(o){if(!PIN||!$("pinbox").hidden)return;if(o==="chat"){showMenu
 if("serviceWorker" in navigator)navigator.serviceWorker.addEventListener("message",e=>{if(e.data&&e.data.open)pushOpen(e.data.open)});
 function chB64U(s){const p="=".repeat((4-s.length%4)%4);const b=atob((s+p).replace(/-/g,"+").replace(/_/g,"/"));const u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return u}
 function chSwReady(){return Promise.race([navigator.serviceWorker.ready,new Promise(r=>setTimeout(()=>r(null),4000))])}
-let PUSH_ERR="";
+let PUSH_ERR="",PUSH_TRY=0;
 function pushPaint(text,label,fn){[["ch_push","ch_pushmsg","ch_pushb"],["np","np_msg","np_b"]].forEach(([x,y,z])=>{const box=$(x);if(!box)return;box.hidden=false;$(y).textContent=text+(PUSH_ERR?"　※"+PUSH_ERR:"");const b=$(z);b.hidden=!label;b.disabled=false;if(label){b.textContent=label;b.onclick=fn}})}
 function pushBusy(){["ch_pushb","np_b"].forEach(i=>{if($(i))$(i).disabled=true})}
 async function chPushState(){
@@ -2049,12 +2049,12 @@ async function chPushState(){
   let sub=null;try{sub=await reg.pushManager.getSubscription()}catch(e){}
   if(!chTok()){pushPaint("スマホの通知：丸門ポータルにログインすると受け取れます（チャット広場・旅費精算のお知らせ）","ログインする",()=>openChat());return}
   if(sub&&Notification.permission==="granted"){pushPaint("スマホの通知：オン（チャット広場・旅費精算のお知らせが届きます）","オフにする",chPushOff);
-    if(Date.now()-Number(lsGet("push_at2")||0)>86400000)chApi("chatPushSub",[sub.endpoint]).then(()=>lsSet("push_at2",String(Date.now())),()=>{})}
+    if(Date.now()-Number(lsGet("push_at2")||0)>86400000&&Date.now()-PUSH_TRY>300000){PUSH_TRY=Date.now();chApi("chatPushSub",[sub.endpoint]).then(r=>{if(r===true)lsSet("push_at2",String(Date.now()))},()=>{})}}
   else pushPaint("チャット広場・旅費精算のお知らせを、スマホの通知で受け取れます","通知を受け取る",chPushOn)}
 async function chPushOn(){pushBusy();PUSH_ERR="";
   try{const perm=await Notification.requestPermission();if(perm==="granted"){const reg=await chSwReady();if(!reg)throw new Error("アプリを一度閉じて開き直してから、もう一度押してください。");
       const key=await chApi("chatPushKey");let sub=await reg.pushManager.getSubscription();if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:chB64U(key)});
-      await chApi("chatPushSub",[sub.endpoint]);lsSet("push_at2",String(Date.now()))}}
+      const r=await chApi("chatPushSub",[sub.endpoint]);if(r===true)lsSet("push_at2",String(Date.now()))}}
   catch(e){const m=(e&&e.message)||String(e);PUSH_ERR=m==="CHAT_LOGIN"?"丸門ポータルにログインし直してください":"通知を登録できませんでした："+m}
   await chPushState();PUSH_ERR=""}
 async function chPushOff(){pushBusy();PUSH_ERR="";
