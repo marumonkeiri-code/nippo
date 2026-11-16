@@ -2049,16 +2049,16 @@ async function chPushState(){
   let sub=null;try{sub=await reg.pushManager.getSubscription()}catch(e){}
   if(!chTok()){pushPaint("スマホの通知：丸門ポータルにログインすると受け取れます（チャット広場・旅費精算のお知らせ）","ログインする",()=>openChat());return}
   if(sub&&Notification.permission==="granted"){pushPaint("スマホの通知：オン（チャット広場・旅費精算のお知らせが届きます）","オフにする",chPushOff);
-    if(Date.now()-Number(lsGet("push_at2")||0)>86400000&&Date.now()-PUSH_TRY>300000){PUSH_TRY=Date.now();chApi("chatPushSub",[sub.endpoint]).then(r=>{if(r===true)lsSet("push_at2",String(Date.now()))},()=>{})}}
+    if(Date.now()-Number(lsGet("push_at3")||0)>86400000&&Date.now()-PUSH_TRY>300000){PUSH_TRY=Date.now();chApi("chatPushSub",[sub.endpoint]).then(r=>{if(r===true)lsSet("push_at3",String(Date.now()))},()=>{})}}
   else pushPaint("チャット広場・旅費精算のお知らせを、スマホの通知で受け取れます","通知を受け取る",chPushOn)}
 async function chPushOn(){pushBusy();PUSH_ERR="";
   try{const perm=await Notification.requestPermission();if(perm==="granted"){const reg=await chSwReady();if(!reg)throw new Error("アプリを一度閉じて開き直してから、もう一度押してください。");
       const key=await chApi("chatPushKey");let sub=await reg.pushManager.getSubscription();if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:chB64U(key)});
-      const r=await chApi("chatPushSub",[sub.endpoint]);if(r===true)lsSet("push_at2",String(Date.now()))}}
+      const r=await chApi("chatPushSub",[sub.endpoint]);if(r===true)lsSet("push_at3",String(Date.now()))}}
   catch(e){const m=(e&&e.message)||String(e);PUSH_ERR=m==="CHAT_LOGIN"?"丸門ポータルにログインし直してください":"通知を登録できませんでした："+m}
   await chPushState();PUSH_ERR=""}
 async function chPushOff(){pushBusy();PUSH_ERR="";
-  try{const reg=await chSwReady();const sub=reg&&await reg.pushManager.getSubscription();if(sub){const ep=sub.endpoint;await sub.unsubscribe();await chApi("chatPushUnsub",[ep]).catch(()=>{})}lsSet("push_at2","")}catch(e){}
+  try{const reg=await chSwReady();const sub=reg&&await reg.pushManager.getSubscription();if(sub){const ep=sub.endpoint;await sub.unsubscribe();await chApi("chatPushUnsub",[ep]).catch(()=>{})}lsSet("push_at3","")}catch(e){}
   chPushState()}
 // ---- 有給休暇願い・持出伝票・物品購入伝票 ----
 const todayJ=()=>new Date(Date.now()+9*3600e3).toISOString().slice(0,10);
