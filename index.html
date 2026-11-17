@@ -395,6 +395,7 @@ body{padding-top:0}
 #ch_list{display:flex;flex-direction:column;gap:8px}
 .chday{align-self:center;font-size:12px;color:var(--muted);background:var(--head);border-radius:12px;padding:3px 12px;margin:8px 0 2px}
 .chmsg{display:flex;flex-direction:column;max-width:82%;align-items:flex-start}.chmsg.me{align-self:flex-end;align-items:flex-end}
+.chmsg.pend{opacity:.6}
 .chname{font-size:12px;color:var(--muted);margin:0 6px 2px}
 .chbub{background:var(--sheet);border:1px solid var(--hair);border-radius:16px 16px 16px 4px;padding:8px 12px;font-size:16px;line-height:1.5;word-break:break-word;overflow-wrap:anywhere;box-shadow:var(--shadow)}
 .chmsg.me .chbub{background:#d9f3ee;border-color:#a9dfd6;border-radius:16px 16px 4px 16px;color:#123}
@@ -1971,15 +1972,15 @@ function chDay(t){const d=new Date(t);if(isNaN(d))return"";return d.getFullYear(
 function chSize(n){return n>=1048576?(n/1048576).toFixed(1)+"MB":Math.max(1,Math.round(n/1024))+"KB"}
 function chText(t){return esc(t).replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank" rel="noopener">$1</a>').replace(/\n/g,"<br>")}
 function chMine(m){return CH.me&&(CH.me.id&&m.uid?CH.me.id===m.uid:CH.me.name===m.name)}
-function chMsgEl(m){const d=document.createElement("div");d.className="chmsg "+(chMine(m)?"me":"other");d.dataset.id=m.id;
+function chMsgEl(m){const d=document.createElement("div");d.className="chmsg "+(chMine(m)?"me":"other")+(m.pend?" pend":"");d.dataset.id=m.id;
   let h=chMine(m)?"":'<div class="chname">'+esc(m.name)+'</div>';
   if(m.text)h+='<div class="chbub">'+chText(m.text)+'</div>';
   if(m.files&&m.files.length)h+='<div class="chfiles">'+m.files.map((f,i)=>/^image\//.test(f.type)&&f.thumb?'<button type="button" class="chimg" data-i="'+i+'"><img alt="'+esc(f.name)+'" src="data:image/jpeg;base64,'+f.thumb+'"></button>':'<button type="button" class="chfile" data-i="'+i+'"><b>'+esc((f.name.match(/\.([A-Za-z0-9]+)$/)||["","FILE"])[1].toUpperCase().slice(0,4))+'</b><span>'+esc(f.name)+'<small>'+chSize(f.size)+'</small></span></button>').join("")+'</div>';
-  h+='<div class="chtime">'+chTime(m.time)+'</div>';d.innerHTML=h;
+  h+='<div class="chtime">'+(m.pend?"送信中…":chTime(m.time))+'</div>';d.innerHTML=h;if(m.pend)return d;
   d.querySelectorAll("[data-i]").forEach(b=>b.addEventListener("click",()=>chOpenFile(m.files[+b.dataset.i],b)));return d}
 function chRender(){const box=$("ch_list");box.innerHTML="";let day="";
-  if(!CH.msgs.length)box.innerHTML='<p class="hint" style="text-align:center;padding:30px 10px">まだ書き込みがありません。最初のひとことをどうぞ。</p>';
-  CH.msgs.forEach(m=>{const dy=chDay(m.time);if(dy!==day){day=dy;const s=document.createElement("div");s.className="chday";s.textContent=dy;box.appendChild(s)}box.appendChild(chMsgEl(m))})}
+  if(!CH.msgs.length&&!CH.pend)box.innerHTML='<p class="hint" style="text-align:center;padding:30px 10px">まだ書き込みがありません。最初のひとことをどうぞ。</p>';
+  CH.msgs.forEach(m=>{const dy=chDay(m.time);if(dy!==day){day=dy;const s=document.createElement("div");s.className="chday";s.textContent=dy;box.appendChild(s)}box.appendChild(chMsgEl(m))});if(CH.pend)box.appendChild(chMsgEl(CH.pend))}
 function chBottom(){window.scrollTo(0,document.documentElement.scrollHeight)}
 function chNear(){return window.innerHeight+window.scrollY>=document.documentElement.scrollHeight-160}
 function chSeen(){if(CH.last){lsSet(CH_SEEN,String(CH.last));$("goChat").classList.remove("unread")}}
@@ -1989,7 +1990,7 @@ function chPoll(){chStop();if(!CH.open)return;CH.timer=setTimeout(chTick,8000)}
 function chStop(){clearTimeout(CH.timer);CH.timer=null}
 function chTick(){if(!CH.open||$("chat").hidden)return;if(document.hidden||CH.busy){chPoll();return}CH.busy=true;
   chApi("chatList",[CH.last,0]).then(r=>{CH.busy=false;chAdd(r);chPoll()},e=>{CH.busy=false;chFail(e,true);chPoll()})}
-function chAdd(r){if(r.msgs&&r.msgs.length){const near=chNear(),have=new Set(CH.msgs.map(m=>m.id));const add=r.msgs.filter(m=>!have.has(m.id));if(add.length){CH.msgs=CH.msgs.concat(add);chRender();if(near||add.some(chMine))chBottom()}}if(r.last>CH.last)CH.last=r.last;if(CH.msgs.length)CH.last=Math.max(CH.last,CH.msgs[CH.msgs.length-1].id);chSeen()}
+function chAdd(r){if(r.msgs&&r.msgs.length){const near=chNear(),have=new Set(CH.msgs.map(m=>m.id));const add=r.msgs.filter(m=>!have.has(m.id));if(add.length){CH.msgs=CH.msgs.concat(add);if(add.some(chMine))CH.pend=null;chRender();if(near||add.some(chMine))chBottom()}}if(r.last>CH.last)CH.last=r.last;if(CH.msgs.length)CH.last=Math.max(CH.last,CH.msgs[CH.msgs.length-1].id);chSeen()}
 function chMore(){if(!CH.msgs.length)return;const b=$("ch_more");b.disabled=true;const h0=document.documentElement.scrollHeight;
   chApi("chatList",[0,CH.msgs[0].id]).then(r=>{b.disabled=false;CH.msgs=r.msgs.concat(CH.msgs);b.hidden=r.msgs.length<50;chRender();window.scrollTo(0,window.scrollY+document.documentElement.scrollHeight-h0)},e=>{b.disabled=false;chFail(e)})}
 function chB64(file){return new Promise((ok,ng)=>{const r=new FileReader();r.onload=()=>ok(String(r.result).split(",")[1]||"");r.onerror=()=>ng(new Error("このファイルは読み込めませんでした。"));r.readAsDataURL(file)})}
@@ -2001,11 +2002,15 @@ async function chPick(files){chNote("");for(const f of files){if(CH.files.length
       else{if(f.size>CH_MAXB){chNote("ファイルが大きすぎます（1つ8MBまで）："+esc(f.name));continue}const data=await chB64(f);CH.files.push({name:f.name||"ファイル",type:f.type||"application/octet-stream",data,thumb:"",size:f.size})}}
     catch(e){chNote(esc(e.message||String(e)))}}chAtt()}
 function chAtt(){const box=$("ch_att");box.innerHTML="";CH.files.forEach((f,i)=>{const d=document.createElement("span");d.className="chchip";d.innerHTML=(f.thumb?'<img alt="" src="data:image/jpeg;base64,'+f.thumb+'">':"")+'<span>'+esc(f.name)+'</span>';const x=document.createElement("button");x.type="button";x.textContent="×";x.setAttribute("aria-label",f.name+"を外す");x.addEventListener("click",()=>{CH.files.splice(i,1);chAtt()});d.appendChild(x);box.appendChild(d)});box.hidden=!CH.files.length}
-function chSend(){if(CH.sending)return;const text=$("ch_text").value.trim();if(!text&&!CH.files.length)return;CH.sending=true;const b=$("ch_send");b.disabled=true;b.textContent="送信中…";chNote("");
-  const files=CH.files.map(f=>({name:f.name,type:f.type,data:f.data,thumb:f.thumb}));
-  chApi("chatPost",[text,files]).then(()=>{CH.sending=false;b.disabled=false;b.textContent="送信";$("ch_text").value="";chGrow();CH.files=[];chAtt();chStop();CH.busy=true;
-      return chApi("chatList",[CH.last,0]).then(r=>{CH.busy=false;chAdd(r);chBottom();chPoll()},e=>{CH.busy=false;chPoll()})},
-    e=>{CH.sending=false;b.disabled=false;b.textContent="送信";chFail(e)})}
+function chSend(){if(CH.sending)return;const text=$("ch_text").value.trim();if(!text&&!CH.files.length)return;CH.sending=true;const b=$("ch_send");b.disabled=true;chNote("");
+  const keep=CH.files.slice(),files=keep.map(f=>({name:f.name,type:f.type,data:f.data,thumb:f.thumb}));
+  // 送った文をすぐ画面に出す（サーバーの返事を待たない）。失敗したら入力欄に戻す
+  CH.pend={id:"pend",pend:true,name:CH.me?CH.me.name:"",uid:CH.me?CH.me.id:"",text:text,time:new Date().toISOString(),files:keep.map(f=>({name:f.name,type:f.type,thumb:f.thumb,size:f.size||0}))};
+  $("ch_text").value="";chGrow();CH.files=[];chAtt();chRender();chBottom();
+  const done=()=>{CH.sending=false;b.disabled=false};
+  chApi("chatPost",[text,files]).then(()=>{chStop();CH.busy=true;
+      return chApi("chatList",[CH.last,0]).then(r=>{CH.busy=false;done();chAdd(r);if(CH.pend){CH.pend=null;chRender()}chBottom();chPoll()},e=>{CH.busy=false;done();chPoll()})},
+    e=>{done();CH.pend=null;if(!$("ch_text").value){$("ch_text").value=text;chGrow()}if(!CH.files.length){CH.files=keep;chAtt()}chRender();chFail(e)})}
 function chGrow(){const t=$("ch_text");t.style.height="auto";t.style.height=Math.min(120,t.scrollHeight)+"px"}
 function chOpenFile(f,btn){if(btn.disabled)return;btn.disabled=true;btn.classList.add("loading");
   chApi("chatFile",[f.key]).then(r=>{btn.disabled=false;btn.classList.remove("loading");const bin=atob(r.data),u8=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u8[i]=bin.charCodeAt(i);
