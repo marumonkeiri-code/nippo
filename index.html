@@ -1209,7 +1209,7 @@ const LS="nippo_pin";let PIN="";let EDIT=null;
 function lsGet(k){try{return localStorage.getItem(k)||""}catch(e){return ""}}
 function lsSet(k,v){try{localStorage.setItem(k,v)}catch(e){}}
 // ---- 旅費精算（HRMOS経費のような作り）：明細を仮登録して、まとめて承認依頼。データと写真は丸門ポータルへ ----
-const KH_API="https://gordonpc.tail182036.ts.net/api/keihi";const KH_LS="keihi_token";
+const KH_API="https://marumon-portal.com/api/keihi";const KH_LS="keihi_token";
 let KH={tok:"",meta:null,view:"",edit:null,blobs:[],read:null,started:false};
 const KH_ROUTE=["電車・バス","タクシー","高速道路","ガソリン（距離）"];
 const KH_ST={"申請中":"s1","差戻":"s2","承認":"s3","精算済":"s4"};
