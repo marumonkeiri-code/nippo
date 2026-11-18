@@ -1,5 +1,5 @@
 // 作業日報アプリ：画面を端末に保存して、電波が弱くても開けるようにする
-const CACHE = 'nippo-v13';
+const CACHE = 'nippo-v14';
 const FILES = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
@@ -19,9 +19,11 @@ self.addEventListener('fetch', e => {
 // 通知：合図が届いたら文面（title・body・open）をサーバーに取りに行って出す。押されたら open の画面を開く
 const API = 'https://script.google.com/macros/s/AKfycbz3XtpAENLFsbaxg5d2NkTzvQRbgPChqxP7kFwWoaKdVQHPw2h0E89fyx4bvzGOTRgV-w/exec';
 const ICON = './icon-192.png';
-async function pushShow() {
+async function pushShow(e) {
   let list = [];
-  try {
+  // サーバーからの通知は文面が一緒に届く。Google Apps Script からの通知（合図だけ）は文面を取りに行く
+  try { if (e && e.data) { const d = e.data.json(); if (d && (d.title || d.body)) list = [d]; } } catch (x) {}
+  if (!list.length) try {
     const sub = await self.registration.pushManager.getSubscription();
     if (sub) {
       const ctl = new AbortController(); const timer = setTimeout(() => ctl.abort(), 15000);
@@ -42,7 +44,7 @@ async function pushShow() {
     await self.registration.showNotification(String(m.title || '丸門アプリ'), {body: String(m.body || ''), icon: ICON, badge: ICON, tag: open || 'info', renotify: true, data: {open: open}});
   }
 }
-self.addEventListener('push', e => { e.waitUntil(pushShow()); });
+self.addEventListener('push', e => { e.waitUntil(pushShow(e)); });
 self.addEventListener('notificationclick', e => {
   e.notification.close();
   const open = String((e.notification.data && e.notification.data.open) || '');

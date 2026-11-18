@@ -1962,7 +1962,26 @@ function openKiju(){scr("kiju");setTitle("重機ワイヤ管理");$("menu").hidd
 const CH_SEEN="chat_seen",CH_MAXF=4,CH_MAXB=8*1024*1024;
 let CH={me:null,msgs:[],last:0,timer:null,started:false,files:[],busy:false,sending:false,peekAt:0,open:false};
 function chTok(){return lsGet(KH_LS)}
-function chApi(fn,args){return callApi0(fn,[chTok()].concat(args||[]))}
+// チャット広場・通知の裏側：丸門ポータルのサーバー（速い）。サーバー側の準備がまだのとき（502）だけ、今までの Google Apps Script に戻る
+const CH_BASE=KH_API.replace(/\/keihi$/,"");let CH_MODE=null,CH_GAS=false;
+function chMode(){if(!chTok())return Promise.resolve("srv");if(!CH_MODE)CH_MODE=fetch(CH_BASE+"/chat/peek",{headers:{Authorization:"Bearer "+chTok()}}).then(r=>{if(r.status===502){CH_GAS=true;return"gas"}return"srv"},()=>"srv");return CH_MODE}
+async function chSrv(fn,a){const H={Authorization:"Bearer "+chTok()};const J=o=>({method:"POST",headers:Object.assign({"Content-Type":"application/json"},H),body:JSON.stringify(o)});let u="",opt={headers:H};
+  if(fn==="chatList")u="/chat/list?"+(a[0]?"after="+Number(a[0]):"")+(a[1]?"before="+Number(a[1]):"");
+  else if(fn==="chatPeek")u="/chat/peek";
+  else if(fn==="chatPost"){u="/chat/post";opt=J({text:a[0],files:a[1]||[]})}
+  else if(fn==="chatFile")u="/chat/file?key="+encodeURIComponent(a[0]);
+  else if(fn==="chatPushKey")u="/push/key";
+  else if(fn==="chatPushSub"){u="/push/sub";opt=J(a[0]&&a[0].toJSON?a[0].toJSON():a[0])}
+  else if(fn==="chatPushUnsub"){u="/push/unsub";opt=J({endpoint:a[0]})}
+  else throw new Error("不明な呼び出しです。");
+  let r;try{r=await fetch(CH_BASE+u,opt)}catch(e){throw new Error("丸門ポータルにつながりません（電波を確かめてください）")}
+  if(r.status===401)throw new Error("CHAT_LOGIN");
+  if(r.status===502&&(fn==="chatList"||fn==="chatPeek")){const e=new Error("gas");e.gas=true;throw e}
+  if(fn==="chatFile"&&r.ok)return{type:r.headers.get("Content-Type")||"",blob:await r.blob()};
+  const j=await r.json().catch(()=>null);if(!j||!j.ok)throw new Error((j&&j.error)||"丸門ポータルから返事がありません。");
+  return fn==="chatPeek"?j.last:fn==="chatPost"?j.id:fn==="chatPushKey"?j.key:fn==="chatList"?j:true}
+function chGas(fn,a){if(fn==="chatPushSub")a=[a[0]&&a[0].endpoint];return callApi0(fn,[chTok()].concat(a))}
+function chApi(fn,args){const a=args||[];return chMode().then(m=>m==="gas"?chGas(fn,a):chSrv(fn,a).catch(e=>{if(e&&e.gas){CH_GAS=true;CH_MODE=Promise.resolve("gas");return chGas(fn,a)}throw e}))}
 function chFail(e,quiet){const m=(e&&e.message)||String(e);if(m==="CHAT_LOGIN"){lsSet(KH_LS,"");try{KH.tok=""}catch(x){}chShowLogin("もう一度ログインしてください");return}if(!quiet)chNote(esc(m))}
 function chNote(html){const b=$("ch_msg");if(!html){b.hidden=true;return}b.innerHTML=html;b.hidden=false}
 function chShowLogin(msg){chStop();$("ch_login").hidden=false;$("ch_room").hidden=true;$("chbar").hidden=true;$("ch_who").textContent="";$("ch_loginmsg").textContent=msg||""}
@@ -1986,7 +2005,7 @@ function chNear(){return window.innerHeight+window.scrollY>=document.documentEle
 function chSeen(){if(CH.last){lsSet(CH_SEEN,String(CH.last));$("goChat").classList.remove("unread")}}
 function chFirst(){chNote("");$("ch_list").innerHTML='<p class="hint" style="text-align:center;padding:30px 10px">読み込んでいます…</p>';
   chApi("chatList",[0,0]).then(r=>{CH.me=r.me;CH.msgs=r.msgs;CH.last=r.last;$("ch_who").textContent=r.me.name+" さん";$("ch_more").hidden=!r.more;chShowRoom();chRender();chBottom();chSeen();chPoll();chPushState()},e=>{$("ch_list").innerHTML="";const m=(e&&e.message)||String(e);if(m==="CHAT_LOGIN")return chFail(e);$("ch_login").hidden=true;chNote(esc(m)+'<div class="draftbtns"><button type="button" class="sub" id="chretry">もう一度読み込む</button></div>');$("chretry").addEventListener("click",chFirst)})}
-function chPoll(){chStop();if(!CH.open)return;CH.timer=setTimeout(chTick,8000)}
+function chPoll(){chStop();if(!CH.open)return;CH.timer=setTimeout(chTick,CH_GAS?8000:3000)}
 function chStop(){clearTimeout(CH.timer);CH.timer=null}
 function chTick(){if(!CH.open||$("chat").hidden)return;if(document.hidden||CH.busy){chPoll();return}CH.busy=true;
   chApi("chatList",[CH.last,0]).then(r=>{CH.busy=false;chAdd(r);chPoll()},e=>{CH.busy=false;chFail(e,true);chPoll()})}
@@ -2013,14 +2032,14 @@ function chSend(){if(CH.sending)return;const text=$("ch_text").value.trim();if(!
     e=>{done();CH.pend=null;if(!$("ch_text").value){$("ch_text").value=text;chGrow()}if(!CH.files.length){CH.files=keep;chAtt()}chRender();chFail(e)})}
 function chGrow(){const t=$("ch_text");t.style.height="auto";t.style.height=Math.min(120,t.scrollHeight)+"px"}
 function chOpenFile(f,btn){if(btn.disabled)return;btn.disabled=true;btn.classList.add("loading");
-  chApi("chatFile",[f.key]).then(r=>{btn.disabled=false;btn.classList.remove("loading");const bin=atob(r.data),u8=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u8[i]=bin.charCodeAt(i);
-      const type=/^image\//.test(f.type)?f.type:(r.type||f.type||"application/octet-stream");const url=URL.createObjectURL(new Blob([u8],{type}));
+  chApi("chatFile",[f.key]).then(r=>{btn.disabled=false;btn.classList.remove("loading");let part=r.blob;if(!part){const bin=atob(r.data),u8=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u8[i]=bin.charCodeAt(i);part=u8}
+      const type=/^image\//.test(f.type)?f.type:(r.type||f.type||"application/octet-stream");const url=URL.createObjectURL(new Blob([part],{type}));
       if(/^image\//.test(type)){$("chvimg").src=url;$("chvname").textContent=f.name;const a=$("chvsave");a.href=url;a.download=f.name;$("chview").hidden=false}
       else{const a=document.createElement("a");a.href=url;a.download=f.name;a.target="_blank";a.rel="noopener";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000)}},
     e=>{btn.disabled=false;btn.classList.remove("loading");chFail(e)})}
 function chLogin(){$("ch_loginmsg").textContent="確かめています…";
   fetch(KH_API+"/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({login_id:$("ch_id").value.trim(),password:$("ch_pw").value,device:navigator.userAgent.slice(0,100)})})
-    .then(r=>r.json()).then(j=>{if(!j.ok){$("ch_loginmsg").textContent=j.error||"ログインできませんでした";return}lsSet(KH_LS,j.token);try{KH.tok=j.token}catch(x){}$("ch_pw").value="";$("ch_loginmsg").textContent="";chFirst()})
+    .then(r=>r.json()).then(j=>{if(!j.ok){$("ch_loginmsg").textContent=j.error||"ログインできませんでした";return}lsSet(KH_LS,j.token);CH_MODE=null;try{KH.tok=j.token}catch(x){}$("ch_pw").value="";$("ch_loginmsg").textContent="";chFirst()})
     .catch(()=>{$("ch_loginmsg").textContent="丸門ポータルにつながりません（電波を確かめてください）"})}
 function chStart(){
   $("ch_loginb").addEventListener("click",chLogin);$("ch_pwshow").addEventListener("change",e=>{$("ch_pw").type=e.target.checked?"text":"password"});
@@ -2035,7 +2054,7 @@ function openChat(){scr("chat");setTitle("チャット広場");$("menu").hidden=
   if(CH.me){chShowRoom();chRender();chBottom();chStop();chTick()}else chFirst()}
 function chLeave(){CH.open=false;chStop()}
 function chPeek(){const g=$("goChat");if(!g||!chTok()||Date.now()-CH.peekAt<60000)return;CH.peekAt=Date.now();
-  callApi0("chatPeek",[chTok()]).then(last=>{g.classList.toggle("unread",Number(last)>Number(lsGet(CH_SEEN)||0))},()=>{})}
+  chApi("chatPeek").then(last=>{g.classList.toggle("unread",Number(last)>Number(lsGet(CH_SEEN)||0))},()=>{})}
 // チャット広場の通知（ホーム画面に入れたアプリで「通知を受け取る」を押した人へ、新しい書き込みを知らせる）
 try{const o=new URLSearchParams(location.search).get("open");if(o){if(o==="keihi_approve"){window.KH_GOAPPR=true;sessionStorage.setItem("screen","keihi")}else if(o==="chat")sessionStorage.setItem("screen","chat");history.replaceState(null,"",location.pathname)}}catch(e){}
 // 通知を押して開いたとき：chat＝チャット広場、keihi_approve＝旅費精算の承認の画面
@@ -2054,16 +2073,20 @@ async function chPushState(){
   let sub=null;try{sub=await reg.pushManager.getSubscription()}catch(e){}
   if(!chTok()){pushPaint("スマホの通知：丸門ポータルにログインすると受け取れます（チャット広場・旅費精算のお知らせ）","ログインする",()=>openChat());return}
   if(sub&&Notification.permission==="granted"){pushPaint("スマホの通知：オン（チャット広場・旅費精算のお知らせが届きます）","オフにする",chPushOff);
-    if(Date.now()-Number(lsGet("push_at3")||0)>86400000&&Date.now()-PUSH_TRY>300000){PUSH_TRY=Date.now();chApi("chatPushSub",[sub.endpoint]).then(r=>{if(r===true)lsSet("push_at3",String(Date.now()))},()=>{})}}
+    const mode=await chMode();
+    if(mode==="srv"&&lsGet("push_srv")!=="1"){if(Date.now()-PUSH_TRY>300000){PUSH_TRY=Date.now();chPushMove(reg,sub)}}
+    else if(Date.now()-Number(lsGet("push_at3")||0)>86400000&&Date.now()-PUSH_TRY>300000){PUSH_TRY=Date.now();chApi("chatPushSub",[sub]).then(r=>{if(r===true)lsSet("push_at3",String(Date.now()))},()=>{})}}
   else pushPaint("チャット広場・旅費精算のお知らせを、スマホの通知で受け取れます","通知を受け取る",chPushOn)}
+// 通知の登録を、Google Apps Script からサーバーへ入れ替える（鍵が違うので登録し直す。操作は要らない）
+async function chPushMove(reg,sub){try{const key=await chApi("chatPushKey");await sub.unsubscribe();const s2=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:chB64U(key)});await chApi("chatPushSub",[s2]);lsSet("push_srv","1");lsSet("push_at3",String(Date.now()))}catch(e){}}
 async function chPushOn(){pushBusy();PUSH_ERR="";
   try{const perm=await Notification.requestPermission();if(perm==="granted"){const reg=await chSwReady();if(!reg)throw new Error("アプリを一度閉じて開き直してから、もう一度押してください。");
-      const key=await chApi("chatPushKey");let sub=await reg.pushManager.getSubscription();if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:chB64U(key)});
-      const r=await chApi("chatPushSub",[sub.endpoint]);if(r===true)lsSet("push_at3",String(Date.now()))}}
+      const mode=await chMode(),key=await chApi("chatPushKey");let sub=await reg.pushManager.getSubscription();if(sub&&mode==="srv"&&lsGet("push_srv")!=="1"){await sub.unsubscribe();sub=null}if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:chB64U(key)});
+      const r=await chApi("chatPushSub",[sub]);if(r===true)lsSet("push_at3",String(Date.now()));if(mode==="srv")lsSet("push_srv","1")}}
   catch(e){const m=(e&&e.message)||String(e);PUSH_ERR=m==="CHAT_LOGIN"?"丸門ポータルにログインし直してください":"通知を登録できませんでした："+m}
   await chPushState();PUSH_ERR=""}
 async function chPushOff(){pushBusy();PUSH_ERR="";
-  try{const reg=await chSwReady();const sub=reg&&await reg.pushManager.getSubscription();if(sub){const ep=sub.endpoint;await sub.unsubscribe();await chApi("chatPushUnsub",[ep]).catch(()=>{})}lsSet("push_at3","")}catch(e){}
+  try{const reg=await chSwReady();const sub=reg&&await reg.pushManager.getSubscription();if(sub){const ep=sub.endpoint;await sub.unsubscribe();await chApi("chatPushUnsub",[ep]).catch(()=>{})}lsSet("push_at3","");lsSet("push_srv","")}catch(e){}
   chPushState()}
 // ---- 有給休暇願い・持出伝票・物品購入伝票 ----
 const todayJ=()=>new Date(Date.now()+9*3600e3).toISOString().slice(0,10);
